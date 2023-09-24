@@ -1,24 +1,30 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const Model = mongoose.model;
 const jwt = require("jsonwebtoken");
 const secret_key = process.env["JWT_SECRET"];
 
-const userSchema = new Schema(
-  {
-    firstName: String,
-    lastName: String,
-    profilePicture: String,
-    bio: String,
-    githubProfile: String,
-    githubUsername: String,
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: true, minlength: 6 },
-    registrationDate: { type: Date, default: Date.now },
-    tokens: [{ token: { type: String } }],
-    isEmailVerified: { type: Boolean, required: true, default: false },
-    isBanned: { type: Boolean, required: true, default: false}
-  }
-);
+const userSchema = new Schema({
+  firstName: String,
+  lastName: String,
+  profilePicture: String,
+  bio: String,
+  githubProfile: String,
+  githubUsername: String,
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true, minlength: 6 },
+  tokens: [{ token: { type: String } }],
+  isEmailVerified: { type: Boolean, required: true, default: false },
+  isBanned: { type: Boolean, required: true, default: false },
+  isPremiumUser: { type: Boolean, required: true, default: false },
+  forgotPasswordToken: { type: String, required: true, default: "" },
+  isForgotPasswordInitiated: { type: Boolean, required: true, default: false },
+  Parameter1: String,
+  Parameter2: String,
+  Parameter3: Boolean,
+  Parameter4: Boolean,
+  Parameter5: Date,
+});
 
 userSchema.methods.generateAuthToken = async function () {
   try {
@@ -33,4 +39,4 @@ userSchema.methods.generateAuthToken = async function () {
   }
 };
 
-module.exports = mongoose.model("User", userSchema);
+module.exports = Model("User", userSchema);
