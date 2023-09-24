@@ -1,27 +1,19 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const jwt = require("jsonwebtoken");
-const secret_key = process.env["JWT_SECRET"];
+const Model = mongoose.model;
 
-const userDetailsSchema = new mongoose.Schema({
-  userID: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+const userDetailsSchema = new Schema({
+  userID: { type: Schema.Types.ObjectId, ref: "User", required: true },
   preferences: String,
   accountInformation: String,
   theme: String,
   emailNotifications: Boolean,
+  registrationDate: { type: Date, default: Date.now },
+  Parameter1: String,
+  Parameter2: String,
+  Parameter3: Boolean,
+  Parameter4: Boolean,
+  Parameter5: Date,
 });
 
-userSchema.methods.generateAuthToken = async function () {
-  try {
-    let newtoken = jwt.sign({ _id: this._id }, secret_key, {
-      expiresIn: "30d",
-    });
-    this.tokens = this.tokens.concat({ token: newtoken });
-    await this.save();
-    return newtoken;
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-module.exports = mongoose.model("UserDetails", userDetailsSchema);
+module.exports = Model("UserDetails", userDetailsSchema);
