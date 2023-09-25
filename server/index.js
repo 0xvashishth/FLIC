@@ -17,6 +17,7 @@ app.use(cookieParser())
 var whitelist = ['http://localhost:8082/', "http://localhost:3000/"]
 var corsOptions = {
   origin: function (origin, callback) {
+    console.log(origin)
     if (!origin || whitelist.indexOf(origin) !== -1) {
       callback(null, true)
     } else {
