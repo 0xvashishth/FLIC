@@ -59,7 +59,12 @@ const chatSchema = new Schema({
     {
         type: String, // The type of each element in the array is a string.
     },
-  ]
+  ],
+  Parameter1: String,
+  Parameter2: String,
+  Parameter3: Boolean,
+  Parameter4: Boolean,
+  Parameter5: Date,
 });
 
 const Chat = mongoose.model('Chat', chatSchema);
