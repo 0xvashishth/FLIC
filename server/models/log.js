@@ -22,6 +22,11 @@ const logSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Chat',
   },
+  Parameter1: String,
+  Parameter2: String,
+  Parameter3: Boolean,
+  Parameter4: Boolean,
+  Parameter5: Date,
 });
 
 const Log = mongoose.model('Log', logSchema);
