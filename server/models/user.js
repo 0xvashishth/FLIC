@@ -19,6 +19,8 @@ const userSchema = new Schema({
   isPremiumUser: { type: Boolean, required: true, default: false },
   forgotPasswordToken: { type: String, required: true, default: "" },
   isForgotPasswordInitiated: { type: Boolean, required: true, default: false },
+  urlCount: { type: Number, default: 0 },
+  qrCount: { type: Number, default: 0 },
   Parameter1: String,
   Parameter2: String,
   Parameter3: Boolean,
