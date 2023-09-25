@@ -5,6 +5,8 @@ const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const app = express();
 const connectDB = require("./config/db");
+const commonR = require("./apiRoutes/commonRoutes");
+
 
 //body-parse
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
@@ -36,6 +38,7 @@ app.use(express.json());
 connectDB();
 
 // routers
+app.use("/api/v1", commonR);
 
 // Middleware
 const middleware = (req, res, next) => {
