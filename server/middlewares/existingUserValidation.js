@@ -4,9 +4,9 @@ const existingUser = async (req, res, next) => {
     try {
         const { user }  = req.body;
 
-        const userEmail = user.email;
+        const email = user.email;
 
-        var userExist = await User.findOne({ email: userEmail });
+        var userExist = await User.findOne({ email });
 
         if (userExist) {
             console.log("User already exist!")
