@@ -4,7 +4,7 @@ const userDetails = require("../models/userDetails");
 // const { sendEmail } = require("../utils/sendEmail")
 const { sendEmailWithTemplate } = require("../utils/sendgridEmail")
 const { generateVerificationLink } = require("../utils/generateVerifyLink")
-const {addDataToLogs} = require("./log-controller")
+const { addDataToLogs } = require("./log-controller")
 
 const login = async (req, res, nxt) => {
   const { user } = req.body;
@@ -105,5 +105,55 @@ const signup = async (req, res, nxt) => {
   }
 };
 
+const updateProfile = async (req, res, nxt) => {
+  const { user } = req.body;
+  const session = await mongoose.startSession();
+  // starting the mongoose transaction
+  session.startTransaction();
+  const allowedAttributes = [
+    'lastName',
+    'firstName',
+    'email',
+    'bio',
+    'profilePicture',
+    'githubProfile',
+    'githubUsername',
+  ];
+
+  try {
+    const extraAttributes = Object.keys(user).filter(
+      (attr) => !allowedAttributes.includes(attr)
+    );
+
+    if (extraAttributes.length > 0) {
+      throw new Error(`Invalid attributes: ${extraAttributes.join(', ')}`);
+    }
+
+    User.update(
+      { _id: req.userId },
+      { $set: user },
+      { session },
+      async (error, result) => {
+        if (error) {
+          throw new Error("Error in server!");
+        } else {
+          addDataToLogs("User Updated", req.userId);
+          await session.commitTransaction(); // Commit the transaction
+          session.endSession();
+          return res.status(201).json({
+            message: 'Verification Link Sent Successfully, Please check your emailBox for verification!',
+          });
+        }
+      }
+    );
+
+  } catch (error) {
+    await session.abortTransaction(); // Rollback the transaction
+    session.endSession();
+    console.error(err);
+    return res.status(500).json({ error: "Something Went Wrong" });
+  }
+
+}
 
 module.exports = { signup, login };
