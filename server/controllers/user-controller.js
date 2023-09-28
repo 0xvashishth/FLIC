@@ -1,9 +1,10 @@
 const User = require("../models/user")
 const { validateEmailAndPasswordForSignup } = require("../middlewares/emailAndPasswordValidation");
 const userDetails = require("../models/userDetails");
-const { sendEmail } = require("../utils/sendEmail")
+// const { sendEmail } = require("../utils/sendEmail")
 const { sendEmailWithTemplate } = require("../utils/sendgridEmail")
 const { generateVerificationLink } = require("../utils/generateVerifyLink")
+const {addDataToLogs} = require("./log-controller")
 
 const login = async (req, res, nxt) => {
   const { user } = req.body;
@@ -21,20 +22,22 @@ const login = async (req, res, nxt) => {
       const token = await existingUser.generateAuthToken();
 
       if (matched) {
-
+        addDataToLogs("User Login", existingUser._id);
         await session.commitTransaction(); // Commit the transaction
         session.endSession();
 
+        const publicProfile = existingUser.getPublicProfile();
+
         return res.status(200).json({
-          user: existingUser,
-          token: token,
+          user: publicProfile,
+          token,
           message: 'User logged in successfully',
         });
       } else {
-        return res.status(401).json({ error: [{ msg: 'Password is not correct' }] });
+        return res.status(401).json({ error: 'Password is not correct' });
       }
     } else {
-      return res.status(404).json({ error: [{ msg: 'User not found' }] });
+      return res.status(404).json({ error: 'User not found' });
     }
   } catch (err) {
     await session.abortTransaction(); // Rollback the transaction
@@ -54,7 +57,7 @@ const signup = async (req, res, nxt) => {
 
     const { password, email, firstName, lastName } = user;
 
-    const validationResult = validateEmailAndPassword(email, password);
+    const validationResult = validateEmailAndPasswordForSignup(email, password);
 
     if (validationResult.error) {
       console.error('Validation error:', validationResult.message);
@@ -84,6 +87,7 @@ const signup = async (req, res, nxt) => {
     }
     sendEmailWithTemplate(process.env["VERIFYEMAILTEMPLATEID"], [email], dynamicTemplateData)
       .then(async () => {
+        addDataToLogs("User signUp", saveUserPromise._id);
         await session.commitTransaction(); // Commit the transaction
         session.endSession();
         return res.status(201).json({
