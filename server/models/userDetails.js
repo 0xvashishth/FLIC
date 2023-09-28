@@ -4,10 +4,10 @@ const Model = mongoose.model;
 
 const userDetailsSchema = new Schema({
   userID: { type: Schema.Types.ObjectId, ref: "User", required: true },
-  preferences: String,
-  accountInformation: String,
-  theme: String,
-  emailNotifications: Boolean,
+  preferences: { type: String },
+  accountInformation: { type: String },
+  theme: { type: String, default: "white" },
+  emailNotifications: { type: Boolean, default: true },
   registrationDate: { type: Date, default: Date.now },
   Parameter1: String,
   Parameter2: String,

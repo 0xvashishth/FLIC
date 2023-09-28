@@ -14,6 +14,7 @@ const userSchema = new Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true, minlength: 6 },
   tokens: [{ token: { type: String } }],
+  emailVerificationLink: { type: String, require: true },
   isEmailVerified: { type: Boolean, required: true, default: false },
   isBanned: { type: Boolean, required: true, default: false },
   isPremiumUser: { type: Boolean, required: true, default: false },
