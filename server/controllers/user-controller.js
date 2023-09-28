@@ -6,13 +6,8 @@ const { sendEmailWithTemplate } = require("../utils/sendgridEmail")
 const { generateVerificationLink } = require("../utils/generateVerifyLink")
 
 const login = async (req, res, nxt) => {
-  const error = validationResult(req);
-
-  if (!error.isEmpty()) {
-    return res.status(400).json({ error: error.array() });
-  }
-
-  const { email, password } = req.body;
+  const { user } = req.body;
+  const { password, email } = user;
 
   const session = await mongoose.startSession();
 
@@ -26,11 +21,11 @@ const login = async (req, res, nxt) => {
       const token = await existingUser.generateAuthToken();
 
       if (matched) {
+
         await session.commitTransaction(); // Commit the transaction
         session.endSession();
 
         return res.status(200).json({
-          _id: existingUser.id,
           user: existingUser,
           token: token,
           message: 'User logged in successfully',
@@ -59,7 +54,7 @@ const signup = async (req, res, nxt) => {
 
     const { password, email, firstName, lastName } = user;
 
-    const validationResult = validateEmailAndPassword(userEmail, password);
+    const validationResult = validateEmailAndPassword(email, password);
 
     if (validationResult.error) {
       console.error('Validation error:', validationResult.message);
