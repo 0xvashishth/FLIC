@@ -14,7 +14,7 @@ router.post("/signup", existingUserValidation , userC.signup);
 router.post("/login", loginValiations, userC.login);
 
 // User Update
-router.put("/edit", existingUserValidation);
+router.put("/edit", userC.updateProfile);
 
 // Curently logged in user
 // router.get("/me", protect, userC.getMe);
