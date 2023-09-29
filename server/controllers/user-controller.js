@@ -1,6 +1,9 @@
 const User = require("../models/user")
 const { validateEmailAndPasswordForSignup } = require("../middlewares/emailAndPasswordValidation");
 const userDetails = require("../models/userDetails");
+const Chat = require("../models/chat");
+const Form = require("../models/form");
+const Url = require("../models/url");
 // const { sendEmail } = require("../utils/sendEmail")
 const { sendEmailWithTemplate } = require("../utils/sendgridEmail")
 const { generateVerificationLink } = require("../utils/generateVerifyLink")
@@ -34,9 +37,13 @@ const login = async (req, res, nxt) => {
           message: 'User logged in successfully',
         });
       } else {
+        await session.abortTransaction(); // Rollback the transaction
+        session.endSession();
         return res.status(401).json({ error: 'Password is not correct' });
       }
     } else {
+      await session.abortTransaction(); // Rollback the transaction
+      session.endSession();
       return res.status(404).json({ error: 'User not found' });
     }
   } catch (err) {
@@ -61,7 +68,7 @@ const signup = async (req, res, nxt) => {
 
     if (validationResult.error) {
       console.error('Validation error:', validationResult.message);
-      return res.status(400).json({ error: validationResult.message });
+      throw new Error(validationResult.message);
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
@@ -80,12 +87,12 @@ const signup = async (req, res, nxt) => {
     });
     await newUserDetails.save({ session });
 
-    dynamicTemplateData = {
+    var dynamicTemplateData = {
       firstName,
       lastName,
       emailVerificationLink
     }
-    sendEmailWithTemplate(process.env["VERIFYEMAILTEMPLATEID"], [email], dynamicTemplateData)
+    await sendEmailWithTemplate(process.env["VERIFYEMAILTEMPLATEID"], [email], dynamicTemplateData)
       .then(async () => {
         addDataToLogs("User signUp", saveUserPromise._id);
         await session.commitTransaction(); // Commit the transaction
@@ -110,6 +117,7 @@ const updateProfile = async (req, res, nxt) => {
   const session = await mongoose.startSession();
   // starting the mongoose transaction
   session.startTransaction();
+
   const allowedAttributes = [
     'lastName',
     'firstName',
@@ -129,7 +137,7 @@ const updateProfile = async (req, res, nxt) => {
       throw new Error(`Invalid attributes: ${extraAttributes.join(', ')}`);
     }
 
-    User.update(
+    await User.update(
       { _id: req.userId },
       { $set: user },
       { session },
@@ -141,7 +149,7 @@ const updateProfile = async (req, res, nxt) => {
           await session.commitTransaction(); // Commit the transaction
           session.endSession();
           return res.status(201).json({
-            message: 'Verification Link Sent Successfully, Please check your emailBox for verification!',
+            message: 'User Updated Successfully!',
           });
         }
       }
@@ -156,4 +164,53 @@ const updateProfile = async (req, res, nxt) => {
 
 }
 
-module.exports = { signup, login };
+const deleteProfile = async (req, res, nxt) => {
+
+  const session = await mongoose.startSession();
+  // starting the mongoose transaction
+  session.startTransaction();
+
+  try {
+
+    await User.deleteOne(
+      { _id: req.userId }
+    );
+
+    await userDetails.deleteOne(
+      { userID: req.userId }
+    );
+
+    await Chat.deleteMany(
+      { agent: req.userId }
+    );
+
+    await Form.deleteMany(
+      { userID: req.userId }
+    );
+
+    await Url.deleteMany(
+      { userID: req.userId }
+    );
+
+    await FormDetails.deleteMany({ FormID: { $in: (await Form.find({ userID: req.userId })).map(form => form._id) } });
+
+    await Form.deleteMany({ userID: req.userId });
+
+    addDataToLogs("User All Records Deleted", req.userId);
+
+    await session.commitTransaction(); // Commit the transaction
+    session.endSession();
+    
+    return res.status(201).json({
+      message: 'User Deleted Successfully!',
+    });
+  } catch (error) {
+    await session.abortTransaction(); // Rollback the transaction
+    session.endSession();
+    console.error(err);
+    return res.status(500).json({ error: "Something Went Wrong" });
+  }
+
+}
+
+module.exports = { signup, login, updateProfile, deleteProfile };
