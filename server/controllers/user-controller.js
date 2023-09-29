@@ -25,6 +25,12 @@ const login = async (req, res, nxt) => {
       const token = await existingUser.generateAuthToken();
 
       if (matched) {
+        if(!existingUser.isEmailVerified){
+          await session.abortTransaction(); // Rollback the transaction
+          session.endSession();
+          return res.status(401).json({ error: "Your email is not verified, Please check your email for verificatrion :)" });
+        }
+        
         addDataToLogs("User Login", existingUser._id);
         await session.commitTransaction(); // Commit the transaction
         session.endSession();
@@ -200,7 +206,7 @@ const deleteProfile = async (req, res, nxt) => {
 
     await session.commitTransaction(); // Commit the transaction
     session.endSession();
-    
+
     return res.status(201).json({
       message: 'User Deleted Successfully!',
     });
