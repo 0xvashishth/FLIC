@@ -8,6 +8,8 @@ const Url = require("../models/url");
 const { sendEmailWithTemplate } = require("../utils/sendgridEmail")
 const { generateVerificationLink } = require("../utils/generateVerifyLink")
 const { addDataToLogs } = require("./log-controller")
+const { verificationAndBannedCheckForLogin } = require("../middlewares/verificationAndBannedCheck")
+
 
 const login = async (req, res, nxt) => {
   const { user } = req.body;
@@ -25,12 +27,15 @@ const login = async (req, res, nxt) => {
       const token = await existingUser.generateAuthToken();
 
       if (matched) {
-        if(!existingUser.isEmailVerified){
+
+        var chkAccess = await verificationAndBannedCheckForLogin(existingUser);
+
+        if (!chkAccess) {
           await session.abortTransaction(); // Rollback the transaction
           session.endSession();
-          return res.status(401).json({ error: "Your email is not verified, Please check your email for verificatrion :)" });
+          return res.status(401).json({ error: "Your email is not verified, Or you are banned to this platform! Please check your email!" });
         }
-        
+
         addDataToLogs("User Login", existingUser._id);
         await session.commitTransaction(); // Commit the transaction
         session.endSession();
@@ -219,4 +224,16 @@ const deleteProfile = async (req, res, nxt) => {
 
 }
 
-module.exports = { signup, login, updateProfile, deleteProfile };
+const getMe = async (req, res, nxt) => {
+  try {
+    return res.status(201).json({
+      message: 'User Retrived Successfully!',
+      user: await req.rootUser.getPublicProfile()
+    });
+  } catch (error) {
+    console.error(err);
+    return res.status(500).json({ error: "Something Went Wrong" });
+  }
+}
+
+module.exports = { signup, login, updateProfile, deleteProfile, getMe };

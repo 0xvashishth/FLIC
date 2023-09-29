@@ -21,4 +21,23 @@ const verificationAndBannedCheck = async (req, res, next) => {
     }
 }
 
-module.exports = verificationAndBannedCheck;
+const verificationAndBannedCheckForLogin = async (user) => {
+    try {
+        var userCheck = user;
+
+        if (!userCheck.isEmailVerified) {
+            throw new Error("Your email is not verified, Please check your email for verificatrion");
+        }
+
+        if(userCheck.isBanned){
+            throw new Error("You are banned! Please contact developers!");
+        }
+        
+        return true;
+    } catch (err) {
+        console.log(err)
+        return false;
+    }
+}
+
+module.exports = {verificationAndBannedCheck, verificationAndBannedCheckForLogin};
