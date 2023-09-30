@@ -236,4 +236,115 @@ const getMe = async (req, res, nxt) => {
   }
 }
 
-module.exports = { signup, login, updateProfile, deleteProfile, getMe };
+// Admin Controller
+
+const getAllUser = async (req, res, nxt) => {
+  try {
+    // Pagination options (you can customize these)
+    const page = req.query.page || 1; // Current page
+    const limit = req.query.limit || 10; // Number of items per page
+
+    // Calculate skip value based on the page and limit
+    const skip = (page - 1) * limit;
+
+    // Query to fetch users with pagination
+    const users = await User.find({})
+      .skip(skip)
+      .limit(limit);
+
+    // Total count of users (you may want to calculate this separately)
+    const totalCount = await User.countDocuments();
+
+    return res.status(200).json({
+      message: 'User Retrieved Successfully!',
+      users,
+      totalCount,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      error: 'Internal Server Error',
+    });
+  }
+};
+
+const getUserById = async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    // Check if the provided ID is valid (mongoose.Types.ObjectId)
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ error: 'Invalid user ID' });
+    }
+
+    // Find the user by ID
+    const user = await User.findById(userId);
+
+    // Check if the user was not found
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // User found, send a success response
+    return res.status(200).json({
+      message: 'User retrieved successfully',
+      user,
+    });
+  } catch (error) {
+    console.error(error);
+
+    // Handle other errors
+    return res.status(500).json({
+      error: 'Internal Server Error',
+    });
+  }
+};
+
+const deleteUserByAdmin = async (req, res) => {
+  const session = await mongoose.startSession();
+  // starting the mongoose transaction
+  session.startTransaction();
+
+  try {
+
+    await User.deleteOne(
+      { _id: req.params.id }
+    );
+
+    await userDetails.deleteOne(
+      { userID: req.params.id }
+    );
+
+    await Chat.deleteMany(
+      { agent: req.params.id }
+    );
+
+    await Form.deleteMany(
+      { userID: req.params.id }
+    );
+
+    await Url.deleteMany(
+      { userID: req.params.id }
+    );
+
+    await FormDetails.deleteMany({ FormID: { $in: (await Form.find({ userID: req.params.id })).map(form => form._id) } });
+
+    await Form.deleteMany({ userID: req.params.id });
+
+    addDataToLogs("User All Records Deleted", req.params.id);
+
+    await session.commitTransaction(); // Commit the transaction
+    session.endSession();
+
+    return res.status(201).json({
+      message: 'User Deleted Successfully!',
+    });
+  } catch (error) {
+    await session.abortTransaction(); // Rollback the transaction
+    session.endSession();
+    console.error(err);
+    return res.status(500).json({ error: "Something Went Wrong" });
+  }
+}
+
+module.exports = { signup, login, updateProfile, deleteProfile, getMe, getAllUser,getUserById, deleteUserByAdmin };
