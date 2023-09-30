@@ -7,9 +7,9 @@ const userC = require("../controllers/user-controller");
 const userC = require("../controllers/user-controller");
 const adminAuth = require("../middlewares/adminAuth");
 
-// Admin Auth
-router.get("/", adminAuth, userC.getAllUser);
-router.get("/:id", adminAuth, userC.getUserById);
-router.delete('/:id', adminAuth, userC.deleteUserByAdmin);
+// Admin Auth For User
+router.get("/user", adminAuth, userC.getAllUser);
+router.get("/user/:id", adminAuth, userC.getUserById);
+router.delete('/user/:id', adminAuth, userC.deleteUserByAdmin);
 
 module.exports = router;
