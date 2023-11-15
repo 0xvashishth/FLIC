@@ -119,7 +119,7 @@ const signup = async (req, res, nxt) => {
     await session.abortTransaction(); // Rollback the transaction
     session.endSession();
     console.error(err);
-    return res.status(500).json({ error: "Something Went Wrong" });
+    return res.status(500).json({ error: "Something Went Wrong", errorMessage: err.message });
   }
 };
 

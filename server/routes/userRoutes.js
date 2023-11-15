@@ -11,7 +11,7 @@ const { verificationAndBannedCheck } = require("../middlewares/verificationAndBa
 router.post("/signup", existingUserValidation, userC.signup);
 
 // User Login
-router.post("/login", loginValiations, userC.login);
+// router.post("/login", loginValiations, userC.login);
 
 // User Update
 router.put("/edit", auth, verificationAndBannedCheck, userC.updateProfile);
