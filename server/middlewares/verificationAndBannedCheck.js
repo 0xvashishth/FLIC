@@ -26,7 +26,7 @@ const verificationAndBannedCheckForLogin = async (user) => {
         var userCheck = user;
 
         if (!userCheck.isEmailVerified) {
-            throw new Error("Your email is not verified, Please check your email for verificatrion");
+            throw new Error("Your email is not verified, Please check your email for verification");
         }
 
         if(userCheck.isBanned){
