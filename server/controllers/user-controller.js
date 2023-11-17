@@ -236,7 +236,7 @@ const getMe = async (req, res, nxt) => {
   }
 }
 
-// Admin Controller
+//--------------------- Admin Controllers-------------------
 
 const getAllUser = async (req, res, nxt) => {
   try {
