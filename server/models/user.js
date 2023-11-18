@@ -42,4 +42,22 @@ userSchema.methods.generateAuthToken = async function () {
   }
 };
 
+userSchema.methods.getPublicProfile = function () {
+  return {
+    _id: this._id,
+    firstName: this.firstName,
+    lastName: this.lastName,
+    email: this.email,
+    bio: this.bio,
+    profilePicture: this.profilePicture,
+    githubProfile: this.githubProfile,
+    githubUsername: this.githubUsername,
+    isEmailVerified: this.isEmailVerified,
+    isBanned: this.isBanned,
+    isPremiumUser: this.isPremiumUser,
+    urlCount: this.urlCount,
+    qrCount: this.qrCount,
+  };
+};
+
 module.exports = Model("User", userSchema);

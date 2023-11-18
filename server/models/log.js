@@ -7,7 +7,10 @@ const logSchema = new Schema({
     type: Date,
     default: Date.now,
   },
-  note:{
+  onActivityId: {
+     type: Schema.Types.ObjectId,
+  },
+  note: {
     type: String
   },
   form: {
