@@ -17,9 +17,9 @@ const logSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Form',
   },
-  link: {
+  url: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Link',
+    ref: 'Url',
   },
   chat: {
     type: mongoose.Schema.Types.ObjectId,

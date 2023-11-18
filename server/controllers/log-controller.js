@@ -1,6 +1,6 @@
 const Logs = require("../models/log")
 
-const addDataToLogs = async (activityType, onActivityId, note = "", form = "", link = "", chat = "") => {
+const addDataToLogs = async (activityType, onActivityId, note = "", form = "", url = "", chat = "") => {
     const newLog = new Logs({
         activityType,
         onActivityId,
