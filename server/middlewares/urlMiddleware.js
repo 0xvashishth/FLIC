@@ -1,6 +1,3 @@
-const jwt = require("jsonwebtoken");
-const User = require("../models/user");
-const secret_key = process.env["JWT_SECRET"];
 const FREE_USER_URL_COUNT = process.env["FREE_USER_URL_COUNT"];
 const PREMIUM_USER_URL_COUNT = process.env["PREMIUM_USER_URL_COUNT"];
 

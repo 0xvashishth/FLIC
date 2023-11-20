@@ -114,7 +114,6 @@ app.get('/l/:id', async (req, res) => {
   }
 });
 
-
 // Init Middleware
 app.use(express.json({ extended: false }));
 app.use(express.json());

@@ -238,7 +238,7 @@ const getMe = async (req, res, nxt) => {
 
 //--------------------- Admin Controllers-------------------
 
-const getAllUser = async (req, res, nxt) => {
+const getAllUserByAdmin = async (req, res, nxt) => {
   try {
     // Pagination options (you can customize these)
     const page = req.query.page || 1; // Current page
@@ -347,4 +347,4 @@ const deleteUserByAdmin = async (req, res) => {
   }
 }
 
-module.exports = { signup, login, updateProfile, deleteProfile, getMe, getAllUser,getUserById, deleteUserByAdmin };
+module.exports = { signup, login, updateProfile, deleteProfile, getMe, getAllUserByAdmin,getUserById, deleteUserByAdmin };
