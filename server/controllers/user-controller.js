@@ -8,7 +8,7 @@ const Url = require("../models/url");
 const { sendEmailWithTemplate } = require("../utils/sendgridEmail")
 const { generateVerificationLink } = require("../utils/generateVerifyLink")
 const { addDataToLogs } = require("./log-controller")
-const { verificationAndBannedCheckForLogin } = require("../middlewares/verificationAndBannedCheck")
+const { verificationAndBannedCheckForLogin } = require("../middlewares/userMiddleware")
 
 
 const login = async (req, res, nxt) => {

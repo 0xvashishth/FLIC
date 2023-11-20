@@ -40,4 +40,18 @@ const verificationAndBannedCheckForLogin = async (user) => {
     }
 }
 
-module.exports = {verificationAndBannedCheck, verificationAndBannedCheckForLogin};
+const isUserPremiumCheck = async (req, res, next) => {
+    try {
+        var userCheck = req.rootUser;
+
+        if (!userCheck.isPremiumUser) {
+            return res.status(400).json({ error: "This service is unavailable as you are not a premium user!" });
+        }
+        next();
+    } catch (err) {
+        console.log(err.message);
+        return res.status(401).json({ error: "Something went wrong!", errorMessage: err.message });
+    }
+}
+
+module.exports = {verificationAndBannedCheck, verificationAndBannedCheckForLogin, isUserPremiumCheck};
