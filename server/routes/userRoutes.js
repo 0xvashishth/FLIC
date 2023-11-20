@@ -4,7 +4,7 @@ const express = require("express");
 const router = express.Router();
 const userC = require("../controllers/user-controller");
 const existingUserValidation = require("../middlewares/existingUserValidation")
-const { verificationAndBannedCheck, verificationAndBannedCheckForLogin } = require("../middlewares/verificationAndBannedCheck")
+const { verificationAndBannedCheck, verificationAndBannedCheckForLogin } = require("../middlewares/userMiddleware")
 
 // Normal User Routes
 // user signup

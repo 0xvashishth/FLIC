@@ -1,6 +1,7 @@
 const Chat = require("../models/chat");
 const Form = require("../models/form");
 const Url = require("../models/url");
+const User = require("../models/user");
 const { addDataToLogs } = require("./log-controller");
 const { sendEmailWithTemplate } = require("../utils/sendgridEmail");
 const { cloudinary } = require("../utils/uploadFileToCloudinary");
@@ -14,7 +15,17 @@ const createUrl = async (req, res) => {
     const { user } = req.rootUser;
     const { url } = req.body;
 
-    const { originalURL, shortenedURL, description } = url;
+    var { originalURL, shortenedURL, description } = url;
+
+    // ----URL Validation----
+    if (
+      process.env["URL_PREFIX"] !=
+      shortenedURL.substring(0, process.env["URL_PREFIX_LETTER_LENGTH"])
+    ) {
+      return res.status(400).json({
+        error: "Unsupported URL Format!",
+      });
+    }
 
     var existingShortenedURL = Url.findOne({ shortenedURL });
 
@@ -49,6 +60,9 @@ const createUrl = async (req, res) => {
     )
       .then(async () => {
         addDataToLogs("URL Created", savePromise._id);
+        increaseDecreaseCount(user, false, "increase", session).catch((err) => {
+          throw err;
+        });
         await session.commitTransaction(); // Commit the transaction
         session.endSession();
         return res.status(201).json({
@@ -134,7 +148,7 @@ const deleteUrl = async (req, res, next) => {
 
     const { _id, originalURL, shortenedURL, description } = url;
 
-    await URL.update({ _id }, { session }).catch((err) => {
+    await Url.deleteOne({ _id }, { session }).catch((err) => {
       throw err;
     });
 
@@ -143,6 +157,21 @@ const deleteUrl = async (req, res, next) => {
       shortenedURL,
       description,
     };
+
+    // increasing decreasing url and qr count
+    if (url.qrCodeImageUrl) {
+      increaseDecreaseCount(user, true, "decrease", session).catch((err) => {
+        throw err;
+      });
+      deleteFileFromCloud(url.qrCodeImagePublicId).catch((err) => {
+        throw err;
+      });
+    } else {
+      increaseDecreaseCount(user, false, "decrease", session).catch((err) => {
+        throw err;
+      });
+    }
+
     await sendEmailWithTemplate(
       process.env["URLDELETEDTEMPLATEID"],
       [user.email],
@@ -150,6 +179,7 @@ const deleteUrl = async (req, res, next) => {
     )
       .then(async () => {
         addDataToLogs("URL Deleted", _id);
+
         await session.commitTransaction(); // Commit the transaction
         session.endSession();
         return res.status(201).json({
@@ -173,7 +203,7 @@ const createQR = async (req, res) => {
   session.startTransaction();
 
   try {
-    // const { user } = req.rootUser;
+    const { user } = req.rootUser;
     const { url } = req.body;
     const { _id } = url;
     const uploadedFile = req.file;
@@ -186,15 +216,25 @@ const createQR = async (req, res) => {
     console.log("File uploaded to Cloudinary:", result.secure_url);
     await Url.updateOne(
       { _id },
-      { qrCodeImageUrl: result.secure_url },
+      {
+        qrCodeImageUrl: result.secure_url,
+        qrCodeImagePublicId: result.public_id,
+      },
       { session }
     )
       .then(async (response) => {
         addDataToLogs("QR Code Uploaded", _id);
+        // changing count in user model
+        increaseDecreaseCount(user, true, "increase", session).catch((err) => {
+          throw err;
+        });
+        const newUrl = await Url.findById({ _id });
         await session.commitTransaction(); // Commit the transaction
         session.endSession();
 
-        res.status(200).json({ message: "File uploaded successfully." });
+        res
+          .status(200)
+          .json({ message: "QR Created successfully.", url: newUrl });
       })
       .catch((err) => {
         throw err;
@@ -207,4 +247,134 @@ const createQR = async (req, res) => {
   }
 };
 
-module.exports = { createUrl, updateUrl, deleteUrl, createQR };
+const deleteQR = async (req, res) => {
+  const session = await mongoose.startSession();
+  // starting the mongoose transaction
+  session.startTransaction();
+
+  try {
+    const { user } = req.rootUser;
+    const { url } = req.body;
+    const { _id } = url;
+
+    await Url.updateOne(
+      { _id },
+      { qrCodeImageUrl: "", qrCodeImagePublicId: "" },
+      { session }
+    )
+      .then(async (response) => {
+        deleteFileFromCloud(url.qrCodeImagePublicId).catch((err) => {
+          throw err;
+        });
+        addDataToLogs("QR Code Removed", _id);
+        // changing count in user model
+        increaseDecreaseCount(user, true, "qrdecrease", session).catch(
+          (err) => {
+            throw err;
+          }
+        );
+        const newUrl = await Url.findById({ _id });
+        await session.commitTransaction(); // Commit the transaction
+        session.endSession();
+
+        res
+          .status(200)
+          .json({ message: "QR Removed successfully.", url: newUrl });
+      })
+      .catch((err) => {
+        throw err;
+      });
+  } catch (err) {
+    await session.abortTransaction(); // Rollback the transaction
+    session.endSession();
+    console.error(err.message);
+    return res.status(500).json({ error: err.message });
+  }
+};
+
+const getUrlSuffix = async (req, res) => {
+  const suffixUrl = req.query.suffixUrl;
+
+  // ----URL Validation----
+  if (
+    process.env["URL_PREFIX"] !=
+    shortenedURL.substring(0, process.env["URL_PREFIX_LETTER_LENGTH"])
+  ) {
+    return res.status(400).json({
+      error: "Unsupported URL Format!",
+    });
+  }
+
+  var existingShortenedURL = Url.findOne({ shortenedURL: suffixUrl });
+
+  if (!existingShortenedURL) {
+    return res.status(200).json({
+      message: "URL Available!",
+    });
+  } else {
+    return res.status(400).json({
+      error: "URL Not Available!",
+    });
+  }
+};
+
+// ----Support Function----
+const deleteFileFromCloud = async (imageId) => {
+  await cloudinary.uploader.destroy(imageId).catch((err) => {
+    throw err;
+  });
+  return;
+};
+
+const increaseDecreaseCount = async (user, qr = false, action, session) => {
+  if ((action = "qrdecrease")) {
+    await User.updateOne(
+      { _id: user._id },
+      { qrCount: --user.qrCount },
+      { session }
+    ).catch((err) => {
+      throw err;
+    });
+  } else if ((action = "decrease")) {
+    if (qr) {
+      await User.updateOne(
+        { _id: user._id },
+        { qrCount: --user.qrCount, urlCount: --user.urlCount },
+        { session }
+      ).catch((err) => {
+        throw err;
+      });
+    } else {
+      await User.updateOne(
+        { _id: user._id },
+        { urlCount: --user.urlCount },
+        { session }
+      ).catch((err) => {
+        throw err;
+      });
+    }
+  } else if ((action = "increase")) {
+    if (qr) {
+      await User.updateOne(
+        { _id: user._id },
+        { qrCount: ++user.qrCount },
+        { session }
+      ).catch((err) => {
+        throw err;
+      });
+    } else {
+      await User.updateOne(
+        { _id: user._id },
+        { urlCount: ++user.urlCount },
+        { session }
+      ).catch((err) => {
+        throw err;
+      });
+    }
+  } else {
+    throw new Error("Invalid Number, Server Error!");
+  }
+  return true;
+};
+
+module.exports = { createUrl, updateUrl, deleteUrl, createQR, deleteQR, getUrlSuffix };

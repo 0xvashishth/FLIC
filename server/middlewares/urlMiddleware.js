@@ -24,7 +24,7 @@ const urlLimitCheck = async (req, res, next) => {
     next();
   } catch (err) {
     console.log(err);
-    return res.status(500).json({ error: "Something went wrong!" });
+    return res.status(500).json({ error: "Something went wrong!", errorMessage: err.message });
   }
 };
 
@@ -39,8 +39,23 @@ const urlBannedCheck = async (req, res, next) => {
     next();
   } catch (err) {
     console.log(err);
-    return res.status(401).json({ error: "Something went wrong!" });
+    return res.status(500).json({ error: "Something went wrong!", errorMessage: err.message });
   }
 };
 
-module.exports = { urlLimitCheck, urlBannedCheck };
+const isOwnerOfUrl = async (req, res, next) => {
+  try {
+    if(req.userId == req.url.userID){
+      next();
+    }else{
+      return res.status(401).json({
+        error: "You are unauthorized to do this action!",
+      });
+    }
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ error: "Something went wrong!", errorMessage: err.message });
+  }
+}
+
+module.exports = { urlLimitCheck, urlBannedCheck, isOwnerOfUrl };

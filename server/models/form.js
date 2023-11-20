@@ -23,4 +23,6 @@ const formSchema = new Schema({
   Parameter5: Date,
 });
 
-module.exports = Model("Form", formSchema);
+const Form = mongoose.model('Form', formSchema);
+
+module.exports = Form;
