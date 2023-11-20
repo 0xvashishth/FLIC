@@ -11,7 +11,7 @@ const { verificationAndBannedCheck, verificationAndBannedCheckForLogin } = requi
 router.post("/signup", existingUserValidation, userC.signup);
 
 // User Login
-// no middleware needed for now, it's implemented in controller :)
+// No middleware needed for now, it's implemented in controller :)
 router.post("/login", userC.login);
 
 // User Update
