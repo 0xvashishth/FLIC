@@ -15,5 +15,6 @@ router.delete("/", auth, verificationAndBannedCheck, isOwnerOfUrl, urlBannedChec
 router.put("/createqr", auth, verificationAndBannedCheck, isOwnerOfUrl, urlBannedCheck, urlC.createQR);
 router.put("/removeqr", auth, verificationAndBannedCheck, isOwnerOfUrl, urlBannedCheck, urlC.deleteQR);
 router.get("/checksuffixurl", urlC.getUrlSuffix);
+router.get("/", auth, verificationAndBannedCheck, urlC.getUrls);
 
 module.exports = router;

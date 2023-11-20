@@ -324,6 +324,39 @@ const getUrlSuffix = async (req, res) => {
   }
 };
 
+const getUrls = async (req, res) => {
+    try {
+      // Not Implementing the pagination for one user
+
+      // Pagination options (you can customize these)
+      // const page = req.query.page || 1; // Current page
+      // const limit = req.query.limit || 10; // Number of items per page
+  
+      // Calculate skip value based on the page and limit
+      // const skip = (page - 1) * limit;
+  
+      // Query to fetch urls with pagination
+      const urls = await Url.find({ userID: req.userId })
+        // .skip(skip)
+        // .limit(limit);
+  
+      // Total count of urls (you may want to calculate this separately)
+      // const totalCount = await Url.countDocuments();
+  
+      return res.status(200).json({
+        message: 'URLs Retrieved Successfully!',
+        urls,
+        // totalCount,
+      });
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({
+        error: 'Internal Server Error',
+        errorMessage: err.message
+      });
+    }
+}
+
 // ------ Admin Controllers -----
 
 const deleteUrlByIdByAdmin = async (req, res) => {
@@ -516,4 +549,4 @@ const increaseDecreaseCount = async (user, qr = false, action, session) => {
   return true;
 };
 
-module.exports = { createUrl, updateUrl, deleteUrl, createQR, deleteQR, getUrlSuffix, deleteUrlByIdByAdmin, getAllUrlsByAdmin, getUrlByIdByAdmin };
+module.exports = { createUrl, updateUrl, deleteUrl, createQR, deleteQR, getUrlSuffix, deleteUrlByIdByAdmin, getAllUrlsByAdmin, getUrlByIdByAdmin, getUrls };
