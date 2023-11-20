@@ -22,6 +22,8 @@ const createUrl = async (req, res) => {
       process.env["URL_PREFIX"] !=
       shortenedURL.substring(0, process.env["URL_PREFIX_LETTER_LENGTH"])
     ) {
+      await session.commitTransaction(); // Commit the transaction
+      session.endSession();
       return res.status(400).json({
         error: "Unsupported URL Format!",
       });
@@ -30,6 +32,8 @@ const createUrl = async (req, res) => {
     var existingShortenedURL = Url.findOne({ shortenedURL });
 
     if (existingShortenedURL) {
+      await session.commitTransaction(); // Commit the transaction
+      session.endSession();
       return res.send(401).json({ error: "Shortened URL Already Exists" });
     }
 
@@ -95,6 +99,8 @@ const updateUrl = async (req, res, next) => {
     var existingShortenedURL = Url.findOne({ shortenedURL });
 
     if (existingShortenedURL) {
+      await session.commitTransaction(); // Commit the transaction
+      session.endSession();
       return res.send(401).json({ error: "Shortened URL Already Exists" });
     }
 
@@ -318,6 +324,139 @@ const getUrlSuffix = async (req, res) => {
   }
 };
 
+// ------ Admin Controllers -----
+
+const deleteUrlByIdByAdmin = async (req, res) => {
+  const session = await mongoose.startSession();
+  // starting the mongoose transaction
+  session.startTransaction();
+
+  try {
+    const urlId = req.params.id;
+    const url = Url.findOneById(urlId);
+    if(!url) {
+      await session.commitTransaction(); // Commit the transaction
+      session.endSession();
+      return res.status(404).json({
+        message: "URL Not Found!",
+      });
+    }
+    const { _id, originalURL, shortenedURL, description } = url;
+
+    const linkOwner = User.findById(url.userID);
+
+    await Url.deleteOne({ _id }, { session }).catch((err) => {
+      throw err;
+    });
+
+    var dynamicTemplateData = {
+      originalURL,
+      shortenedURL,
+      description,
+    };
+
+    // increasing decreasing url and qr count
+    if (url.qrCodeImageUrl) {
+      increaseDecreaseCount(linkOwner, true, "decrease", session).catch((err) => {
+        throw err;
+      });
+      deleteFileFromCloud(url.qrCodeImagePublicId).catch((err) => {
+        throw err;
+      });
+    } else {
+      increaseDecreaseCount(linkOwner, false, "decrease", session).catch((err) => {
+        throw err;
+      });
+    }
+
+    await sendEmailWithTemplate(
+      process.env["URLDELETEDBYADMINTEMPLATEID"],
+      [linkOwner.email],
+      dynamicTemplateData
+    )
+      .then(async () => {
+        addDataToLogs("URL Deleted By Admin", _id);
+
+        await session.commitTransaction(); // Commit the transaction
+        session.endSession();
+        return res.status(201).json({
+          message: "URL Deleted Successfully!",
+        });
+      })
+      .catch((error) => {
+        throw error;
+      });
+  } catch (err) {
+    await session.abortTransaction(); // Rollback the transaction
+    session.endSession();
+    console.error(err.message);
+    return res.status(500).json({ error: err.message });
+  }
+}
+
+const getAllUrlsByAdmin = async (req, res) => {
+  try {
+    // Pagination options (you can customize these)
+    const page = req.query.page || 1; // Current page
+    const limit = req.query.limit || 10; // Number of items per page
+
+    // Calculate skip value based on the page and limit
+    const skip = (page - 1) * limit;
+
+    // Query to fetch urls with pagination
+    const urls = await Url.find({})
+      .skip(skip)
+      .limit(limit);
+
+    // Total count of urls (you may want to calculate this separately)
+    const totalCount = await Url.countDocuments();
+
+    return res.status(200).json({
+      message: 'URLs Retrieved Successfully!',
+      urls,
+      totalCount,
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      error: 'Internal Server Error',
+      errorMessage: err.message
+    });
+  }
+}
+
+const getUrlByIdByAdmin = async (req, res) => {
+  try {
+    const urlId = req.params.id;
+
+    // Check if the provided ID is valid (mongoose.Types.ObjectId)
+    if (!mongoose.Types.ObjectId.isValid(urlId)) {
+      return res.status(400).json({ error: 'Invalid URL ID' });
+    }
+
+    // Find the user by ID
+    const url = await Url.findById(urlId);
+
+    // Check if the user was not found
+    if (!url) {
+      return res.status(404).json({ error: 'URL not found' });
+    }
+
+    // User found, send a success response
+    return res.status(200).json({
+      message: 'URL retrieved successfully',
+      url,
+    });
+  } catch (err) {
+    console.error(err.message);
+    // Handle other errors
+    return res.status(500).json({
+      error: 'Internal Server Error',
+      errorMessage: err.message
+    });
+  }
+}
+
 // ----Support Function----
 const deleteFileFromCloud = async (imageId) => {
   await cloudinary.uploader.destroy(imageId).catch((err) => {
@@ -377,4 +516,4 @@ const increaseDecreaseCount = async (user, qr = false, action, session) => {
   return true;
 };
 
-module.exports = { createUrl, updateUrl, deleteUrl, createQR, deleteQR, getUrlSuffix };
+module.exports = { createUrl, updateUrl, deleteUrl, createQR, deleteQR, getUrlSuffix, deleteUrlByIdByAdmin, getAllUrlsByAdmin, getUrlByIdByAdmin };
