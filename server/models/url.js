@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const Model = mongoose.model;
 
 const urlSchema = new Schema({
   originalURL: { type: String, required: true },

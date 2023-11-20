@@ -12,6 +12,7 @@ const {urlLimitCheck, urlBannedCheck, isOwnerOfUrl} = require("../middlewares/ur
 router.post("/", auth, verificationAndBannedCheck, urlLimitCheck, urlC.createUrl);
 router.put("/", auth, verificationAndBannedCheck, isOwnerOfUrl, urlBannedCheck, urlC.updateUrl)
 router.delete("/", auth, verificationAndBannedCheck, isOwnerOfUrl, urlBannedCheck, urlC.deleteUrl);
+// here below multer must be used to handle the files in the request, that is remaining..!
 router.put("/createqr", auth, verificationAndBannedCheck, isOwnerOfUrl, urlBannedCheck, urlC.createQR);
 router.put("/removeqr", auth, verificationAndBannedCheck, isOwnerOfUrl, urlBannedCheck, urlC.deleteQR);
 router.get("/checksuffixurl", urlC.getUrlSuffix);

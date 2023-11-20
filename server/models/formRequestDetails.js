@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const Model = mongoose.model;
 
 const formDetailsSchema = new Schema({
   FormID: { type: Schema.Types.ObjectId, ref: "Form", required: true },
