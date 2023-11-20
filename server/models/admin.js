@@ -41,4 +41,6 @@ adminSchema.methods.getPublicProfile = function () {
   };
 };
 
-module.exports = Model("Admin", adminSchema);
+const Admin = mongoose.model('Admin', adminSchema);
+
+module.exports = Admin;

@@ -1,7 +1,3 @@
-const jwt = require('jsonwebtoken');
-const User = require('../models/user');
-const secret_key = process.env['JWT_SECRET'];
-
 const verificationAndBannedCheck = async (req, res, next) => {
     try {
         var userCheck = req.rootUser;
@@ -17,7 +13,7 @@ const verificationAndBannedCheck = async (req, res, next) => {
         next();
     } catch (err) {
         console.log(err);
-        return res.status(401).json({ error: "Something went wrong!" });
+        return res.status(500).json({ error: "Something went wrong!", errorMessage: err.message });
     }
 }
 
@@ -50,7 +46,7 @@ const isUserPremiumCheck = async (req, res, next) => {
         next();
     } catch (err) {
         console.log(err.message);
-        return res.status(401).json({ error: "Something went wrong!", errorMessage: err.message });
+        return res.status(500).json({ error: "Something went wrong!", errorMessage: err.message });
     }
 }
 

@@ -14,6 +14,7 @@ const urlSchema = new Schema({
   isReported: { type: Number, default: 0 },
   isBanned: { type: Boolean, default: false },
   qrCodeImageUrl: { type: String, required: false, default: ""},
+  qrCodeImagePublicId: { type: String, required: false, default:""},
   Parameter1: String,
   Parameter2: String,
   Parameter3: Boolean,
@@ -21,4 +22,6 @@ const urlSchema = new Schema({
   Parameter5: Date,
 });
 
-module.exports = Model("Url", urlSchema);
+const Url = mongoose.model('Url', urlSchema);
+
+module.exports = Url;

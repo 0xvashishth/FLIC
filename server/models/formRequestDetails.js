@@ -14,4 +14,6 @@ const formDetailsSchema = new Schema({
   Parameter5: Date,
 });
 
-module.exports = Model("FormDetails", formDetailsSchema);
+const FormDetails = mongoose.model('FormDetails', formDetailsSchema);
+
+module.exports = FormDetails;
