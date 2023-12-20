@@ -14,7 +14,17 @@ const config: Config = {
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
     },
+    fontFamily: {
+      'sans': ['ui-sans-serif', 'system-ui'],
+      'serif': ['ui-serif', 'Georgia'],
+      'mono': ['ui-monospace', 'SFMono-Regular'],
+      'display': ['Oswald'],
+      'body': ['"Open Sans"'],
+      'opun-black': ['var(--font-opun-black)'],
+      'opun-medium': ['var(--font-opun-medium)'],
+      'opun-light': ['var(--font-opun-light)'],
+    },
   },
-  plugins: [],
+  plugins: [require("daisyui")],
 }
 export default config
