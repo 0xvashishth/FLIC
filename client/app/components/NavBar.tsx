@@ -1,10 +1,15 @@
 import React from "react";
-import {opun_black, opun_light, opun_medium} from "../assets/fonts/FontMaster"
-import logo from "../assets/logos/flic-transperent.png"
+import {
+  opun_black,
+  opun_light,
+  opun_medium,
+} from "../assets/fonts/FontMaster";
+import logo from "../assets/logos/flic-transperent-white.png";
 
 const NavBar = () => {
   return (
-    <div className="navbar bg-base-100">
+    <div className="m-1">
+      <div className="navbar rounded-2xl bg-base-200">
       <div className="navbar-start">
         <div className="dropdown">
           <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
@@ -28,19 +33,21 @@ const NavBar = () => {
             className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
           >
             <li>
-              <a>Home</a>
+              <a>Home 🏠</a>
             </li>
             <li>
               <a>Services</a>
               <ul className="p-2">
-              <li>
-                  <a>forms</a>
+                <li>
+                  <a>Form</a>
                 </li>
                 <li>
-                  <a>Links</a>
+                  <a>Link</a>
                 </li>
                 <li>
-                  <a>Chats</a>
+                  <a>
+                    Chat <span className="badge badge-primary">New</span>
+                  </a>
                 </li>
               </ul>
             </li>
@@ -61,15 +68,17 @@ const NavBar = () => {
           <li>
             <details>
               <summary>Services</summary>
-              <ul className="p-2">
+              <ul className="p-2 z-50">
                 <li>
-                  <a>forms</a>
+                  <a>Form</a>
                 </li>
                 <li>
-                  <a>Links</a>
+                  <a>Link</a>
                 </li>
                 <li>
-                  <a>Chats</a>
+                  <a>
+                    Chat <span className="badge bg-sys-yellow">New</span>
+                  </a>
                 </li>
               </ul>
             </details>
@@ -81,25 +90,40 @@ const NavBar = () => {
       </div>
 
       <div className="navbar-end">
-      <div className="dropdown dropdown-end">
-      <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
-        <div className="w-10 rounded-full">
-          <img alt="Tailwind CSS Navbar component" src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" />
+        <div className="dropdown dropdown-end">
+          <div
+            tabIndex={0}
+            role="button"
+            className="btn btn-ghost btn-circle avatar"
+          >
+            <div className="w-10 rounded-full">
+              <img
+                alt="Tailwind CSS Navbar component"
+                src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
+              />
+            </div>
+          </div>
+          <ul
+            tabIndex={0}
+            className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
+          >
+            <li>
+              <a className="justify-between">
+                Profile
+                <span className="badge badge-primary">New</span>
+              </a>
+            </li>
+            <li>
+              <a>Settings</a>
+            </li>
+            <li>
+              <a>Logout</a>
+            </li>
+          </ul>
         </div>
+        <a href="/login" className="btn btn-outline">Login</a>
       </div>
-      <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
-        <li>
-          <a className="justify-between">
-            Profile
-            <span className="badge">New</span>
-          </a>
-        </li>
-        <li><a>Settings</a></li>
-        <li><a>Logout</a></li>
-      </ul>
     </div>
-        <a className="btn">Login</a>
-      </div>
     </div>
   );
 };
