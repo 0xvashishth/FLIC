@@ -1,4 +1,6 @@
 import React from "react";
+import {opun_black, opun_light, opun_medium} from "../assets/fonts/FontMaster"
+import logo from "../assets/logos/flic-transperent.png"
 
 const NavBar = () => {
   return (
@@ -26,46 +28,54 @@ const NavBar = () => {
             className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
           >
             <li>
-              <a>Item 1</a>
+              <a>Home</a>
             </li>
             <li>
-              <a>Parent</a>
+              <a>Services</a>
               <ul className="p-2">
-                <li>
-                  <a>Submenu 1</a>
+              <li>
+                  <a>forms</a>
                 </li>
                 <li>
-                  <a>Submenu 2</a>
+                  <a>Links</a>
+                </li>
+                <li>
+                  <a>Chats</a>
                 </li>
               </ul>
             </li>
             <li>
-              <a>Item 3</a>
+              <a>About us</a>
             </li>
           </ul>
         </div>
-        <a className="btn btn-ghost text-xl">daisyUI</a>
+        <div className="w-20 rounded-full">
+          <img alt="Tailwind CSS Navbar component" src={logo.src} />
+        </div>
       </div>
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">
           <li>
-            <a className="">Item 1</a>
+            <a className={`${opun_black.variable} font-opun-black`}>Home</a>
           </li>
           <li>
             <details>
-              <summary>Parent</summary>
+              <summary>Services</summary>
               <ul className="p-2">
                 <li>
-                  <a>Submenu 1</a>
+                  <a>forms</a>
                 </li>
                 <li>
-                  <a>Submenu 2</a>
+                  <a>Links</a>
+                </li>
+                <li>
+                  <a>Chats</a>
                 </li>
               </ul>
             </details>
           </li>
           <li>
-            <a>Item 3</a>
+            <a>Abous us</a>
           </li>
         </ul>
       </div>
