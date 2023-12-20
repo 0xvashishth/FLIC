@@ -16,6 +16,11 @@ const config: Config = {
         // 'gradient-conic':
         //   'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
+      colors: {
+        'sys-lightBlue': "#5ce1e6",
+        'sys-pink': "#ff8bd2",
+        'sys-yellow': "#ffde59",
+      },
     },
     fontFamily: {
       'sans': ['ui-sans-serif', 'system-ui'],
