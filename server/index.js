@@ -78,7 +78,7 @@ app.get('/l/:id', async (req, res) => {
             </script>
           </head>
           <body>
-            <img src="https://github.com/vasu-1/FLIC/assets/76911582/ad679078-7ba8-4cd9-8f1f-065ba17b538c" alt="Logo" width="auto" height="300rem">
+            <Image src="https://github.com/vasu-1/FLIC/assets/76911582/ad679078-7ba8-4cd9-8f1f-065ba17b538c" alt="Logo" width="auto" height="300rem">
             <h4>We are crunching your link in <span id="timer">5</span> seconds...</h4>
           </body>
         </html>
@@ -102,7 +102,7 @@ app.get('/l/:id', async (req, res) => {
             </style>
           </head>
           <body>
-            <img src="https://github.com/vasu-1/FLIC/assets/76911582/ad679078-7ba8-4cd9-8f1f-065ba17b538c" alt="Logo" width="auto" height="300rem">
+            <Image src="https://github.com/vasu-1/FLIC/assets/76911582/ad679078-7ba8-4cd9-8f1f-065ba17b538c" alt="Logo" width="auto" height="300rem">
             <h2>No Such URL Exists</h2>
           </body>
         </html>

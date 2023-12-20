@@ -57,7 +57,7 @@ const NavBar = () => {
           </ul>
         </div>
         <div className="w-20 rounded-full">
-          <img alt="Tailwind CSS Navbar component" src={logo.src} />
+          <Image alt="Tailwind CSS Navbar component" src={logo.src} />
         </div>
       </div>
       <div className="navbar-center hidden lg:flex">
@@ -97,7 +97,7 @@ const NavBar = () => {
             className="btn btn-ghost btn-circle avatar"
           >
             <div className="w-10 rounded-full">
-              <img
+              <Image
                 alt="Tailwind CSS Navbar component"
                 src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
               />
