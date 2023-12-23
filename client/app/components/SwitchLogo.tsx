@@ -12,6 +12,10 @@ const SwitchLogo = () => {
 //     localStorage.setItem('flicTheme', localStorage.getItem('flicTheme') === 'dark' ? 'light' : 'dark')
 //     setTheme(theme === 'dark' ? 'light' : 'dark');
 //   };
+var theme = logoDark.src;
+if(typeof window !== 'undefined'){
+  theme = localStorage.getItem('flicTheme') == "light" ? logoDark.src : logoLight.src
+}
 
 //   //modify data-theme when theme changes
 //   useEffect(() => {
@@ -23,7 +27,7 @@ const SwitchLogo = () => {
 //   }, []);
 
   return (
-    <img alt="flic logo" src={localStorage.getItem('flicTheme') == "light" ? logoDark.src : logoLight.src} />
+    <img alt="flic logo" src={theme} />
   );
 };
 

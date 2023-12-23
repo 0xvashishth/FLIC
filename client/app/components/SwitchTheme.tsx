@@ -4,8 +4,12 @@ import { useRouter } from "next/navigation";
 import { FiMoon, FiSun } from "react-icons/fi";
 const SwitchTheme = () => {
   const router = useRouter();
+  var theme1 = "light";
+  if(typeof window !== 'undefined'){
+    theme1 = localStorage.getItem("flicTheme") || "light"
+  }
   const [theme, setTheme] = useState(
-    localStorage.getItem("flicTheme") || "light"
+    theme1
   );
 
   const toggleTheme = () => {
