@@ -5,6 +5,7 @@ import HomePage from "./components/HomePage";
 export default function Home() {
   return (
     <main >
+      
       <NavBar />
       <HomePage />
       <Footer />

@@ -5,12 +5,15 @@ import {
   opun_medium,
 } from "../assets/fonts/FontMaster";
 import logo from "../assets/logos/flic-transperent-white.png";
+import SwitchLogo from "./SwitchLogo";
 
 const Footer = () => {
   return (
     <footer className="footer p-10 bg-base-200 text-base-content">
   <aside>
-    <img className="w-40" src={logo.src} />
+  <div className="w-40 rounded-full">
+         <SwitchLogo />
+        </div>
     <p className="my-3">All in one Form, Link and Chat solution<br/>Built With 💖 By <a href="https://github.com/0xvashishth">Vashishth Patel</a></p>
   </aside> 
   <nav>

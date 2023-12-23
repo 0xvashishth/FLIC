@@ -5,6 +5,8 @@ import {
   opun_medium,
 } from "../assets/fonts/FontMaster";
 import logo from "../assets/logos/flic-transperent-white.png";
+import SwitchTheme from "./SwitchTheme";
+import SwitchLogo from "./SwitchLogo";
 
 const NavBar = () => {
   return (
@@ -57,7 +59,7 @@ const NavBar = () => {
           </ul>
         </div>
         <div className="w-20 rounded-full">
-          <img alt="Tailwind CSS Navbar component" src={logo.src} />
+          <SwitchLogo />
         </div>
       </div>
       <div className="navbar-center hidden lg:flex">
@@ -90,11 +92,12 @@ const NavBar = () => {
       </div>
 
       <div className="navbar-end">
+      
         <div className="dropdown dropdown-end">
           <div
             tabIndex={0}
             role="button"
-            className="btn btn-ghost btn-circle avatar"
+            className="btn btn-ghost btn-circle avatar m-1"
           >
             <div className="w-10 rounded-full">
               <img
@@ -121,6 +124,7 @@ const NavBar = () => {
             </li>
           </ul>
         </div>
+        
         <a href="/login" className="btn btn-outline">Login</a>
       </div>
     </div>
