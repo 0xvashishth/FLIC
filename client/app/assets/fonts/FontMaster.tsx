@@ -1,4 +1,4 @@
-import localFont from "@next/font/local";
+import localFont from "next/font/local";
 
 export const opun_black = localFont({
   src: "./opun-mai/Opun Mai Black.ttf",
