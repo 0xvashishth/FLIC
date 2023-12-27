@@ -1,12 +1,8 @@
 import React from "react";
-import {
-  opun_black,
-  opun_light,
-  opun_medium,
-} from "../assets/fonts/FontMaster";
+import {MenuHorizontal, MenuVertical} from "./clientUtils/NavLinks";
 import logo from "../assets/logos/flic-transperent-white.png";
-import SwitchTheme from "./SwitchTheme";
-import SwitchLogo from "./SwitchLogo";
+import SwitchTheme from "./clientUtils/SwitchTheme";
+import SwitchLogo from "./clientUtils/SwitchLogo";
 
 const NavBar = () => {
   return (
@@ -30,65 +26,14 @@ const NavBar = () => {
               />
             </svg>
           </div>
-          <ul
-            tabIndex={0}
-            className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
-          >
-            <li>
-              <a>Home 🏠</a>
-            </li>
-            <li>
-              <a>Services</a>
-              <ul className="p-2">
-                <li>
-                  <a>Form</a>
-                </li>
-                <li>
-                  <a>Link</a>
-                </li>
-                <li>
-                  <a>
-                    Chat <span className="badge badge-primary">New</span>
-                  </a>
-                </li>
-              </ul>
-            </li>
-            <li>
-              <a>About us</a>
-            </li>
-          </ul>
+          <MenuVertical />
         </div>
         <div className="w-20 rounded-full">
           <SwitchLogo />
         </div>
       </div>
       <div className="navbar-center hidden lg:flex">
-        <ul className="menu menu-horizontal px-1">
-          <li>
-            <a className={`${opun_black.variable} font-opun-black`}>Home</a>
-          </li>
-          <li>
-            <details>
-              <summary>Services</summary>
-              <ul className="p-2 z-50">
-                <li>
-                  <a>Form</a>
-                </li>
-                <li>
-                  <a>Link</a>
-                </li>
-                <li>
-                  <a>
-                    Chat <span className="badge bg-sys-yellow">New</span>
-                  </a>
-                </li>
-              </ul>
-            </details>
-          </li>
-          <li>
-            <a>Abous us</a>
-          </li>
-        </ul>
+        <MenuHorizontal/>
       </div>
 
       <div className="navbar-end">
