@@ -379,21 +379,25 @@ const Footer = () => {
       <nav>
         <header className="footer-title">Legal</header>
         <a
-          onClick={() => document.getElementById("my_modal_terms").showModal()}
+          onClick={() =>
+            (document.getElementById("my_modal_terms") as HTMLDialogElement).showModal()
+          }
           className="link link-hover"
         >
           Terms of use
         </a>
         <a
           onClick={() =>
-            document.getElementById("my_modal_privacy").showModal()
+            (document.getElementById("my_modal_privacy") as HTMLDialogElement).showModal()
           }
           className="link link-hover"
         >
           Privacy policy
         </a>
         <a
-          onClick={() => document.getElementById("my_modal_cookie").showModal()}
+          onClick={() =>
+            (document.getElementById("my_modal_cookie") as HTMLDialogElement).showModal()
+          }
           className="link link-hover"
         >
           Cookie policy
