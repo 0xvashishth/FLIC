@@ -1,11 +1,16 @@
+"use client"
+
 import SwitchLogo from "@/app/components/clientUtils/SwitchLogo";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function DashboardLayout({
   children, // will be a page or nested layout
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+
   return (
     <div className="drawer lg:drawer-open">
       <input id="my-drawer" type="checkbox" className="drawer-toggle" />
@@ -92,13 +97,13 @@ export default function DashboardLayout({
           </Link>
           <div className="mx-auto my-5">
             <li>
-                <Link href="/dashboard/form">Form</Link>
+                <Link className={` ${pathname === "/dashboard/form" ? "active" : ""}`} href="/dashboard/form">Form</Link>
             </li>
             <li>
-              <Link href="/dashboard/link">Link</Link>
+              <Link className={` ${pathname === "/dashboard/link" ? "active" : ""}`} href="/dashboard/link">Link</Link>
             </li>
             <li>
-              <Link href="/dashboard/chat">Chat</Link>
+              <Link className={` ${pathname === "/dashboard/chat" ? "active" : ""}`} href="/dashboard/chat">Chat</Link>
             </li>
             <li>
               <details open>
