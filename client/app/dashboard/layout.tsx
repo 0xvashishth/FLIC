@@ -42,7 +42,7 @@ export default function DashboardLayout({
             </div>
           </div>
           <div className="navbar-center">
-            <Link className="btn btn-ghost text-xl" href="/dashboard">FLIC</Link>
+            <Link className="btn btn-ghost text-xl" href="/dashboard">FLIC Dashboard 🎉</Link>
           </div>
           <div className="navbar-end">
             <button className="btn btn-ghost btn-circle">

@@ -26,7 +26,7 @@ const SwitchTheme = () => {
 
   return (
     <div
-      className="fixed z-50 bottom-10 right-8 flex justify-center items-center btn"
+      className="fixed bg-slate-400 text-black glass z-50 bottom-10 right-8 flex justify-center items-center btn"
       onClick={toggleTheme}
     >
       {theme === "dark" ? (
