@@ -42,7 +42,7 @@ export default function DashboardLayout({
             </div>
           </div>
           <div className="navbar-center">
-            <Link className="btn btn-ghost text-xl" href="/dashboard">FLIC Dashboard 🎉</Link>
+            <Link className="btn btn-ghost text-xl" href="/dashboard">Hello Vashishth 🎉</Link>
           </div>
           <div className="navbar-end">
             <button className="btn btn-ghost btn-circle">
@@ -97,13 +97,13 @@ export default function DashboardLayout({
           </Link>
           <div className="mx-auto my-5">
             <li>
-                <Link className={` ${pathname === "/dashboard/form" ? "active" : ""}`} href="/dashboard/form">Form</Link>
+                <Link className={` ${pathname.startsWith("/dashboard/form") ? "active" : ""}`} href="/dashboard/form">Form</Link>
             </li>
             <li>
-              <Link className={` ${pathname === "/dashboard/link" ? "active" : ""}`} href="/dashboard/link">Link</Link>
+              <Link className={` ${pathname.startsWith("/dashboard/link") ? "active" : ""}`} href="/dashboard/link">Link</Link>
             </li>
             <li>
-              <Link className={` ${pathname === "/dashboard/chat" ? "active" : ""}`} href="/dashboard/chat">Chat</Link>
+              <Link className={` ${pathname.startsWith("/dashboard/chat") ? "active" : ""}`} href="/dashboard/chat">Chat</Link>
             </li>
             <li>
               <details open>

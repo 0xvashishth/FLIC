@@ -26,7 +26,7 @@ const HomePage = () => {
 </div>
 </div>
 <div className="text-center p-9">
-<a href="/signup" className="btn btn-outline">Get Started 🚀</a>
+<a href="/dashboard" className="btn btn-outline">Get Started 🚀</a>
 </div>
 </div>
   );
