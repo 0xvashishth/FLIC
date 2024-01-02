@@ -70,10 +70,10 @@ export default function Page() {
                       className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box"
                     >
                       <li>
-                        <a>Edit</a>
+                        <Link href={"form/details/settings?id="+data.Id}>Edit</Link>
                       </li>
                       <li>
-                        <a>Delete</a>
+                        <Link href={"form/details/settings?id="+data.Id}>Delete</Link>
                       </li>
                     </ul>
                   </div>

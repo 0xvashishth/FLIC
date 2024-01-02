@@ -3,12 +3,20 @@
 import SwitchLogo from "@/app/components/clientUtils/SwitchLogo";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import toast from 'react-hot-toast';
 
 export default function DashboardLayout({
   children, // will be a page or nested layout
 }: {
   children: React.ReactNode;
 }) {
+
+  const dashboardNotification = () => {
+    toast('Coming Soon', {
+      icon: '🚀',
+    });
+  }
+
   const pathname = usePathname();
 
   return (
@@ -45,7 +53,7 @@ export default function DashboardLayout({
             <Link className="btn btn-ghost text-xl" href="/dashboard">Hello Vashishth 🎉</Link>
           </div>
           <div className="navbar-end">
-            <button className="btn btn-ghost btn-circle">
+          {/* Search Button Is Not Needed RN <button className="btn btn-ghost btn-circle">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5"
@@ -60,8 +68,38 @@ export default function DashboardLayout({
                   d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                 />
               </svg>
-            </button>
-            <button className="btn btn-ghost btn-circle">
+            </button> */}
+            <div className="dropdown dropdown-end">
+          <div
+            tabIndex={0}
+            role="button"
+            className="btn btn-ghost btn-circle avatar m-1"
+          >
+            <div className="w-10 rounded-full">
+              <img
+                alt="Tailwind CSS Navbar component"
+                src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
+              />
+            </div>
+          </div>
+          <ul
+            tabIndex={0}
+            className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
+          >
+            <li>
+              <a className="justify-between">
+                Profile
+              </a>
+            </li>
+            <li>
+              <a>Preferences <span className="badge badge-primary">New</span></a>
+            </li>
+            <li>
+              <a>Logout</a>
+            </li>
+          </ul>
+        </div>
+            <button onClick={dashboardNotification} className="btn btn-ghost btn-circle">
               <div className="indicator">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
