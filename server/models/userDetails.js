@@ -14,5 +14,5 @@ const userDetailsSchema = new Schema({
   Parameter4: Boolean,
   Parameter5: Date,
 });
-
-module.exports = Model("UserDetails", userDetailsSchema);
+const UserDetails = mongoose.model('UserDetails', userDetailsSchema);
+module.exports = UserDetails;

@@ -26,6 +26,7 @@ var corsOptions = {
     }
   }
 }
+
 app.use(cors(corsOptions));
 // To allow all traffic, use below
 // app.use(cors({ origin: true, credentials: true }));
