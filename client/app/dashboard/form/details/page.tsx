@@ -28,12 +28,12 @@ export default function Page() {
     <button type="submit">Send</button>
   </form>`;
   return (
-    <div className="rounded-lg my-3">
+    <div className="rounded-lg my-3 ">
       <div className="my-3 flex">
         <h2 className="align-middle ml-3 mr-3 mt-3">Your Forms's endpoint</h2>
         <input className="input font-mono input-bordered w-1/2" defaultValue={form_Url} />
       </div>
-      <Editor className="rounded-md my-3" height="50vh" defaultLanguage="html" defaultValue={exampleCode} />
+      <Editor className="rounded-md  my-3" height="50vh" defaultLanguage="html" defaultValue={exampleCode} />
     </div>
   );
 }

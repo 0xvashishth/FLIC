@@ -15,7 +15,7 @@ export default function DashboardLayout({
   return (
     <div>
         <div className="pt-3">
-        <h1 className="text-xl">my form</h1>
+        <h1 className="text-sm rounded-xl p-2 will-change-auto text-center">my form</h1>
       </div>
       <div className="pt-3 mx-auto text-center">
         <ul className="menu menu-vertical sm:menu-horizontal bg-base-200 rounded-box">

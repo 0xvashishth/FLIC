@@ -1,4 +1,4 @@
 // `app/dashboard/page.tsx` is the UI for the `/dashboard` URL
 export default function Page() {
-    return <h1>Hello, Dashboard Form Plugin Page!</h1>
+    return <h1 className="m-5 mx-auto text-center">Coming Soon 🚀</h1>
 }
