@@ -40,7 +40,7 @@ export default function Page() {
             {formData.map((data) => (
               <tr className="border-2" key={data.Id}>
                 <th>{data.Id}</th>
-                <td>{data.Name}</td>
+                <td className="">{data.Name}</td>
                 <td>
                   {data.Status == "Active" ? (
                     <span className="badge badge-md badge-warning">

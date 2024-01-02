@@ -28,7 +28,7 @@ export default function Page() {
           </li>
         </ul>
       </div>
-      <div className="flex m-2">
+      <div className="m-1 md:flex">
         <div className="menu mx-auto">
           <ul className="menu bg-base-200 rounded-box">
             <li className="menu-title">Recently Opened 🕥</li>

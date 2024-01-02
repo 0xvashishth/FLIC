@@ -15,7 +15,7 @@ export default function DashboardLayout({
     <div className="m-3">
       <div className="text-xl flex justify-between">
         <div className="text-left">
-          <h1>Form Details & Analytics 🔍</h1>
+          <h1 className="text-2xl">Form Details & Analytics 🔍</h1>
           <div className="drawer z-[50] drawer-end">
             <input
               id="create-form-drawer"
@@ -28,8 +28,8 @@ export default function DashboardLayout({
                 aria-label="close sidebar"
                 className="drawer-overlay"
               ></label>
-              <ul className="menu p-7 w-1/2 min-h-full bg-base-200 text-base-content">
-                <li className="btn mx-auto text-2xl">
+              <ul className="menu p-7 md:w-1/2 w-4/5 min-h-full bg-base-200 text-base-content">
+                <li className="btn mx-auto sm:text-2xl">
                   Create a new Form
                   </li>
                 <form>
