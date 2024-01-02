@@ -19,6 +19,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+      <link rel="icon" href="/icon.png" sizes="any" />
+      <link
+      rel="apple-touch-icon"
+      href="/icon.png"
+      type="image/png"
+      sizes="32x32"
+    />
+      </head>
       <body className={`${opun_medium.variable} font-opun-medium`}>
       <Toaster />
       <SwitchTheme />
