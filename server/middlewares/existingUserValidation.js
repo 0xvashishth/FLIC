@@ -3,7 +3,7 @@ const User = require('../models/user');
 const existingUser = async (req, res, next) => {
     try {
         const { user }  = req.body;
-
+        console.log("in existing user validation: ", req.body)
         const email = user.email;
 
         var userExist = await User.findOne({ email });

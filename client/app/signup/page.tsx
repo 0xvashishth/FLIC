@@ -27,11 +27,11 @@ const Signup = () => {
   
     const handleSubmit = async (e: any) => {
       e.preventDefault();
-  
+      console.log(user);
       // You can perform any necessary actions here, such as sending data to the server
   
       try {
-        const response = await axios.post(`${ROOT_URL}/user/signup`, user);
+        const response = await axios.post(`${ROOT_URL}/user/signup`, {user});
         console.log(response.data.message); // Assuming the server returns some data
         toast.success(response.data.message);
       } catch (error: any) {
