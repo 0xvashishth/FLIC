@@ -103,18 +103,18 @@ const signup = async (req, res, nxt) => {
       lastName,
       emailVerificationLink
     }
-    await sendEmailWithTemplate(process.env["VERIFYEMAILTEMPLATEID"], [email], dynamicTemplateData)
-      .then(async () => {
+    // await sendEmailWithTemplate(process.env["VERIFYEMAILTEMPLATEID"], [email], dynamicTemplateData)
+    //   .then(async () => {
         addDataToLogs("User signUp", saveUserPromise._id);
         await session.commitTransaction(); // Commit the transaction
         session.endSession();
         return res.status(201).json({
           message: 'Verification Link Sent Successfully, Please check your emailBox for verification!',
-        });
-      })
-      .catch((error) => {
-        throw error;
-      });
+        })
+      // })
+      // .catch((error) => {
+      //   throw error;
+      // });
   } catch (err) {
     await session.abortTransaction(); // Rollback the transaction
     session.endSession();
