@@ -351,8 +351,7 @@ const getUrls = async (req, res) => {
     } catch (err) {
       console.error(err);
       return res.status(500).json({
-        error: 'Internal Server Error',
-        errorMessage: err.message
+        error: err.message
       });
     }
 }
@@ -452,8 +451,7 @@ const getAllUrlsByAdmin = async (req, res) => {
   } catch (err) {
     console.error(err);
     return res.status(500).json({
-      error: 'Internal Server Error',
-      errorMessage: err.message
+      error: err.message
     });
   }
 }
@@ -484,8 +482,7 @@ const getUrlByIdByAdmin = async (req, res) => {
     console.error(err.message);
     // Handle other errors
     return res.status(500).json({
-      error: 'Internal Server Error',
-      errorMessage: err.message
+      error: err.message
     });
   }
 }

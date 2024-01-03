@@ -14,16 +14,16 @@ const logSchema = new Schema({
     type: String
   },
   form: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Form',
+    type: String,
+    required: false
   },
   url: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Url',
+    type: String,
+    required: false
   },
   chat: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Chat',
+    type: String,
+    required: false
   },
   Parameter1: String,
   Parameter2: String,

@@ -14,6 +14,12 @@ router.post("/signup", existingUserValidation, userC.signup);
 // No middleware needed for now, it's implemented in controller :)
 router.post("/login", userC.login);
 
+// User Forgot Password
+router.post("/forgot_password", userC.forgotPassword);
+
+// User Forgot Password
+router.post("/forgot_password_reset", userC.forgotPasswordReset);
+
 // User Update
 router.put("/edit", auth, verificationAndBannedCheck, userC.updateProfile);
 

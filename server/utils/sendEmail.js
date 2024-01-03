@@ -13,7 +13,7 @@ const transporter = nodemailer.createTransport({
 });
 
 // Function to send an email
-const sendEmail = async (subject, recipients, body, cc = [], bcc = []) => {
+const sendEmail = async (subject, recipients = [], body, cc = [], bcc = []) => {
   try {
     // Construct the email message
     const mailOptions = {

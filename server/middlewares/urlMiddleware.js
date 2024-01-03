@@ -21,7 +21,7 @@ const urlLimitCheck = async (req, res, next) => {
     next();
   } catch (err) {
     console.log(err);
-    return res.status(500).json({ error: "Something went wrong!", errorMessage: err.message });
+    return res.status(500).json({ error: err.message });
   }
 };
 
@@ -36,7 +36,7 @@ const urlBannedCheck = async (req, res, next) => {
     next();
   } catch (err) {
     console.log(err);
-    return res.status(500).json({ error: "Something went wrong!", errorMessage: err.message });
+    return res.status(500).json({ error: err.message });
   }
 };
 
@@ -51,7 +51,7 @@ const isOwnerOfUrl = async (req, res, next) => {
     }
   } catch (err) {
     console.log(err);
-    return res.status(500).json({ error: "Something went wrong!", errorMessage: err.message });
+    return res.status(500).json({ error: err.message });
   }
 }
 
