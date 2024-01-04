@@ -1,23 +1,37 @@
-"use client"
+"use client";
 
 import SwitchLogo from "@/app/components/clientUtils/SwitchLogo";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import toast from 'react-hot-toast';
+import toast from "react-hot-toast";
+import { useState, useEffect } from "react";
+import checkLoggedInUser from "../components/clientUtils/checkLoggedInUser";
 
 export default function DashboardLayout({
   children, // will be a page or nested layout
 }: {
   children: React.ReactNode;
 }) {
-
   const dashboardNotification = () => {
-    toast('Coming Soon', {
-      icon: '🚀',
+    toast("Coming Soon", {
+      icon: "🚀",
     });
-  }
+  };
 
   const pathname = usePathname();
+
+  const [user, setUser] = useState({
+    email: "",
+    firstName: "",
+  });
+
+  // checking the user loggedIn
+  checkLoggedInUser();
+
+  useEffect(() => {
+    var userItem = JSON.parse(localStorage.getItem("user")!);
+    setUser(userItem!);
+  }, []);
 
   return (
     <div className="drawer lg:drawer-open">
@@ -50,10 +64,12 @@ export default function DashboardLayout({
             </div>
           </div>
           <div className="navbar-center">
-            <Link className="btn btn-ghost text-xl" href="/dashboard">Hello Vashishth 🎉</Link>
+            <Link className="btn btn-ghost text-xl" href="/dashboard">
+              Hello {user.firstName} 🎉
+            </Link>
           </div>
           <div className="navbar-end">
-          {/* Search Button Is Not Needed RN <button className="btn btn-ghost btn-circle">
+            {/* Search Button Is Not Needed RN <button className="btn btn-ghost btn-circle">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5"
@@ -69,37 +85,45 @@ export default function DashboardLayout({
                 />
               </svg>
             </button> */}
-            <div className="dropdown dropdown-end">
-          <div
-            tabIndex={0}
-            role="button"
-            className="btn btn-ghost btn-circle avatar m-1"
-          >
-            <div className="w-10 rounded-full">
-              <img
-                alt="Tailwind CSS Navbar component"
-                src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
-              />
-            </div>
-          </div>
-          <ul
-            tabIndex={0}
-            className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
-          >
-            <li>
-              <a className="justify-between">
-                Profile
-              </a>
-            </li>
-            <li>
-              <a>Preferences <span className="badge badge-primary">New</span></a>
-            </li>
-            <li>
-              <a>Logout</a>
-            </li>
-          </ul>
-        </div>
-            <button onClick={dashboardNotification} className="btn btn-ghost btn-circle">
+            {user ? (
+              <div className="dropdown dropdown-end">
+                <div
+                  tabIndex={0}
+                  role="button"
+                  className="btn btn-ghost btn-circle avatar m-1"
+                >
+                  <div className="w-10 rounded-full">
+                    <img
+                      alt="Tailwind CSS Navbar component"
+                      src={process.env.NEXT_PUBLIC_IDENTICONS_URL + user.email}
+                    />
+                  </div>
+                </div>
+                <ul
+                  tabIndex={0}
+                  className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
+                >
+                  <li>
+                    <Link className="justify-between" href="/dashboard/settings/profile">
+                      Profile
+                      <span className="badge badge-primary">New</span>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/dashboard/preferences">Preferences</Link>
+                  </li>
+                  <li>
+                    <a href="/logout">Logout</a>
+                  </li>
+                </ul>
+              </div>
+            ) : (
+              <div></div>
+            )}
+            <button
+              onClick={dashboardNotification}
+              className="btn btn-ghost btn-circle"
+            >
               <div className="indicator">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -135,20 +159,41 @@ export default function DashboardLayout({
           </Link>
           <div className="mx-auto my-5">
             <li>
-                <Link className={` ${pathname.startsWith("/dashboard/form") ? "active" : ""}`} href="/dashboard/form">Form</Link>
+              <Link
+                className={` ${
+                  pathname.startsWith("/dashboard/form") ? "active" : ""
+                }`}
+                href="/dashboard/form"
+              >
+                Form
+              </Link>
             </li>
             <li>
-              <Link className={` ${pathname.startsWith("/dashboard/link") ? "active" : ""}`} href="/dashboard/link">Link</Link>
+              <Link
+                className={` ${
+                  pathname.startsWith("/dashboard/link") ? "active" : ""
+                }`}
+                href="/dashboard/link"
+              >
+                Link
+              </Link>
             </li>
             <li>
-              <Link className={` ${pathname.startsWith("/dashboard/chat") ? "active" : ""}`} href="/dashboard/chat">Chat</Link>
+              <Link
+                className={` ${
+                  pathname.startsWith("/dashboard/chat") ? "active" : ""
+                }`}
+                href="/dashboard/chat"
+              >
+                Chat
+              </Link>
             </li>
             <li>
               <details open>
                 <summary>Settings</summary>
                 <ul>
                   <li>
-                    <a>Profile</a>
+                    <Link href="/dashboard/settings/profile">Profile</Link>
                   </li>
                   <li>
                     <a>Preferences</a>

@@ -1,10 +1,19 @@
-import React from "react";
+"use client"
+import React, {useState, useEffect} from "react";
 import {MenuHorizontal, MenuVertical} from "./clientUtils/NavLinks";
-import logo from "../assets/logos/flic-transperent-white.png";
-import SwitchTheme from "./clientUtils/SwitchTheme";
 import SwitchLogo from "./clientUtils/SwitchLogo";
 
 const NavBar = () => {
+  const [user, setUser] = useState({
+    email: ""
+  });
+  
+  useEffect(()=>{
+    
+    var userItem = JSON.parse(localStorage.getItem("user")!);
+    setUser(userItem!);
+  }, []);
+
   return (
     <div className="m-1">
       <div className="navbar rounded-2xl bg-base-200">
@@ -37,8 +46,7 @@ const NavBar = () => {
       </div>
 
       <div className="navbar-end">
-      
-        <div className="dropdown dropdown-end">
+      {user? <div className="dropdown dropdown-end">
           <div
             tabIndex={0}
             role="button"
@@ -47,7 +55,7 @@ const NavBar = () => {
             <div className="w-10 rounded-full">
               <img
                 alt="Tailwind CSS Navbar component"
-                src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
+                src={process.env.NEXT_PUBLIC_IDENTICONS_URL + user.email}
               />
             </div>
           </div>
@@ -56,21 +64,21 @@ const NavBar = () => {
             className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
           >
             <li>
-              <a className="justify-between">
+              <a className="justify-between" href="/dashboard/settings/profile">
                 Profile
                 <span className="badge badge-primary">New</span>
               </a>
             </li>
             <li>
-              <a>Settings</a>
+              <a href="/dashboard">Dashboard</a>
             </li>
             <li>
-              <a>Logout</a>
+              <a href="/logout">Logout</a>
             </li>
           </ul>
-        </div>
+        </div> : <div></div>}
         
-        <a href="/login" className="btn btn-outline">Login</a>
+        {!user ? <a href="/login" className="btn btn-outline">Login</a> : <div></div>}
       </div>
     </div>
     </div>
