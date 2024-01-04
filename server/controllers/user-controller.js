@@ -15,7 +15,7 @@ const {
 } = require("../middlewares/userMiddleware");
 const mongoose = require("mongoose");
 var bcrypt = require("bcryptjs");
-var {sendEmail} = require("../utils/sendEmail")
+var { sendEmail } = require("../utils/sendEmail");
 
 const login = async (req, res, nxt) => {
   const { user } = req.body;
@@ -38,12 +38,10 @@ const login = async (req, res, nxt) => {
         if (!chkAccess) {
           await session.abortTransaction(); // Rollback the transaction
           session.endSession();
-          return res
-            .status(401)
-            .json({
-              error:
-                "Your email is not verified, Or you are banned to this platform! Please check your email!",
-            });
+          return res.status(401).json({
+            error:
+              "Your email is not verified, Or you are banned to this platform! Please check your email!",
+          });
         }
 
         addDataToLogs("User Login", existingUser._id);
@@ -152,22 +150,28 @@ const forgotPassword = async (req, res, next) => {
       if (!chkAccess) {
         await session.abortTransaction(); // Rollback the transaction
         session.endSession();
-        return res
-          .status(401)
-          .json({
-            error:
-              "Your email is not verified, Or you are banned to this platform! Please check your email!",
-          });
+        return res.status(401).json({
+          error:
+            "Your email is not verified, Or you are banned to this platform! Please check your email!",
+        });
       }
       const token = await existingUser.generateAuthToken();
       existingUser.isForgotPasswordInitiated = true;
       existingUser.forgotPasswordToken = token;
       var currentDateTime = Date.now();
       existingUser.forgotPasswordInitiatedDate = currentDateTime;
-      var url = process.env.SERVER_ROOT_URL + "/user/forgot_password_reset?token=" + token + "&email=" + email + "&time=" + currentDateTime;
+      var url =
+        process.env.CLIENT_ROOT_URL +
+        "/forgotPassword/resetPassword?token=" +
+        token +
+        "&email=" +
+        email +
+        "&time=" +
+        currentDateTime;
       var emailBody = `
         Hey ${existingUser.firstName}, Here's your link to reset your password: ${url}
-      `
+        This Link is only valid for 30 mins :)
+      `;
       await sendEmail("Password Reset Link", [email], emailBody);
       await existingUser.save();
       addDataToLogs("User Forgot Password Initiated", existingUser._id);
@@ -190,8 +194,144 @@ const forgotPassword = async (req, res, next) => {
 };
 
 const forgotPasswordReset = async (req, res, next) => {
+  const { user } = req.body;
+  const { email, time, token, password } = user;
+  const session = await mongoose.startSession();
 
-}
+  try {
+    session.startTransaction();
+
+    var existingUser = await User.findOne({
+      email: email,
+      forgotPasswordInitiatedDate: time,
+      forgotPasswordToken: token,
+      isForgotPasswordInitiated: true,
+    }).session(session);
+
+    if (existingUser) {
+      var chkAccess = await verificationAndBannedCheckForLogin(existingUser);
+
+      if (!chkAccess) {
+        await session.abortTransaction(); // Rollback the transaction
+        session.endSession();
+        return res.status(401).json({
+          error:
+            "Your email is not verified, Or you are banned to this platform! Please check your email!",
+        });
+      }
+      const currentTime = Date.now();
+      const linkCreationTime = parseInt(
+        existingUser.forgotPasswordInitiatedDate
+      );
+      const timeDifference = currentTime - linkCreationTime;
+      const thirtyMinutesInMillis = 30 * 60 * 1000;
+
+      if (timeDifference > thirtyMinutesInMillis) {
+        existingUser.forgotPasswordToken = token;
+        existingUser.Parameter1 = "";
+        existingUser.forgotPasswordInitiatedDate = null;
+        existingUser.isForgotPasswordInitiated = false;
+        await session.commitTransaction(); // Commit the transaction
+        session.endSession();
+        return res
+          .status(401)
+          .json({ error: "Reset Password Link Time Period Expired!" });
+      }
+
+      existingUser.forgotPasswordToken = "fpt";
+      existingUser.Parameter1 = "";
+      existingUser.forgotPasswordInitiatedDate = null;
+      existingUser.isForgotPasswordInitiated = false;
+
+      const hashedPassword = await bcrypt.hash(password, 12);
+      existingUser.password = hashedPassword;
+
+      await existingUser.save();
+      addDataToLogs("User Forgot Password Reset Successful", existingUser._id);
+      await session.commitTransaction(); // Commit the transaction
+      session.endSession();
+      return res.status(200).json({
+        message: "Password Reset Successfully 🚀",
+      });
+    } else {
+      await session.abortTransaction(); // Rollback the transaction
+      session.endSession();
+      return res.status(404).json({ error: "Entry Not Found 😥" });
+    }
+  } catch (err) {
+    await session.abortTransaction(); // Rollback the transaction
+    session.endSession();
+    console.error(err);
+    return res.status(500).json({ error: err });
+  }
+};
+
+const forgotPasswordResetCheck = async (req, res, next) => {
+  const { user } = req.body;
+  const { email, time, token } = user;
+  const session = await mongoose.startSession();
+
+  try {
+    session.startTransaction();
+
+    var existingUser = await User.findOne({
+      email: email,
+      forgotPasswordInitiatedDate: time,
+      forgotPasswordToken: token,
+      isForgotPasswordInitiated: true,
+    }).session(session);
+
+    if (existingUser) {
+      var chkAccess = await verificationAndBannedCheckForLogin(existingUser);
+
+      if (!chkAccess) {
+        await session.abortTransaction(); // Rollback the transaction
+        session.endSession();
+        return res.status(401).json({
+          error:
+            "Your email is not verified, Or you are banned to this platform! Please check your email!",
+        });
+      }
+      const currentTime = Date.now();
+      const linkCreationTime = parseInt(
+        existingUser.forgotPasswordInitiatedDate
+      );
+      const timeDifference = currentTime - linkCreationTime;
+      const thirtyMinutesInMillis = 30 * 60 * 1000;
+
+      if (timeDifference > thirtyMinutesInMillis) {
+        existingUser.forgotPasswordToken = token;
+        existingUser.Parameter1 = "";
+        existingUser.forgotPasswordInitiatedDate = null;
+        existingUser.isForgotPasswordInitiated = false;
+        await session.commitTransaction(); // Rollback the transaction
+        session.endSession();
+        return res.status(401).json({ error: "Reset Password Link Expired!" });
+      }
+
+      const token = await existingUser.generateAuthToken();
+      existingUser.forgotPasswordToken = token;
+      existingUser.Parameter1 = "InitialPasswordResetCheckDone";
+      await existingUser.save();
+      addDataToLogs("User Forgot Password Reset Check", existingUser._id);
+      await session.commitTransaction(); // Commit the transaction
+      session.endSession();
+      return res.status(200).json({
+        message: "You can reset your password 🚀",
+        newToken: token,
+      });
+    } else {
+      await session.abortTransaction(); // Rollback the transaction
+      session.endSession();
+      return res.status(404).json({ error: "Entry Not Found 😥" });
+    }
+  } catch (err) {
+    await session.abortTransaction(); // Rollback the transaction
+    session.endSession();
+    console.error(err);
+    return res.status(500).json({ error: err });
+  }
+};
 
 const updateProfile = async (req, res, nxt) => {
   const { user } = req.body;
@@ -404,6 +544,7 @@ module.exports = {
   login,
   forgotPassword,
   forgotPasswordReset,
+  forgotPasswordResetCheck,
   updateProfile,
   deleteProfile,
   getMe,

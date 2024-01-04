@@ -17,8 +17,11 @@ router.post("/login", userC.login);
 // User Forgot Password
 router.post("/forgot_password", userC.forgotPassword);
 
-// User Forgot Password
+// User Forgot Password Reset
 router.post("/forgot_password_reset", userC.forgotPasswordReset);
+
+// User Forgot Password Reset Check
+router.post("/forgot_password_reset_check", userC.forgotPasswordResetCheck);
 
 // User Update
 router.put("/edit", auth, verificationAndBannedCheck, userC.updateProfile);
