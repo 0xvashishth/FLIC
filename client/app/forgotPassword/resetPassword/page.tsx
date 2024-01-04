@@ -60,7 +60,8 @@ const ResetPassword = () => {
               { user: userSendForCheck }
             );
             console.log(response.data.message); // Assuming the server returns some data
-            setResetToken(response.data.newToken);
+            // Not needed to create new token
+            // setResetToken(response.data.newToken);
             toast.success(response.data.message, {
               id: toastId,
             });
@@ -141,9 +142,9 @@ const ResetPassword = () => {
     <div className="hero min-h-screen bg-base-100">
       <div className="hero-content flex-col">
         <div className="text-center lg:text-left">
-          <h1 className="text-5xl font-bold text-center">Forgot Password 🚀</h1>
+          <h1 className="text-5xl font-bold text-center">Reset Password 🚀</h1>
           <p className="py-6 text-sys-yellow">
-            You won't be able to forgot your password if your account is not
+            You won't be able to reset your password if your account is not
             verified. Reach out to us at hello@flic.tech for any quries 💁🏻‍♂️
           </p>
         </div>

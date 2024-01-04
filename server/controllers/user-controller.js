@@ -8,7 +8,11 @@ const Form = require("../models/form");
 const Url = require("../models/url");
 // const { sendEmail } = require("../utils/sendEmail")
 const { sendEmailWithTemplate } = require("../utils/sendgridEmail");
-const { generateVerificationLink } = require("../utils/generateVerifyLink");
+const {
+  generateVerificationLink,
+  generatePasswordResetLink,
+  getUuidToken,
+} = require("../utils/generateVerifyLink");
 const { addDataToLogs } = require("./log-controller");
 const {
   verificationAndBannedCheckForLogin,
@@ -91,13 +95,14 @@ const signup = async (req, res, nxt) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
-    var emailVerificationLink = generateVerificationLink();
+    var { emailVerificationLink, emailVerificationToken } =
+      generateVerificationLink(email);
     const newUser = new User({
       email,
       firstName,
       lastName,
       password: hashedPassword,
-      emailVerificationLink,
+      emailVerificationToken,
     });
     const saveUserPromise = await newUser.save({ session });
 
@@ -105,27 +110,184 @@ const signup = async (req, res, nxt) => {
       userID: saveUserPromise._id,
     });
     await newUserDetails.save({ session });
+    var emailBody = `
+        Hey ${firstName}, Click Below link to verify your account: ${emailVerificationLink}
+      `;
+      await sendEmail("Verfication on FLIC", [email], emailBody).then(()=>{
+        addDataToLogs("User signUp", saveUserPromise._id).then(async () => {
+          await session.commitTransaction(); // Commit the transaction
+          session.endSession();
+          return res.status(201).json({
+            message:
+              "Verification Link Sent Successfully, Please check your emailBox for verification!",
+          });
+        });
+      })
+    .catch((error) => {
+      throw error;
+    });
+  } catch (err) {
+    await session.abortTransaction(); // Rollback the transaction
+    session.endSession();
+    console.error(err);
+    return res.status(500).json({ error: err.message });
+  }
+};
 
-    var dynamicTemplateData = {
-      firstName,
-      lastName,
-      emailVerificationLink,
-    };
-    // await sendEmailWithTemplate(process.env["VERIFYEMAILTEMPLATEID"], [email], dynamicTemplateData)
-    //   .then(async () => {
-    addDataToLogs("User signUp", saveUserPromise._id).then(async () => {
+const emailVerification = async (req, res) => {
+  const session = await mongoose.startSession();
+  // starting the mongoose transaction
+  session.startTransaction();
+
+  try {
+    const { token, email } = req.query;
+    if (!token || !email) {
+      return res.send(`
+      <html>
+          <head>
+            <title>FLIC Verification Page..</title>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <style>
+              body {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                height: 90vh;
+                margin: 0;
+              }
+            </style>
+            <script>
+              // Display a countdown timer and redirect after 5 seconds
+              let countdown = 5;
+              function updateTimer() {
+                document.getElementById('timer').innerText = countdown;
+                countdown--;
+  
+                if (countdown < 0) {
+                  window.location.href = '${process.env.CLIENT_ROOT_URL}';
+                } else {
+                  setTimeout(updateTimer, 1000);
+                }
+              }
+              
+              window.onload = function() {
+                updateTimer();
+              };
+            </script>
+          </head>
+          <body>
+            <img src="https://github.com/vasu-1/FLIC/assets/76911582/ad679078-7ba8-4cd9-8f1f-065ba17b538c" alt="Logo" width="auto" height="300rem">
+            <h4>You went wrong, Redirecting to FLIC in <span id="timer">5</span> seconds...</h4>
+          </body>
+        </html>
+      `);
+    }
+    else{
+    var existingUser = await User.findOne({
+      email: email,
+      emailVerificationToken: token,
+    }).session(session);
+
+    if (existingUser) {
+      existingUser.emailVerificationToken = "";
+      existingUser.isEmailVerified = true;
+      var emailBody = `
+        Hey ${existingUser.firstName}, You are verified on FLIC, You may Login now 🚀
+      `;
+      await sendEmail("You are verified on FLIC", [email], emailBody);
+      await existingUser.save();
+      addDataToLogs("User Verification", existingUser._id);
       await session.commitTransaction(); // Commit the transaction
       session.endSession();
-      return res.status(201).json({
-        message:
-          "Verification Link Sent Successfully, Please check your emailBox for verification!",
-      });
-    });
-
-    // })
-    // .catch((error) => {
-    //   throw error;
-    // });
+      return res.send(`
+      <html>
+          <head>
+            <title>FLIC Verification Page..</title>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <style>
+              body {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                height: 90vh;
+                margin: 0;
+              }
+            </style>
+            <script>
+              // Display a countdown timer and redirect after 5 seconds
+              let countdown = 5;
+              function updateTimer() {
+                document.getElementById('timer').innerText = countdown;
+                countdown--;
+  
+                if (countdown < 0) {
+                  window.location.href = '${process.env.CLIENT_ROOT_URL}/login';
+                } else {
+                  setTimeout(updateTimer, 1000);
+                }
+              }
+              
+              window.onload = function() {
+                updateTimer();
+              };
+            </script>
+          </head>
+          <body>
+            <img src="https://github.com/vasu-1/FLIC/assets/76911582/ad679078-7ba8-4cd9-8f1f-065ba17b538c" alt="Logo" width="auto" height="300rem">
+            <h4>You are verified, Redirecting to FLIC in <span id="timer">5</span> seconds...</h4>
+          </body>
+        </html>
+      `);
+    } else {
+      await session.abortTransaction(); // Rollback the transaction
+      session.endSession();
+      return res.send(`
+      <html>
+          <head>
+            <title>FLIC Verification Page..</title>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <style>
+              body {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                height: 90vh;
+                margin: 0;
+              }
+            </style>
+            <script>
+              // Display a countdown timer and redirect after 5 seconds
+              let countdown = 5;
+              function updateTimer() {
+                document.getElementById('timer').innerText = countdown;
+                countdown--;
+  
+                if (countdown < 0) {
+                  window.location.href = '${process.env.CLIENT_ROOT_URL}';
+                } else {
+                  setTimeout(updateTimer, 1000);
+                }
+              }
+              
+              window.onload = function() {
+                updateTimer();
+              };
+            </script>
+          </head>s
+          <body>
+            <img src="https://github.com/vasu-1/FLIC/assets/76911582/ad679078-7ba8-4cd9-8f1f-065ba17b538c" alt="Logo" width="auto" height="300rem">
+            <h4>User not found on FLIC, Redirecting in <span id="timer">5</span> seconds...</h4>
+          </body>
+        </html>
+      `);
+    }
+    }
   } catch (err) {
     await session.abortTransaction(); // Rollback the transaction
     session.endSession();
@@ -155,21 +317,16 @@ const forgotPassword = async (req, res, next) => {
             "Your email is not verified, Or you are banned to this platform! Please check your email!",
         });
       }
-      const token = await existingUser.generateAuthToken();
+      var currentDateTime = Date.now();
+      const { resetLink, token } = generatePasswordResetLink(
+        currentDateTime,
+        email
+      );
       existingUser.isForgotPasswordInitiated = true;
       existingUser.forgotPasswordToken = token;
-      var currentDateTime = Date.now();
       existingUser.forgotPasswordInitiatedDate = currentDateTime;
-      var url =
-        process.env.CLIENT_ROOT_URL +
-        "/forgotPassword/resetPassword?token=" +
-        token +
-        "&email=" +
-        email +
-        "&time=" +
-        currentDateTime;
       var emailBody = `
-        Hey ${existingUser.firstName}, Here's your link to reset your password: ${url}
+        Hey ${existingUser.firstName}, Here's your link to reset your password: ${resetLink}
         This Link is only valid for 30 mins :)
       `;
       await sendEmail("Password Reset Link", [email], emailBody);
@@ -178,7 +335,7 @@ const forgotPassword = async (req, res, next) => {
       await session.commitTransaction(); // Commit the transaction
       session.endSession();
       return res.status(200).json({
-        message: "Reset link sent successfully to youe email 🚀",
+        message: "Reset link sent successfully to your email 🚀",
       });
     } else {
       await session.abortTransaction(); // Rollback the transaction
@@ -309,8 +466,8 @@ const forgotPasswordResetCheck = async (req, res, next) => {
         return res.status(401).json({ error: "Reset Password Link Expired!" });
       }
 
-      const token = await existingUser.generateAuthToken();
-      existingUser.forgotPasswordToken = token;
+      // const token = getUuidToken();
+      // existingUser.forgotPasswordToken = token;
       existingUser.Parameter1 = "InitialPasswordResetCheckDone";
       await existingUser.save();
       addDataToLogs("User Forgot Password Reset Check", existingUser._id);
@@ -318,7 +475,6 @@ const forgotPasswordResetCheck = async (req, res, next) => {
       session.endSession();
       return res.status(200).json({
         message: "You can reset your password 🚀",
-        newToken: token,
       });
     } else {
       await session.abortTransaction(); // Rollback the transaction
@@ -542,6 +698,7 @@ const deleteUserByAdmin = async (req, res) => {
 module.exports = {
   signup,
   login,
+  emailVerification,
   forgotPassword,
   forgotPasswordReset,
   forgotPasswordResetCheck,

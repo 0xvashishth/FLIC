@@ -4,7 +4,6 @@ import axios from "axios";
 import toast from "react-hot-toast";
 const ROOT_URL = process.env.NEXT_PUBLIC_SERVER_URL;
 import { useRouter } from "next/navigation";
-import local from "next/font/local";
 
 const Login = () => {
   const { push } = useRouter();
@@ -28,8 +27,8 @@ const Login = () => {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
-    // Check if there is a previous signup attempt in the last 10 minutes
-    // Not Needed In Signup
+    // Check if there is a previous login attempt in the last 10 minutes
+    // Not Needed In Login
     // const previousLoginAttempt = localStorage.getItem("userLoginAttempt");
     // if (previousLoginAttempt) {
     //   const currentTime = Date.now();
@@ -52,15 +51,15 @@ const Login = () => {
       toast.success(response.data.message, {
         id: toastId,
       });
-      localStorage.setItem("user", JSON.stringify(response.data.usery));
+      localStorage.setItem("user", JSON.stringify(response.data.user));
       localStorage.setItem("userToken", response.data.token);
       // Update the timestamp for the latest signup attempt
       localStorage.setItem("userLoginAttempt", Date.now().toString());
       setUser({
-        password: "", 
+        password: "",
         email: "",
-      })
-      // push("/dashboard");
+      });
+      push("/dashboard");
     } catch (error: any) {
       console.error("Error loggin in:", error);
       toast.error(error.response.data.error, {
@@ -71,42 +70,66 @@ const Login = () => {
 
   return (
     <div className="hero min-h-screen bg-base-100">
-  <div className="hero-content flex-col">
-    <div className="text-center lg:text-left">
-      <h1 className="text-5xl font-bold text-center">Login Now 🚀</h1>
-      <p className="py-6 text-sys-yellow">You won't be able to login if your account is not verified. Reach out to us at hello@flic.tech for any quries 💁🏻‍♂️</p>
-    </div>
-    <div className="card shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
-      <form className="card-body" onSubmit={handleSubmit}>
-        <div className="form-control">
-          <label className="label">
-            <span className="label-text">Email</span>
-          </label>
-          <input type="email" value={user.email}
+      <div className="hero-content flex-col">
+        <div className="text-center lg:text-left">
+          <h1 className="text-5xl font-bold text-center">Login Now 🚀</h1>
+          <p className="py-6 text-sys-yellow">
+            You won't be able to login if your account is not verified. Reach
+            out to us at hello@flic.tech for any quries 💁🏻‍♂️
+          </p>
+        </div>
+        <div className="card shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
+          <form className="card-body" onSubmit={handleSubmit}>
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text">Email</span>
+              </label>
+              <input
+                type="email"
+                value={user.email}
                 onChange={handleChange}
-                id="email" placeholder="email" className="input input-bordered" required />
-        </div>
-        <div className="form-control">
-          <label className="label">
-            <span className="label-text">Password</span>
-          </label>
-          <input type="password" value={user.password}
+                id="email"
+                placeholder="email"
+                className="input input-bordered"
+                required
+              />
+            </div>
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text">Password</span>
+              </label>
+              <input
+                type="password"
+                value={user.password}
                 onChange={handleChange}
-                id="password" placeholder="password" className="input input-bordered" required />
-          <label className="label">
-            <a href="/forgotPassword" className="label-text-alt link link-hover">Forgot password?</a>
-          </label>
+                id="password"
+                placeholder="password"
+                className="input input-bordered"
+                required
+              />
+              <label className="label">
+                <a
+                  href="/forgotPassword"
+                  className="label-text-alt link link-hover"
+                >
+                  Forgot password?
+                </a>
+              </label>
+            </div>
+            <div className="form-control mt-6">
+              <button type="submit" className="btn btn-outline">
+                Login
+              </button>
+            </div>
+            <label className="label">
+              <a href="/signup" className="label-text-alt link link-hover">
+                Not Registered? Signup Here 🔥
+              </a>
+            </label>
+          </form>
         </div>
-        <div className="form-control mt-6">
-          <button type="submit" className="btn btn-outline">Login</button>
-        </div>
-        <label className="label">
-            <a href="/signup" className="label-text-alt link link-hover">Not Registered? Signup Here 🔥</a>
-        </label>
-      </form>
+      </div>
     </div>
-  </div>
-</div>
   );
 };
 
