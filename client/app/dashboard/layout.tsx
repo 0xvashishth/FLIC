@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import toast from "react-hot-toast";
 import { useState, useEffect } from "react";
-import checkLoggedInUser from "../components/clientUtils/checkLoggedInUser";
+import { useRouter } from "next/navigation";
 
 export default function DashboardLayout({
   children, // will be a page or nested layout
@@ -18,6 +18,7 @@ export default function DashboardLayout({
     });
   };
 
+  const { push } = useRouter();
   const pathname = usePathname();
 
   const [user, setUser] = useState({
@@ -26,11 +27,14 @@ export default function DashboardLayout({
   });
 
   // checking the user loggedIn
-  checkLoggedInUser();
 
   useEffect(() => {
-    var userItem = JSON.parse(localStorage.getItem("user")!);
-    setUser(userItem!);
+    if (!localStorage.getItem("user") || !localStorage.getItem("userToken")) {
+      push("/");
+    } else {
+      var userItem = JSON.parse(localStorage.getItem("user")!);
+      setUser(userItem!);
+    }
   }, []);
 
   return (
@@ -104,13 +108,15 @@ export default function DashboardLayout({
                   className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
                 >
                   <li>
-                    <Link className="justify-between" href="/dashboard/settings/profile">
+                    <Link className="justify-between" href="/dashboard/profile">
                       Profile
                       <span className="badge badge-primary">New</span>
                     </Link>
                   </li>
                   <li>
-                    <Link href="/dashboard/preferences">Preferences</Link>
+                    <Link href="/dashboard/profile/preferences">
+                      Preferences
+                    </Link>
                   </li>
                   <li>
                     <a href="/logout">Logout</a>
@@ -190,16 +196,43 @@ export default function DashboardLayout({
             </li>
             <li>
               <details open>
-                <summary>Settings</summary>
+                <summary>
+                  <Link href="/dashboard/profile">Profile</Link>
+                </summary>
                 <ul>
                   <li>
-                    <Link href="/dashboard/settings/profile">Profile</Link>
+                    <Link
+                      className={` ${
+                        pathname == "/dashboard/profile" ? "active" : ""
+                      }`}
+                      href="/dashboard/profile"
+                    >
+                      Profile
+                    </Link>
                   </li>
                   <li>
-                    <a>Preferences</a>
+                    <Link
+                      className={` ${
+                        pathname.startsWith("/dashboard/profile/preferences")
+                          ? "active"
+                          : ""
+                      }`}
+                      href="/dashboard/profile/preferences"
+                    >
+                      Preferences
+                    </Link>
                   </li>
                   <li>
-                    <a>Billing</a>
+                    <Link
+                      className={` ${
+                        pathname.startsWith("/dashboard/profile/billing")
+                          ? "active"
+                          : ""
+                      }`}
+                      href="/dashboard/profile/billing"
+                    >
+                      Billing
+                    </Link>
                   </li>
                 </ul>
               </details>
@@ -221,7 +254,7 @@ export default function DashboardLayout({
               </details>
             </li>
             <li>
-              <a>Logout</a>
+              <a href="/logout">Logout</a>
             </li>
           </div>
         </ul>

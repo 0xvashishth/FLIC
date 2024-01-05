@@ -27,10 +27,10 @@ router.post("/forgot_password_reset", userC.forgotPasswordReset);
 router.post("/forgot_password_reset_check", userC.forgotPasswordResetCheck);
 
 // User Update
-router.put("/edit", auth, verificationAndBannedCheck, userC.updateProfile);
+router.put("/", auth, verificationAndBannedCheck, userC.updateProfile);
 
 // User Detele All Records
-router.put("/delete", auth, verificationAndBannedCheck, userC.deleteProfile);
+router.delete("/", auth, verificationAndBannedCheck, userC.deleteProfile);
 
 // Curently logged in user
 router.get("/me", auth, verificationAndBannedCheck, userC.getMe);

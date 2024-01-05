@@ -1,7 +1,5 @@
 "use client"
 
-import SwitchLogo from "@/app/components/clientUtils/SwitchLogo";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 export default function DashboardLayout({
@@ -10,7 +8,6 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-
   return (
     <div className="m-3">
       <div className="text-xl flex justify-between">

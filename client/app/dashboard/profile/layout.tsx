@@ -3,6 +3,7 @@
 import SwitchLogo from "@/app/components/clientUtils/SwitchLogo";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function SettingsLayout({
   children, // will be a page or nested layout
@@ -10,7 +11,8 @@ export default function SettingsLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-
+  
+  
   return (
     <div>
         {children}

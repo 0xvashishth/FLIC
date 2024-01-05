@@ -6,6 +6,7 @@ const userDetails = require("../models/userDetails");
 const Chat = require("../models/chat");
 const Form = require("../models/form");
 const Url = require("../models/url");
+const FormDetails = require("../models/formRequestDetails");
 // const { sendEmail } = require("../utils/sendEmail")
 const { sendEmailWithTemplate } = require("../utils/sendgridEmail");
 const {
@@ -113,7 +114,8 @@ const signup = async (req, res, nxt) => {
     var emailBody = `
         Hey ${firstName}, Click Below link to verify your account: ${emailVerificationLink}
       `;
-      await sendEmail("Verfication on FLIC", [email], emailBody).then(()=>{
+    await sendEmail("Verfication on FLIC", [email], emailBody)
+      .then(() => {
         addDataToLogs("User signUp", saveUserPromise._id).then(async () => {
           await session.commitTransaction(); // Commit the transaction
           session.endSession();
@@ -123,9 +125,9 @@ const signup = async (req, res, nxt) => {
           });
         });
       })
-    .catch((error) => {
-      throw error;
-    });
+      .catch((error) => {
+        throw error;
+      });
   } catch (err) {
     await session.abortTransaction(); // Rollback the transaction
     session.endSession();
@@ -183,25 +185,24 @@ const emailVerification = async (req, res) => {
           </body>
         </html>
       `);
-    }
-    else{
-    var existingUser = await User.findOne({
-      email: email,
-      emailVerificationToken: token,
-    }).session(session);
+    } else {
+      var existingUser = await User.findOne({
+        email: email,
+        emailVerificationToken: token,
+      }).session(session);
 
-    if (existingUser) {
-      existingUser.emailVerificationToken = "";
-      existingUser.isEmailVerified = true;
-      var emailBody = `
+      if (existingUser) {
+        existingUser.emailVerificationToken = "";
+        existingUser.isEmailVerified = true;
+        var emailBody = `
         Hey ${existingUser.firstName}, You are verified on FLIC, You may Login now 🚀
       `;
-      await sendEmail("You are verified on FLIC", [email], emailBody);
-      await existingUser.save();
-      addDataToLogs("User Verification", existingUser._id);
-      await session.commitTransaction(); // Commit the transaction
-      session.endSession();
-      return res.send(`
+        await sendEmail("You are verified on FLIC", [email], emailBody);
+        await existingUser.save();
+        addDataToLogs("User Verification", existingUser._id);
+        await session.commitTransaction(); // Commit the transaction
+        session.endSession();
+        return res.send(`
       <html>
           <head>
             <title>FLIC Verification Page..</title>
@@ -242,10 +243,10 @@ const emailVerification = async (req, res) => {
           </body>
         </html>
       `);
-    } else {
-      await session.abortTransaction(); // Rollback the transaction
-      session.endSession();
-      return res.send(`
+      } else {
+        await session.abortTransaction(); // Rollback the transaction
+        session.endSession();
+        return res.send(`
       <html>
           <head>
             <title>FLIC Verification Page..</title>
@@ -286,7 +287,7 @@ const emailVerification = async (req, res) => {
           </body>
         </html>
       `);
-    }
+      }
     }
   } catch (err) {
     await session.abortTransaction(); // Rollback the transaction
@@ -498,43 +499,43 @@ const updateProfile = async (req, res, nxt) => {
   const allowedAttributes = [
     "lastName",
     "firstName",
-    "email",
     "bio",
     "profilePicture",
     "githubProfile",
-    "githubUsername",
   ];
-
   try {
-    const extraAttributes = Object.keys(user).filter(
-      (attr) => !allowedAttributes.includes(attr)
-    );
+    // const extraAttributes = Object.keys(user).filter(
+    //   (attr) => !allowedAttributes.includes(attr)
+    // );
 
-    if (extraAttributes.length > 0) {
-      throw new Error(`Invalid attributes: ${extraAttributes.join(", ")}`);
-    }
-
-    await User.update(
-      { _id: req.userId },
-      { $set: user },
-      { session },
-      async (error, result) => {
-        if (error) {
-          throw new Error("Error in server!");
-        } else {
-          addDataToLogs("User Updated", req.userId);
-          await session.commitTransaction(); // Commit the transaction
-          session.endSession();
-          return res.status(201).json({
-            message: "User Updated Successfully!",
-          });
-        }
+    const filteredUser = allowedAttributes.reduce((acc, attribute) => {
+      if (user.hasOwnProperty(attribute)) {
+        acc[attribute] = user[attribute];
       }
+      return acc;
+    }, {});
+
+    // if (extraAttributes.length > 0) {
+    //   throw new Error(`Invalid attributes: ${extraAttributes.join(", ")}`);
+    // }
+    await User.findByIdAndUpdate(
+      { _id: req.userId },
+      { $set: filteredUser },
+      { session }
     );
+    console.log("Updated");
+    addDataToLogs("User Updated", req.userId);
+    await session.commitTransaction(); // Commit the transaction
+    session.endSession();
+    return res.status(201).json({
+      message: "User Updated Successfully!",
+    });
+
+    // return res.status(200).json({message: "profile updated"})
   } catch (error) {
     await session.abortTransaction(); // Rollback the transaction
     session.endSession();
-    console.error(err);
+    console.error(error);
     return res.status(500).json({ error: "Something Went Wrong" });
   }
 };
@@ -545,13 +546,9 @@ const deleteProfile = async (req, res, nxt) => {
   session.startTransaction();
 
   try {
-    await User.deleteOne({ _id: req.userId });
-
-    await userDetails.deleteOne({ userID: req.userId });
+    await userDetails.findOneAndDelete({ userID: req.userId });
 
     await Chat.deleteMany({ agent: req.userId });
-
-    await Form.deleteMany({ userID: req.userId });
 
     await Url.deleteMany({ userID: req.userId });
 
@@ -562,6 +559,8 @@ const deleteProfile = async (req, res, nxt) => {
     });
 
     await Form.deleteMany({ userID: req.userId });
+
+    await User.findByIdAndDelete({ _id: req.userId });
 
     addDataToLogs("User All Records Deleted", req.userId);
 
@@ -574,7 +573,7 @@ const deleteProfile = async (req, res, nxt) => {
   } catch (error) {
     await session.abortTransaction(); // Rollback the transaction
     session.endSession();
-    console.error(err);
+    console.error(error);
     return res.status(500).json({ error: "Something Went Wrong" });
   }
 };
@@ -659,13 +658,9 @@ const deleteUserByAdmin = async (req, res) => {
   session.startTransaction();
 
   try {
-    await User.deleteOne({ _id: req.params.id });
-
-    await userDetails.deleteOne({ userID: req.params.id });
+    
 
     await Chat.deleteMany({ agent: req.params.id });
-
-    await Form.deleteMany({ userID: req.params.id });
 
     await Url.deleteMany({ userID: req.params.id });
 
@@ -678,6 +673,10 @@ const deleteUserByAdmin = async (req, res) => {
     });
 
     await Form.deleteMany({ userID: req.params.id });
+
+    await User.deleteOne({ _id: req.params.id });
+
+    await userDetails.deleteOne({ userID: req.params.id });
 
     addDataToLogs("User All Records Deleted", req.params.id);
 

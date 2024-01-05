@@ -15,14 +15,14 @@ app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use(cookieParser())
 
 // cors 
-var whitelist = ['http://localhost:8082/', "https://flic.vercel.app/"]
+var whitelist = ['http://localhost:3000', 'https://flic.vercel.app'];
 var corsOptions = {
   origin: function (origin, callback) {
     console.log(origin);
-    if (origin || whitelist.indexOf(origin) == -1) {
-      callback(null, true)
+    if (!origin || whitelist.indexOf(origin) === -1) {
+      return callback(new Error('Not allowed by CORS'));
     } else {
-      callback(new Error('Not allowed by CORS'))
+      return callback(null, true);
     }
   }
 }
