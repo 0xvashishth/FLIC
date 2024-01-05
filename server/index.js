@@ -16,20 +16,20 @@ app.use(cookieParser())
 
 // cors 
 var whitelist = ['http://localhost:3000', 'https://flic.vercel.app', 'https://flic-7tcx.vercel.app'];
-var corsOptions = {
-  origin: function (origin, callback) {
-    console.log(origin);
-    if (!origin || whitelist.indexOf(origin) === -1) {
-      return callback(new Error('Not allowed by CORS'));
-    } else {
-      return callback(null, true);
-    }
-  }
-}
+// var corsOptions = {
+//   origin: function (origin, callback) {
+//     console.log(origin);
+//     if (!origin || whitelist.indexOf(origin) === -1) {
+//       return callback(new Error('Not allowed by CORS'));
+//     } else {
+//       return callback(null, true);
+//     }
+//   }
+// }
 
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
 // To allow all traffic, use below
-// app.use(cors({ origin: true, credentials: true }));
+app.use(cors({ origin: true, credentials: true }));
 
 // link redirection
 app.get('/l/:id', async (req, res) => {
