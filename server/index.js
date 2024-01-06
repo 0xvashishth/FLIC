@@ -1,21 +1,25 @@
-require('dotenv').config();
-const express = require('express');
-var cors = require('cors');
-const bodyParser = require('body-parser')
-const cookieParser = require('cookie-parser')
+require("dotenv").config();
+const express = require("express");
+var cors = require("cors");
+const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 const app = express();
 const connectDB = require("./config/db");
 const commonR = require("./apiRoutes/commonRoutes");
-const Url = require("./models/url")
+const Url = require("./models/url");
 //body-parse
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 
 // cookie parser
-app.use(cookieParser())
+app.use(cookieParser());
 
-// cors 
-var whitelist = ['http://localhost:3000', 'https://flic.vercel.app', 'https://flic-7tcx.vercel.app'];
+// cors
+var whitelist = [
+  "http://localhost:3000",
+  "https://flic.vercel.app",
+  "https://flic-7tcx.vercel.app",
+];
 // var corsOptions = {
 //   origin: function (origin, callback) {
 //     console.log(origin);
@@ -32,17 +36,20 @@ var whitelist = ['http://localhost:3000', 'https://flic.vercel.app', 'https://fl
 app.use(cors({ origin: true, credentials: true }));
 
 // link redirection
-app.get('/l/:id', async (req, res) => {
+app.get("/l/:id", async (req, res) => {
   try {
     var requestUrl = process.env["SERVER_ROOT_URL"] + req.originalUrl;
     let urlDocument = await Url.findOne({ shortenedURL: requestUrl });
-    console.log(urlDocument)
-    if(urlDocument){
+    console.log(urlDocument);
+    if (urlDocument) {
       var link = urlDocument.originalURL;
       // We will not wait this to be updated
-      const urlDocument = Url.updateOne({ _id: urlDocument._id }, {
-        clickCount: 1 + urlDocument.clickCount
-      });
+      const urlDocument = Url.updateOne(
+        { _id: urlDocument._id },
+        {
+          clickCount: 1 + urlDocument.clickCount,
+        }
+      );
       res.send(`
       <html>
           <head>
@@ -84,7 +91,7 @@ app.get('/l/:id', async (req, res) => {
           </body>
         </html>
       `);
-    }else{
+    } else {
       res.send(`
       <html>
           <head>
@@ -110,8 +117,8 @@ app.get('/l/:id', async (req, res) => {
       `);
     }
   } catch (error) {
-    console.error('Error:', error);
-    res.status(500).send('Internal Server Error');
+    console.error("Error:", error);
+    res.status(500).send("Internal Server Error");
   }
 });
 
@@ -129,10 +136,10 @@ app.use("/api/v1", commonR);
 const middleware = (req, res, next) => {
   console.log("Hello my flic middleware!");
   next();
-}
+};
 
-app.get('/',middleware, (req, res) => {
-  res.send('Hello Flic!')
+app.get("/", middleware, (req, res) => {
+  res.send("Hello Flic!");
 });
 
 const port = process.env.PORT || 8082;
