@@ -21,6 +21,7 @@ const userSchema = new Schema({
   isForgotPasswordInitiated: { type: Boolean, required: true, default: false },
   urlCount: { type: Number, default: 0 },
   qrCount: { type: Number, default: 0 },
+  formCount: {type: Number, default: 0},
   Parameter1: String,
   Parameter2: String,
   Parameter3: Boolean,
@@ -55,6 +56,7 @@ userSchema.methods.getPublicProfile = function () {
     isPremiumUser: this.isPremiumUser,
     urlCount: this.urlCount,
     qrCount: this.qrCount,
+    formCount: this.formCount,
   };
 };
 
