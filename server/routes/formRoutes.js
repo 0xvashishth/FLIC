@@ -57,11 +57,23 @@ router.get(
   isOwnerOfForm,
   formC.getFormResponses // need to create another function for a perticular form retrival
 );
+
 router.get(
-    "/getUserForms",
-    auth,
-    verificationAndBannedCheck,
-    formC.getForms
-  );
+  "/getUserForms",
+  auth,
+  verificationAndBannedCheck,
+  formC.getForms
+);
+
+router.get(
+  "/:id",
+  auth,
+  verificationAndBannedCheck,
+  formBannedCheck,
+  isOwnerOfForm,
+  formC.getForm
+);
+
+
 
 module.exports = router;

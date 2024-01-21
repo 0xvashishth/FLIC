@@ -14,6 +14,7 @@ var { sendEmail } = require("./utils/sendEmail");
 const mongoose = require("mongoose");
 const { generateResponseEmailBody } = require("./utils/emailForFormResponse");
 const { addDataToLogs } = require("./controllers/log-controller");
+const existingUser = require("./middlewares/existingUserValidation");
 //body-parse
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
@@ -141,44 +142,15 @@ app.post("/f/:id", async (req, res) => {
     // Validate if the form with the given ID exists
     const existingForm = await Form.findById(formId);
     if (!existingForm) {
+      await session.abortTransaction(); // Abort the transactionCommit the transaction
+      session.endSession();
       return res.status(404).json({ error: "Form not found" });
     }
-    const user = await User.findById(existingForm.userID);
-    const userEmail = user.email;
-    // Extract dynamic data from the request body
-    const dynamicData = req.body;
-    // Create a new form request details instance
-    const formDetails = new FormRequestDetails({
-      FormID: formId,
-      dynamicData: dynamicData,
-      requestOrigin: req.headers.origin,
-      // You can set other parameters here based on your requirements
-    });
 
-    // not sending the email RN
-    // await sendEmail(
-    //   "You got Response From FLIC Form",
-    //   [userEmail],
-    //   generateResponseEmailBody(user, dynamicData)
-    // )
-      // .then(async () => {
-      //   await addDataToLogs("Form Response", formDetails._id);
-      // })
-      // .catch((error) => {
-      //   throw error;
-      // });
-
-    // Save the form request details to the database
-    await formDetails.save();
-
-    // Update the request count in the main form document
-    existingForm.requestCount += 1;
-    await existingForm.save();
-
-    // Respond with a success message
-    await session.commitTransaction(); // Commit the transaction
+    if (!existingForm.isEnabled) {
+      await session.abortTransaction(); // Abort the transactionCommit the transaction
     session.endSession();
-    res.send(`
+      res.send(`
       <html>
           <head>
             <title>FLIC Waiting Page..</title>
@@ -215,10 +187,91 @@ app.post("/f/:id", async (req, res) => {
           </head>
           <body>
             <img src="https://github.com/vasu-1/FLIC/assets/76911582/ad679078-7ba8-4cd9-8f1f-065ba17b538c" alt="Logo" width="auto" height="300rem">
-            <h4>${existingForm.customMessage}, Redirecting in <span id="timer">5</span> seconds...</h4>
+            <h4>Form is not enabled, Redirecting in <span id="timer">5</span> seconds...</h4>
           </body>
         </html>
       `);
+    }else{
+      const user = await User.findById(existingForm.userID);
+      const userEmail = user.email;
+      // Extract dynamic data from the request body
+      const dynamicData = req.body;
+      // Create a new form request details instance
+      const formDetails = new FormRequestDetails({
+        FormID: formId,
+        dynamicData: dynamicData,
+        requestOrigin: req.headers.origin,
+        // You can set other parameters here based on your requirements
+      });
+  
+      // not sending the email RN
+      if (existingForm.isEmailNotification) {
+        await sendEmail(
+          "You got Response From FLIC Form",
+          [userEmail],
+          generateResponseEmailBody(user, dynamicData)
+        )
+          .then(async () => {
+            await addDataToLogs("Form Response", formDetails._id);
+          })
+          .catch((error) => {
+            throw error;
+          });
+      }
+  
+      // Save the form request details to the database
+      await formDetails.save();
+  
+      // Update the request count in the main form document
+      existingForm.requestCount += 1;
+      await existingForm.save();
+  
+      // Respond with a success message
+      await session.commitTransaction(); // Commit the transaction
+      session.endSession();
+      res.send(`
+        <html>
+            <head>
+              <title>FLIC Waiting Page..</title>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <style>
+                body {
+                  display: flex;
+                  flex-direction: column;
+                  align-items: center;
+                  justify-content: center;
+                  height: 90vh;
+                  margin: 0;
+                }
+              </style>
+              <script>
+                // Display a countdown timer and redirect after 5 seconds
+                let countdown = 5;
+                function updateTimer() {
+                  document.getElementById('timer').innerText = countdown;
+                  countdown--;
+    
+                  if (countdown < 0) {
+                    window.location.href = '${existingForm.redirectUrl}';
+                  } else {
+                    setTimeout(updateTimer, 1000);
+                  }
+                }
+                
+                window.onload = function() {
+                  updateTimer();
+                };
+              </script>
+            </head>
+            <body>
+              <img src="https://github.com/vasu-1/FLIC/assets/76911582/ad679078-7ba8-4cd9-8f1f-065ba17b538c" alt="Logo" width="auto" height="300rem">
+              <h4>${existingForm.customMessage}, Redirecting in <span id="timer">5</span> seconds...</h4>
+            </body>
+          </html>
+        `);
+    }
+    
   } catch (error) {
     await session.abortTransaction(); // Abort the transactionCommit the transaction
     session.endSession();

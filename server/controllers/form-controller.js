@@ -77,7 +77,7 @@ const deleteForm = async (req, res) => {
 
   try {
     const user = req.rootUser;
-    const { form } = req.body;
+    const form = req.form;
 
     // Additional validation and checks if needed
     const deletedResponses = await FormRequestDetails.deleteMany(
@@ -114,10 +114,22 @@ const getForms = async (req, res) => {
   try {
     const user = req.rootUser;
     const forms = await Form.find({ userID: user._id });
-
+    console.log("This is")
     return res.status(200).json({
       message: "Forms Retrieved Successfully!",
       forms,
+    });
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).json({ error: "YEYEeyeyeye" });
+  }
+};
+
+const getForm = async (req, res) => {
+  try {
+    return res.status(200).json({
+      message: "Form Retrieved Successfully!",
+      form: req.form,
     });
   } catch (error) {
     console.error(error.message);
@@ -182,4 +194,5 @@ module.exports = {
   getForms,
   getFormResponses,
   deleteFormResponse,
+  getForm
 };

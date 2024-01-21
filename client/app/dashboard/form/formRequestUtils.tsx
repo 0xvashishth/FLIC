@@ -52,7 +52,7 @@ export async function getUserForms() {
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/form/getUserForms`,
         { headers }
-      );
+      );  
       console.log(response.data.forms); // Assuming the server returns some data
       toast.success(response.data.message, {
         id: toastId,
@@ -63,7 +63,7 @@ export async function getUserForms() {
       );
       return response.data.forms;
     } catch (error: any) {
-      console.error("Error in updating profile:", error);
+      console.error("Error in getting form data:", error);
       toast.error(error.response.data.error, {
         id: toastId,
       });
