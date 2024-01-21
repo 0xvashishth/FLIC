@@ -2,13 +2,14 @@ import toast from "react-hot-toast";
 import axios from "axios";
 
 export async function getUserForms() {
-  console.log("Hello")
   const formDataFromLocalStorage = JSON.parse(
     localStorage.getItem("formDataFromLocalStorage")!
   );
   const FormNewCreatedPing = localStorage.getItem("FormNewCreatedPing");
   if (formDataFromLocalStorage) {
-    if (FormNewCreatedPing == "Yes") {
+    // FormNewCreatedPing == "Yes"
+    // Now bypassing the above rule, because if response count is update, i also need to update the data
+    if (1) {
       const toastId = toast.loading("Getting Data From Server..");
       try {
         const headers = {

@@ -39,14 +39,24 @@ router.delete(
   isOwnerOfForm,
   formC.deleteForm
 );
-// router.get(
-//   "/:id",
-//   auth,
-//   verificationAndBannedCheck,
-//   formBannedCheck,
-//   isOwnerOfForm,
-//   formC.getForms // need to create another function for a perticular form retrival
-// );
+
+router.delete(
+  "/deleteResponse/:id",
+  auth,
+  verificationAndBannedCheck,
+  formBannedCheck,
+  isOwnerOfForm,
+  formC.deleteFormResponse
+);
+
+router.get(
+  "/getFormResponses/:id",
+  auth,
+  verificationAndBannedCheck,
+  formBannedCheck,
+  isOwnerOfForm,
+  formC.getFormResponses // need to create another function for a perticular form retrival
+);
 router.get(
     "/getUserForms",
     auth,

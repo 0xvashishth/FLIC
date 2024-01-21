@@ -7,11 +7,11 @@ import Link from "next/link";
 import { getUserForms } from "./formRequestUtils";
 // `app/dashboard/page.tsx` is the UI htmlFor the `/dashboard` URL
 export default function Page() {
-  const { push } = useRouter();
-  const [formModalData, setFormModalData] = useState({
-    "formTitle": "",
-    "redirectUrl": ""
-  });
+  // const { push } = useRouter();
+  // const [formModalData, setFormModalData] = useState({
+  //   "formTitle": "",
+  //   "redirectUrl": ""
+  // });
   const [formData, setFormData] = useState([
     {
       _id: "",
@@ -22,11 +22,9 @@ export default function Page() {
   ]);
 
   useEffect(() => {
-    (async () => 
-    {
-      setFormData(await getUserForms())
-    }
-    )();
+    (async () => {
+      setFormData(await getUserForms());
+    })();
   }, []);
 
   // const handleChange = (e: any) => {
@@ -112,13 +110,11 @@ export default function Page() {
           <tbody className="border-2">
             {formData.map((data, key) => (
               <tr className="border-2" key={key}>
-                <th>{key+1}</th>
+                <th>{key + 1}</th>
                 <td className="">{data.formTitle}</td>
                 <td>
                   {data.isEnabled ? (
-                    <span className="badge badge-md badge-warning">
-                      Active
-                    </span>
+                    <span className="badge badge-md badge-warning">Active</span>
                   ) : (
                     <span className="badge badge-md badge-secondary">
                       Inactive

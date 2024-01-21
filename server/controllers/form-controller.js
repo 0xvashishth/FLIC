@@ -1,21 +1,22 @@
 // controllers/form-controller.js
 const mongoose = require("mongoose");
 const Form = require("../models/form");
-
+const FormRequestDetails = require("../models/formRequestDetails");
+const { addDataToLogs } = require("./log-controller");
 const createForm = async (req, res) => {
   const session = await mongoose.startSession();
   // starting the mongoose transaction
   session.startTransaction();
 
   try {
-    const user  = req.rootUser;
+    const user = req.rootUser;
     const { form } = req.body;
     console.log(form);
-   if(!form.formTitle || !form.redirectUrl){
-    return res.status(400).json({
+    if (!form.formTitle || !form.redirectUrl) {
+      return res.status(400).json({
         error: `Missing required field(s)`,
       });
-   }
+    }
 
     // Additional validation and checks if needed
 
@@ -24,9 +25,10 @@ const createForm = async (req, res) => {
       userID: user._id,
     });
 
-    await newForm.save();
+    await newForm.save({ session });
     await session.commitTransaction(); // Commit the transaction
     session.endSession();
+    await addDataToLogs("Form Created", newForm._id);
     return res.status(201).json({
       message: "Form Created Successfully!",
       form: newForm,
@@ -41,7 +43,7 @@ const createForm = async (req, res) => {
 
 const updateForm = async (req, res) => {
   try {
-    const user  = req.rootUser;
+    const user = req.rootUser;
     const { form } = req.body;
 
     // Additional validation and checks if needed
@@ -69,37 +71,48 @@ const updateForm = async (req, res) => {
 };
 
 const deleteForm = async (req, res) => {
+  const session = await mongoose.startSession();
+  // starting the mongoose transaction
+  session.startTransaction();
+
   try {
-    const user  = req.rootUser;
+    const user = req.rootUser;
     const { form } = req.body;
 
     // Additional validation and checks if needed
+    const deletedResponses = await FormRequestDetails.deleteMany(
+      {
+        FormID: form._id,
+      },
+      { session }
+    );
 
-    const deletedForm = await Form.findOneAndDelete({
-      _id: form._id,
-      userID: user._id,
-    });
-
-    if (!deletedForm) {
-      return res.status(404).json({
-        message: "Form not found or user does not have permission",
-      });
-    }
-
+    const deletedForm = await Form.findOneAndDelete(
+      {
+        _id: form._id,
+        userID: user._id,
+      },
+      { session }
+    );
+    await addDataToLogs("Form Deleted", form._id);
+    await session.commitTransaction(); // Commit the transaction
+    session.endSession();
     return res.status(200).json({
       message: "Form Deleted Successfully!",
     });
   } catch (error) {
+    await session.abortTransaction(); // Commit the transaction
+    session.endSession();
     console.error(error.message);
     return res.status(500).json({ error: error.message });
   }
 };
 
 // getting forms of user
+// not adding logs
 const getForms = async (req, res) => {
   try {
-    console.log("Yrs")
-    const user  = req.rootUser;
+    const user = req.rootUser;
     const forms = await Form.find({ userID: user._id });
 
     return res.status(200).json({
@@ -112,4 +125,61 @@ const getForms = async (req, res) => {
   }
 };
 
-module.exports = { createForm, updateForm, deleteForm, getForms };
+const deleteFormResponse = async (req, res) => {
+  const session = await mongoose.startSession();
+  // starting the mongoose transaction
+  session.startTransaction();
+
+  try {
+    const responseId = req.header("ResponseId");
+    // Additional validation and checks if needed
+    const deletedResponses = await FormRequestDetails.findByIdAndDelete(
+      responseId,
+      { session }
+    );
+    await addDataToLogs("Response Deleted", responseId);
+    await session.commitTransaction(); // Commit the transaction
+    session.endSession();
+    const formRequestDetails = await FormRequestDetails.find({
+      FormID: req.form._id,
+    });
+    return res.status(200).json({
+      message: "Response Deleted Successfully!",
+      formRequestDetails
+    });
+  } catch (error) {
+    await session.abortTransaction(); // Commit the transaction
+    session.endSession();
+    console.error(error.message);
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+// getting responses of forms of user
+// not adding logs
+const getFormResponses = async (req, res) => {
+  try {
+    const user = req.rootUser;
+    const formID = req.form._id;
+    const formRequestDetails = await FormRequestDetails.find({
+      FormID: formID,
+    });
+    // console.log(formRequestDetails);
+    return res.status(200).json({
+      message: "Responses Retrieved Successfully!",
+      formRequestDetails,
+    });
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+module.exports = {
+  createForm,
+  updateForm,
+  deleteForm,
+  getForms,
+  getFormResponses,
+  deleteFormResponse,
+};

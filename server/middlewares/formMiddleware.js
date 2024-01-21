@@ -31,7 +31,7 @@ const formBannedCheck = async (req, res, next) => {
   try {
     var formId = req.params.id;
     // adding the form object the reqest, so that can be used in subsequent requests
-    const form = await Form.findOne({ _id: formId });
+    const form = await Form.findById({ _id: formId });
     if (!form) {
       return res.status(404).json({
         error: "Form not found!",
@@ -53,7 +53,8 @@ const formBannedCheck = async (req, res, next) => {
 
 const isOwnerOfForm = async (req, res, next) => {
   try {
-    if (req.userId == req.form.userID) {
+    console.log(req.userId, req.form.userID)
+    if (req.userId.toString() == req.form.userID.toString()) {
       next();
     } else {
       return res.status(401).json({
