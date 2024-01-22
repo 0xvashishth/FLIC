@@ -3,12 +3,12 @@ const Schema = mongoose.Schema;
 
 const urlSchema = new Schema({
   originalURL: { type: String, required: true },
-  shortenedURL: { type: String, unique: true, required: true },
+  shortenedSuffix: { type: String, unique: true, required: true },
   userID: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   creationDate: { type: Date, default: Date.now },
   isPremiumUrl: { type: Boolean, default:false},
   clickCount: { type: Number, default: 0 },
-  description: String,
+  title: {type: String, required: true},
   tags: [String],
   isReported: { type: Number, default: 0 },
   isBanned: { type: Boolean, default: false },

@@ -48,13 +48,14 @@ app.use(cors({ origin: true, credentials: true }));
 // link redirection
 app.get("/l/:id", async (req, res) => {
   try {
-    var requestUrl = process.env["SERVER_ROOT_URL"] + req.originalUrl;
-    let urlDocument = await Url.findOne({ shortenedURL: requestUrl });
+    var SuffixId = req.params.id;
+    // var requestUrl = process.env["SERVER_ROOT_URL"] + "/l/" + SuffixId;
+    let urlDocument = await Url.findOne({ shortenedSuffix: SuffixId });
     console.log(urlDocument);
     if (urlDocument) {
       var link = urlDocument.originalURL;
       // We will not wait this to be updated
-      const urlDocument = Url.updateOne(
+      await Url.updateOne(
         { _id: urlDocument._id },
         {
           clickCount: 1 + urlDocument.clickCount,

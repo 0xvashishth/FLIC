@@ -5,6 +5,9 @@ const User = require("../models/user");
 const { addDataToLogs } = require("./log-controller");
 const { sendEmailWithTemplate } = require("../utils/sendgridEmail");
 const { cloudinary } = require("../utils/uploadFileToCloudinary");
+var { sendEmail } = require("../utils/sendEmail");
+const mongoose = require("mongoose");
+
 
 const createUrl = async (req, res) => {
   const session = await mongoose.startSession();
@@ -12,75 +15,109 @@ const createUrl = async (req, res) => {
   session.startTransaction();
 
   try {
-    const { user } = req.rootUser;
+    const user = req.rootUser;
     const { url } = req.body;
 
-    var { originalURL, shortenedURL, description } = url;
-
+    var { originalURL, shortenedSuffix, title } = url;
+    console.log(originalURL, shortenedSuffix, title)
     // ----URL Validation----
-    if (
-      process.env["URL_PREFIX"] !=
-      shortenedURL.substring(0, process.env["URL_PREFIX_LETTER_LENGTH"])
-    ) {
-      await session.commitTransaction(); // Commit the transaction
-      session.endSession();
-      return res.status(400).json({
-        error: "Unsupported URL Format!",
-      });
-    }
+    // if (
+    //   process.env["URL_PREFIX"] !=
+    //   shortenedSuffix.substring(0, process.env["URL_PREFIX_LETTER_LENGTH"])
+    // ) {
+    //   await session.commitTransaction(); // Commit the transaction
+    //   session.endSession();
+    //   return res.status(400).json({
+    //     error: "Unsupported URL Format!",
+    //   });
+    // }
 
-    var existingShortenedURL = Url.findOne({ shortenedURL });
-
+    var existingShortenedURL = await Url.findOne({ shortenedSuffix });
+    var ShortenedUrl = process.env["URL_PREFIX"] + shortenedSuffix;
+    console.log(existingShortenedURL, ShortenedUrl)
     if (existingShortenedURL) {
-      await session.commitTransaction(); // Commit the transaction
+      console.log("There is error here")
+      await session.abortTransaction(); // Commit the transaction
       session.endSession();
-      return res.send(401).json({ error: "Shortened URL Already Exists" });
+      return res.status(401).json({ error: "Shortened Suffix Already Exists" });
     }
-
-    const newUrl = new Url({
-      originalURL,
-      shortenedURL,
-      userID: user._id,
-      isPremiumUrl: user.isPremiumUser,
-      description,
-    });
-
-    const savePromise = await newUrl
-      .save({
-        session,
-      })
-      .catch((err) => {
-        throw err;
+    else{
+      const newUrl = new Url({
+        originalURL,
+        shortenedSuffix,
+        userID: user._id,
+        isPremiumUrl: user.isPremiumUser,
+        title,
       });
-    var dynamicTemplateData = {
-      originalURL,
-      shortenedURL,
-      description,
-    };
-    await sendEmailWithTemplate(
-      process.env["URLCREATEDTEMPLATEID"],
-      [user.email],
-      dynamicTemplateData
-    )
-      .then(async () => {
-        addDataToLogs("URL Created", savePromise._id);
-        increaseDecreaseCount(user, false, "increase", session).catch((err) => {
+  
+      const savePromise = await newUrl
+        .save({
+          session,
+        })
+        .catch((err) => {
           throw err;
         });
-        await session.commitTransaction(); // Commit the transaction
-        session.endSession();
-        return res.status(201).json({
-          message: "URL Created Successfully!",
-          url: newUrl,
-        });
-      })
-      .catch((error) => {
-        throw error;
-      });
+      // var dynamicTemplateData = {
+      //   originalURL,
+      //   shortenedSuffix,
+      //   title,
+      // };
+  
+      var emailBody = `
+      Hello ${user.firstName},
+  
+      Thank you for using our service. Here are the details for the link you created:
+  
+      Link Name: ${title}
+      Original Link: ${originalURL}
+      URL Prefix: ${ShortenedUrl}
+  
+      Best regards,
+      FLIC
+      `
+      await sendEmail("Link Created on FLIC", [user.email], emailBody)
+        .then(async () => {
+          await addDataToLogs("URL Created", savePromise._id);
+          // await increaseDecreaseCount(user, false, "increase", session).catch((err) => {
+          //   throw err;
+          // });
+          await session.commitTransaction(); // Commit the transaction
+          session.endSession();
+          return res.status(201).json({
+            message: "URL Created Successfully!",
+            url: newUrl,
+          });
+        })
+        .catch((error) => {
+          throw error;
+        });  
+    }
+      
+    // await sendEmailWithTemplate(
+    //   process.env["URLCREATEDTEMPLATEID"],
+    //   [user.email],
+    //   dynamicTemplateData
+    // )
+      // .then(async () => {
+      //   addDataToLogs("URL Created", savePromise._id);
+      //   increaseDecreaseCount(user, false, "increase", session).catch((err) => {
+      //     throw err;
+      //   });
+      //   await session.commitTransaction(); // Commit the transaction
+      //   session.endSession();
+      //   return res.status(201).json({
+      //     message: "URL Created Successfully!",
+      //     url: newUrl,
+      //   });
+      // })
+      // .catch((error) => {
+      //   throw error;
+      // });
   } catch (err) {
+    console.error(err.message);
     await session.abortTransaction(); // Rollback the transaction
     session.endSession();
-    console.error(err.message);
+    // console.error(err.message);
     return res.status(500).json({ error: err.message });
   }
 };
@@ -94,9 +131,9 @@ const updateUrl = async (req, res, next) => {
     const { user } = req.rootUser;
     const { url } = req.body;
 
-    const { _id, originalURL, shortenedURL, description } = url;
+    const { _id, originalURL, shortenedSuffix, title } = url;
 
-    var existingShortenedURL = Url.findOne({ shortenedURL });
+    var existingShortenedURL = Url.findOne({ shortenedSuffix });
 
     if (existingShortenedURL) {
       await session.commitTransaction(); // Commit the transaction
@@ -106,7 +143,7 @@ const updateUrl = async (req, res, next) => {
 
     await Url.updateOne(
       { _id },
-      { shortenedURL, originalURL, description },
+      { shortenedSuffix, originalURL, title },
       { session }
     ).catch((err) => {
       throw err;
@@ -114,8 +151,8 @@ const updateUrl = async (req, res, next) => {
 
     var dynamicTemplateData = {
       originalURL,
-      shortenedURL,
-      description,
+      shortenedSuffix,
+      title,
     };
     await sendEmailWithTemplate(
       process.env["URLUPDATEDTEMPLATEID"],
@@ -152,7 +189,7 @@ const deleteUrl = async (req, res, next) => {
     const { user } = req.rootUser;
     const { url } = req.body;
 
-    const { _id, originalURL, shortenedURL, description } = url;
+    const { _id, originalURL, shortenedSuffix, title } = url;
 
     await Url.deleteOne({ _id }, { session }).catch((err) => {
       throw err;
@@ -160,8 +197,8 @@ const deleteUrl = async (req, res, next) => {
 
     var dynamicTemplateData = {
       originalURL,
-      shortenedURL,
-      description,
+      shortenedSuffix,
+      title,
     };
 
     // increasing decreasing url and qr count
@@ -299,28 +336,37 @@ const deleteQR = async (req, res) => {
 };
 
 const getUrlSuffix = async (req, res) => {
-  const suffixUrl = req.query.suffixUrl;
+  const shortenedSuffix = req.query.suffixUrl;
 
   // ----URL Validation----
-  if (
-    process.env["URL_PREFIX"] !=
-    shortenedURL.substring(0, process.env["URL_PREFIX_LETTER_LENGTH"])
-  ) {
-    return res.status(400).json({
-      error: "Unsupported URL Format!",
-    });
-  }
-
-  var existingShortenedURL = Url.findOne({ shortenedURL: suffixUrl });
-
-  if (!existingShortenedURL) {
-    return res.status(200).json({
-      message: "URL Available!",
-    });
-  } else {
-    return res.status(400).json({
-      error: "URL Not Available!",
-    });
+  try {
+    // if (
+    //   process.env["URL_PREFIX"] !=
+    //   shortenedSuffix.substring(0, process.env["URL_PREFIX_LETTER_LENGTH"])
+    // ) {
+    //   return res.status(200).json({
+    //     message: "Unsupported URL Format!",
+    //   });
+    // }
+    if(shortenedSuffix == ""){
+      return res.status(200).json({
+        message: "no",
+      });
+    }else{
+      var existingShortenedURL = await Url.findOne({ shortenedSuffix });
+      console.log(existingShortenedURL)
+      if (!existingShortenedURL) {
+        return res.status(200).json({
+          message: "ok",
+        });
+      } else {
+        return res.status(200).json({
+          message: "no",
+        });
+      }
+    }
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
   }
 };
 
@@ -373,7 +419,7 @@ const deleteUrlByIdByAdmin = async (req, res) => {
         message: "URL Not Found!",
       });
     }
-    const { _id, originalURL, shortenedURL, description } = url;
+    const { _id, originalURL, shortenedSuffix, title } = url;
 
     const linkOwner = User.findById(url.userID);
 
@@ -383,8 +429,8 @@ const deleteUrlByIdByAdmin = async (req, res) => {
 
     var dynamicTemplateData = {
       originalURL,
-      shortenedURL,
-      description,
+      shortenedSuffix,
+      title,
     };
 
     // increasing decreasing url and qr count

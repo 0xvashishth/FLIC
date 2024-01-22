@@ -71,7 +71,6 @@ export default function DashboardLayout({
         id: toastId,
       });
       localStorage.setItem("FormNewCreatedPing", "Yes");
-      console.log("Reaching here")
       location.reload();
     } catch (error: any) {
       console.error("Error in updating profile:", error);

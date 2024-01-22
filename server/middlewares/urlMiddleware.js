@@ -3,14 +3,18 @@ const PREMIUM_USER_URL_COUNT = process.env["PREMIUM_USER_URL_COUNT"];
 
 const urlLimitCheck = async (req, res, next) => {
   try {
+    console.log("Checking")
     var userCheck = req.rootUser;
     if (!userCheck.isPremiumUser) {
+      console.log("Checking1")
       if (userCheck.urlCount + 1 > FREE_USER_URL_COUNT) {
+        console.log("Checking3")
         return res.status(400).json({
           error: "Maximum URL limit exceeded, Please upgrade your account.",
         });
       }
     } else {
+      console.log("Checking2")
       if (userCheck.urlCount + 1 > PREMIUM_USER_URL_COUNT) {
         return res.status(400).json({
           error:
