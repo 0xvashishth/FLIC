@@ -4,51 +4,51 @@ import SwitchLogo from "@/app/components/clientUtils/SwitchLogo";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 
-export default function FormDashboardLayout({
+export default function LinkDashboardLayout({
   children, // will be a page or nested layout
 }: {
   children: React.ReactNode;
 }) {
   const searchParams = useSearchParams();
-  const searchFormId = searchParams.get("id");
+  const searchLinkId = searchParams.get("id");
   const pathname = usePathname();
   return (
     <div>
         <div className="pt-3">
-        <h1 className="text-sm rounded-xl p-2 will-change-auto text-center">my form</h1>
+        <h1 className="text-sm rounded-xl p-2 will-change-auto text-center">my link</h1>
       </div>
       <div className="pt-3 mx-auto text-center">
         <ul className="menu menu-vertical sm:menu-horizontal bg-base-200 rounded-box">
           <li>
             <Link
               className={` ${
-                pathname == "/dashboard/form/details" ? "active" : ""
+                pathname == "/dashboard/link/details" ? "active" : ""
               }`}
-              href={"/dashboard/form/details?id="+ searchFormId}
+              href={"/dashboard/link/details?id="+ searchLinkId}
             >
-              Integration
+              General
             </Link>
           </li>
-          <li>
+          {/* <li>
             <Link
               className={` ${
-                pathname.startsWith("/dashboard/form/details/responses")
+                pathname.startsWith("/dashboard/link/details/responses")
                   ? "active"
                   : ""
               }`}
-              href={"/dashboard/form/details/responses?id=" + searchFormId}
+              href={"/dashboard/link/details/responses?id=" + searchLinkId}
             >
-              Responses
+              Analytics
             </Link>
-          </li>
+          </li> */}
           <li>
             <Link
               className={` ${
-                pathname.startsWith("/dashboard/form/details/settings")
+                pathname.startsWith("/dashboard/link/details/settings")
                   ? "active"
                   : ""
               }`}
-              href={"/dashboard/form/details/settings?id=" + searchFormId}
+              href={"/dashboard/link/details/settings?id=" + searchLinkId}
             >
               Settings
             </Link>
@@ -56,13 +56,13 @@ export default function FormDashboardLayout({
           <li>
             <Link
               className={` ${
-                pathname.startsWith("/dashboard/form/details/plugins")
+                pathname.startsWith("/dashboard/link/details/analytics")
                   ? "active"
                   : ""
               }`}
-              href={"/dashboard/form/details/plugins?id=" + searchFormId}
+              href={"/dashboard/link/details/analytics?id=" + searchLinkId}
             >
-              Plugins
+              Analytics
             </Link>
           </li>
         </ul>

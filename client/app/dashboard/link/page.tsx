@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { getUserLinks } from "./formRequestUtils";
+import { getUserLinks } from "./linkRequestUtils";
 // `app/dashboard/page.tsx` is the UI htmlFor the `/dashboard` URL
 export default function Page() {
   // const { push } = useRouter();
@@ -17,7 +17,7 @@ export default function Page() {
       _id: "",
       title: "",
       clickCount: "",
-      creationDate: "",
+      isActive: "",
       shortenedSuffix: ""
     },
   ]);
@@ -102,9 +102,10 @@ export default function Page() {
             <tr>
               <th></th>
               <td>Link Name</td>
-              <td>Creation Date</td>
+              <td>Status</td>
               <td>Click Count</td>
               <td>Shortened URL</td>
+              <td>Details</td>
               <td>Action</td>
             </tr>
           </thead>
@@ -114,7 +115,13 @@ export default function Page() {
                 <th>{key + 1}</th>
                 <td className="">{data.title}</td>
                 <td>
-                  {data.creationDate}
+                {data.isActive ? (
+                    <span className="badge badge-md badge-warning">Active</span>
+                  ) : (
+                    <span className="badge badge-md badge-secondary">
+                      Inactive
+                    </span>
+                  )}
                 </td>
                 <td>
                   <span className="badge badge-md badge-warning">
@@ -125,6 +132,11 @@ export default function Page() {
                   <span>
                   {`${process.env["NEXT_PUBLIC_ROOT_URL"]}l/${data.shortenedSuffix}`}
                   </span>
+                </td>
+                <td>
+                <Link className="btn btn-sm m-1" href={"link/details?id=" + data._id}>
+                          Details
+                </Link>
                 </td>
                 <td>
                   <div className="dropdown">

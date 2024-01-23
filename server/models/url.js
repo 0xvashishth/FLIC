@@ -10,6 +10,7 @@ const urlSchema = new Schema({
   clickCount: { type: Number, default: 0 },
   title: {type: String, required: true},
   tags: [String],
+  isActive: { type: Boolean, default: true },
   isReported: { type: Number, default: 0 },
   isBanned: { type: Boolean, default: false },
   qrCodeImageUrl: { type: String, required: false, default: ""},

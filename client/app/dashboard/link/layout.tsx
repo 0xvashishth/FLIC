@@ -14,8 +14,7 @@ export default function DashboardLayout({
   const [linkModalData, setLinkModalData] = useState({
     originalURL: "",
     title: "",
-    shortenedSuffix: "",
-    isQrCodeSelected: "",
+    shortenedSuffix: ""
   });
 
   const [customBackHalf, setCustomBackHalf] = useState("");
@@ -183,22 +182,20 @@ export default function DashboardLayout({
                     <span className="text-accent">{customBackHalfText}</span>
                   </div>
 
-                  <div className="mb-6">
+                  {/* <div className="mb-6">
                     <select
                       className="select select-bordered w-full max-w-xs"
-                      id="isQrCodeSelected"
-                      value={linkModalData.isQrCodeSelected}
+                      // id="isQrCodeSelected"
+                      // value={linkModalData.isQrCodeSelected}
                       onChange={handleChange}
                     >
-                      {/* <option disabled selected>
-                        Want to create QR Code?
-                      </option> */}
+                     
                       <option value="no" selected>
                         No
                       </option>
                       <option value="yes">Yes</option>
                     </select>
-                  </div>
+                  </div> */}
 
                   <div className="flex">
                     <button type="submit" className="btn btn-outline">

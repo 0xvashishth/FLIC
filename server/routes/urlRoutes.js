@@ -56,7 +56,8 @@ router.put(
   urlBannedCheck,
   urlC.deleteQR
 );
-router.get("/checksuffixurl", urlC.getUrlSuffix);
 router.get("/", auth, verificationAndBannedCheck, urlC.getUrls);
+router.get("/checksuffixurl", urlC.getUrlSuffix);
+router.get("/:id", auth, verificationAndBannedCheck, urlC.getUrlByIdByAdmin);
 
 module.exports = router;
