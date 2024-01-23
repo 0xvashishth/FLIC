@@ -20,14 +20,14 @@ export default function LinkDashboardLayout({
       <div className="pt-3 mx-auto text-center">
         <ul className="menu menu-vertical sm:menu-horizontal bg-base-200 rounded-box">
           <li>
-            <Link
+            <a
               className={` ${
                 pathname == "/dashboard/link/details" ? "active" : ""
               }`}
               href={"/dashboard/link/details?id="+ searchLinkId}
             >
               General
-            </Link>
+            </a>
           </li>
           {/* <li>
             <Link

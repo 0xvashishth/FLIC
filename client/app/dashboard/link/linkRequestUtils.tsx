@@ -97,3 +97,39 @@ export async function getLinkData(linkId: any) {
   }
 }
 
+export async function updateLinkData(linkId: any, link: object){
+  // Check if there is a previous change profile attempt in the last 10 minutes
+  const previousChangeLinkAttempt = localStorage.getItem("formChangeLinkAttempt");
+  if (0) {
+    const currentTime = Date.now();
+    const timeDifference = currentTime - parseInt(previousChangeLinkAttempt!, 10);
+
+    // If less than 10 minutes have passed since the last attempt, show an error toast
+    if (timeDifference < 10 * 60 * 1000) {
+      toast.error(
+        "Please wait for 10 minutes before attempting to change link again."
+      );
+      return;
+    }
+  }else{
+    const toastId = toast.loading("Updating link data..");
+    try {
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `${process.env.NEXT_PUBLIC_TOKEN_TYPE} ${localStorage.getItem("userToken")}`
+      }
+      console.log("Sent ..", headers);
+      const response = await axios.put(`${process.env.NEXT_PUBLIC_SERVER_URL}/url/${linkId}`, {url: link} , {headers});
+      toast.success(response.data.message, {
+        id: toastId,
+      });
+      localStorage.setItem("formChangeLinkAttempt", Date.now().toString());
+      return response.data.link;
+    } catch (error: any) {
+      console.error("Error in updating profile:", error);
+      toast.error(error.response.data.error, {
+        id: toastId,
+      });
+    }
+  } 
+}

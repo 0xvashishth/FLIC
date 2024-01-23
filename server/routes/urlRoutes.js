@@ -16,6 +16,7 @@ const {
 // Normal User Routes
 // Url created
 // If we need premium user service, use isUserPremiumCheck middleware
+// done
 router.post(
   "/",
   auth,
@@ -23,20 +24,21 @@ router.post(
   urlLimitCheck,
   urlC.createUrl
 );
+// done
 router.put(
-  "/",
+  "/:id",
   auth,
   verificationAndBannedCheck,
-  isOwnerOfUrl,
   urlBannedCheck,
+  isOwnerOfUrl,
   urlC.updateUrl
 );
 router.delete(
-  "/",
+  "/:id",
   auth,
   verificationAndBannedCheck,
-  isOwnerOfUrl,
   urlBannedCheck,
+  isOwnerOfUrl,
   urlC.deleteUrl
 );
 // here below multer must be used to handle the files in the request, that is remaining..!
@@ -56,8 +58,11 @@ router.put(
   urlBannedCheck,
   urlC.deleteQR
 );
+// done
 router.get("/", auth, verificationAndBannedCheck, urlC.getUrls);
+// done
 router.get("/checksuffixurl", urlC.getUrlSuffix);
+// done
 router.get("/:id", auth, verificationAndBannedCheck, urlC.getUrlByIdByAdmin);
 
 module.exports = router;

@@ -1,3 +1,5 @@
+const Url = require("../models/url");
+
 const FREE_USER_URL_COUNT = process.env["FREE_USER_URL_COUNT"];
 const PREMIUM_USER_URL_COUNT = process.env["PREMIUM_USER_URL_COUNT"];
 
@@ -31,13 +33,22 @@ const urlLimitCheck = async (req, res, next) => {
 
 const urlBannedCheck = async (req, res, next) => {
   try {
-    var url = req.url;
-    if (url.isBanned) {
+    var urlId = req.params.id;
+    // adding the form object the reqest, so that can be used in subsequent requests
+    const url = await Url.findById({ _id: urlId });
+    if (!url) {
+      return res.status(404).json({
+        error: "URL not found!",
+      });
+    } else {
+      req.url = url;
+      if (url.isBanned) {
         return res.status(400).json({
           error: "URL is banned, can't perform any actions!",
         });
+      }
+      next();
     }
-    next();
   } catch (err) {
     console.log(err);
     return res.status(500).json({ error: err.message });
@@ -46,9 +57,12 @@ const urlBannedCheck = async (req, res, next) => {
 
 const isOwnerOfUrl = async (req, res, next) => {
   try {
-    if(req.userId == req.url.userID){
+    // console.log(req.userId.toString(), req.url.userID.toString())
+    if(req.userId.toString() == req.url.userID.toString()){
+      console.log("Ns")
       next();
     }else{
+      console.log("Yes")
       return res.status(401).json({
         error: "You are unauthorized to do this action!",
       });
