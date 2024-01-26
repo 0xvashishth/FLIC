@@ -9,10 +9,10 @@ export async function POST(req: any, res: any){
 
     const qrCode = new QRCodeCanvas(qrCodeOptions);
 
-    const file = await qrCode.toDataUrl("png");
+    // const file = await qrCode.toDataUrl("png");
 
     return NextResponse.json({
-      pnfFile: file,
+      pnfFile: qrCode,
     });
   } catch (error) {
     return NextResponse.json(

@@ -131,8 +131,8 @@ export default function Page() {
       .then((response) => {
         const data = response.data;
         if (data) {
-          setImageSrc(data.pnfFile);
-          // console.log(data)
+          // setImageSrc(data.pnfFile);
+          console.log(data)
           setImgLoading("");
           // Handle other data if needed
         }
