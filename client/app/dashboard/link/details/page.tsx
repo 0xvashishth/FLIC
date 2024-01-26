@@ -155,10 +155,9 @@ export default function Page() {
     <div className="rounded-lg my-3 ">
       <div className="my-3 flex">
         <h2 className="align-middle ml-3 mr-3 mt-3">Your Shortened URL</h2>
-        <input
-          className="input font-mono input-bordered w-1/2"
-          defaultValue={`${Root_Url}` + `l/` + `${linkData.shortenedSuffix}`}
-        />
+        <p
+          className="font-mono input input-bordered w-1/2 py-3 bordered"
+        >{`${Root_Url}` + `l/` + `${linkData.shortenedSuffix}`}</p>
       </div>
       <div className="my-3 flex">
         <section className="container p-3">
