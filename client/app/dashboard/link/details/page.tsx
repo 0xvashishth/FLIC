@@ -4,7 +4,7 @@ import { useSearchParams } from "next/navigation";
 import { getLinkData } from "../linkRequestUtils";
 import { useEffect, useState } from "react";
 import axios from "axios";
-// export { File } from "buffer";
+import toast from "react-hot-toast";
 
 export default function Page() {
   const searchParams = useSearchParams();
@@ -13,10 +13,15 @@ export default function Page() {
   });
   const searchLinkId = searchParams.get("id");
   const [imageSrc, setImageSrc] = useState<string | null>(null);
-  const [imgLoading, setImgLoading] = useState("");
-  var Root_Url = process.env.NEXT_PUBLIC_ROOT_URL;
-  var form_Url = `${Root_Url}` + `l/` + `${searchLinkId}}`;
-  // const pathname = usePathname();
+  var Root_Url = process.env.NEXT_PUBLIC_ROOT_URL_LIVE;
+  // var form_Url = `${Root_Url}` + `l/` + `${searchLinkId}}`;
+  
+  useEffect(() => {
+    async function getFormResponse() {
+      setLinkData(await getLinkData(searchLinkId));
+    }
+    getFormResponse();
+  }, []);
 
   var [qrCodeOptions, setQrCodeOptions] = useState({
     width: 300,
@@ -110,7 +115,7 @@ export default function Page() {
   };
 
   const handleGenerateQRCode = (e: any) => {
-    setImgLoading("Generating QR.. 🚀");
+    const toastId = toast.loading("Generating QR.. 🚀");
 
     // Check if an image file is uploaded
     // const imageInput = document.getElementById("image") as HTMLInputElement;
@@ -131,23 +136,21 @@ export default function Page() {
       .then((response) => {
         const data = response.data;
         if (data) {
-          // setImageSrc(data.pnfFile);
           console.log(data)
-          setImgLoading("");
-          // Handle other data if needed
+          setImageSrc(data.pnfFile);
+          toast.success("QR Code Generated! Please Download It", {
+            id: toastId,
+          });
         }
       })
       .catch((error) => {
         console.error("Error fetching image:", error);
-        setImgLoading("Something went wrong 😥");
+        toast.success("Something went wrong 😥", {
+          id: toastId,
+        });
       });
   };
-  useEffect(() => {
-    async function getFormResponse() {
-      setLinkData(await getLinkData(searchLinkId));
-    }
-    getFormResponse();
-  }, []);
+
   return (
     <div className="rounded-lg my-3 ">
       <div className="my-3 flex">
@@ -345,8 +348,6 @@ export default function Page() {
               {imageSrc && (
                 <img src={imageSrc} alt="SVG Image" className="rounded-xl" />
               )}
-
-              {imgLoading}
             </div>
           </div>
         </section>

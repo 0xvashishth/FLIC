@@ -52,7 +52,32 @@ app.get("/l/:id", async (req, res) => {
     // var requestUrl = process.env["SERVER_ROOT_URL"] + "/l/" + SuffixId;
     let urlDocument = await Url.findOne({ shortenedSuffix: SuffixId });
     console.log(urlDocument);
-    if (urlDocument) {
+    if(!urlDocument.isActive || urlDocument.isBanned){
+      res.send(`
+      <html>
+          <head>
+            <title>FLIC | No Such URL Exists</title>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <style>
+              body {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                height: 90vh;
+                margin: 0;
+              }
+            </style>
+          </head>
+          <body>
+            <img src="https://github.com/vasu-1/FLIC/assets/76911582/ad679078-7ba8-4cd9-8f1f-065ba17b538c" alt="Logo" width="auto" height="300rem">
+            <h2>No Such URL Exists</h2>
+          </body>
+        </html>
+      `);
+    }
+    else if (urlDocument) {
       var link = urlDocument.originalURL;
       // We will not wait this to be updated
       await Url.updateOne(

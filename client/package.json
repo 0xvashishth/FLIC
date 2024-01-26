@@ -21,7 +21,6 @@
     "eslint-config-next": "14.0.4",
     "next": "14.0.4",
     "next-mdx-remote": "^4.4.1",
-    "node-html-to-image": "^4.0.0",
     "postcss": "8.4.32",
     "react": "18.2.0",
     "react-codemirror2": "^7.3.0",
