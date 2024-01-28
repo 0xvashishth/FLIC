@@ -254,7 +254,6 @@ app.post("/f/:id", async (req, res) => {
           });
       }
 
-      // Save the form request details to the database
       await formDetails.save();
       console.log("This is after saving form request")
 
