@@ -61,7 +61,8 @@ const createUrl = async (req, res) => {
       //   title,
       // };
 
-      var emailBody = `Thank you for using our service. Here are the details for the link you created:
+      var emailBody = `Hey ${user.firstName},
+      Thank you for using our service. Here are the details for the link you created:
   
       Link Name: ${title}
       Original Link: ${originalURL}
