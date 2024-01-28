@@ -51,7 +51,7 @@ export async function GET(req: any, res: any) {
     });
   } catch (error) {
     console.error(error);
-    return res.json({
+    return NextResponse.json({
       error: "Failed to generate QR code",
     });
   }
