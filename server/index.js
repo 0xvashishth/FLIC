@@ -15,6 +15,7 @@ const mongoose = require("mongoose");
 const { generateResponseEmailBody } = require("./utils/emailForFormResponse");
 const { addDataToLogs } = require("./controllers/log-controller");
 const existingUser = require("./middlewares/existingUserValidation");
+var QRCode = require("qrcode");
 
 //body-parse
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
@@ -53,7 +54,7 @@ app.get("/l/:id", async (req, res) => {
     // var requestUrl = process.env["SERVER_ROOT_URL"] + "/l/" + SuffixId;
     let urlDocument = await Url.findOne({ shortenedSuffix: SuffixId });
     console.log(urlDocument);
-    if(!urlDocument.isActive || urlDocument.isBanned){
+    if (!urlDocument.isActive || urlDocument.isBanned) {
       res.send(`
       <html>
           <head>
@@ -77,8 +78,7 @@ app.get("/l/:id", async (req, res) => {
           </body>
         </html>
       `);
-    }
-    else if (urlDocument) {
+    } else if (urlDocument) {
       var link = urlDocument.originalURL;
       // We will not wait this to be updated
       await Url.updateOne(
@@ -176,7 +176,7 @@ app.post("/f/:id", async (req, res) => {
 
     if (!existingForm.isEnabled) {
       await session.abortTransaction(); // Abort the transactionCommit the transaction
-    session.endSession();
+      session.endSession();
       res.send(`
       <html>
           <head>
@@ -218,7 +218,7 @@ app.post("/f/:id", async (req, res) => {
           </body>
         </html>
       `);
-    }else{
+    } else {
       const user = await User.findById(existingForm.userID);
       const userEmail = user.email;
       // Extract dynamic data from the request body
@@ -230,7 +230,7 @@ app.post("/f/:id", async (req, res) => {
         requestOrigin: req.headers.origin,
         // You can set other parameters here based on your requirements
       });
-  
+
       // not sending the email RN
       if (existingForm.isEmailNotification) {
         await sendEmail(
@@ -245,14 +245,14 @@ app.post("/f/:id", async (req, res) => {
             throw error;
           });
       }
-  
+
       // Save the form request details to the database
       await formDetails.save();
-  
+
       // Update the request count in the main form document
       existingForm.requestCount += 1;
       await existingForm.save();
-  
+
       // Respond with a success message
       await session.commitTransaction(); // Commit the transaction
       session.endSession();
@@ -298,7 +298,6 @@ app.post("/f/:id", async (req, res) => {
           </html>
         `);
     }
-    
   } catch (error) {
     await session.abortTransaction(); // Abort the transactionCommit the transaction
     session.endSession();
@@ -325,6 +324,58 @@ const middleware = (req, res, next) => {
 
 app.get("/", middleware, (req, res) => {
   res.send("Hello Flic!");
+});
+
+function getQrCode(data, lightParam, darkParam) {
+  return new Promise((resolve, reject) => {
+    QRCode.toDataURL(
+      data,
+      { color: { dark: darkParam, light: lightParam } },
+      (err, url) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(url);
+        }
+      }
+    );
+  });
+}
+
+app.get("/getqr", async (req, res) => {
+  try {
+    // Create a URL object to easily access search parameters
+    // const urlObject = new URL(req.url);
+
+    // Extract 'color' and 'data' parameters from the search parameters
+    const lightParam = req.query["light"];
+    const dataParam = req.query["data"];
+    const darkParam = req.query["dark"];
+
+    // console.log(lightParam, dar)
+    // const widthParam = Number(urlObject.searchParams.get('width'));
+    // const marginParam = Number(urlObject.searchParams.get('mergin'));
+
+    // Generate QR code URL
+    const url = await getQrCode(dataParam, lightParam, darkParam);
+
+    // Simulate delay if needed
+    // await new Promise(resolve => setTimeout(resolve, 1000));
+
+    // console.log(url);
+
+    // return res.json({
+    //   pngFile: url,
+    // });
+    return res.json({
+      pngFile: url,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.json({
+      error: "Failed to generate QR code",
+    });
+  }
 });
 
 const port = process.env.PORT || 8082;
