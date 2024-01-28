@@ -243,7 +243,7 @@ app.post("/f/:id", async (req, res) => {
         await sendEmail(
           "You got Response From FLIC Form",
           [userEmail],
-          generateResponseEmailBody(user, dynamicData)
+          "check your response"
         )
           .then(async () => {
             console.log("This is after sent email");
