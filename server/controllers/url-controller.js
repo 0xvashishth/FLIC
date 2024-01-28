@@ -61,10 +61,7 @@ const createUrl = async (req, res) => {
       //   title,
       // };
 
-      var emailBody = `
-      Hello ${user.firstName},
-  
-      Thank you for using our service. Here are the details for the link you created:
+      var emailBody = `Thank you for using our service. Here are the details for the link you created:
   
       Link Name: ${title}
       Original Link: ${originalURL}
@@ -73,7 +70,8 @@ const createUrl = async (req, res) => {
       Best regards,
       FLIC
       `;
-      await sendEmail("Link Created on FLIC", [user.email], emailBody)
+
+      await sendEmail("Link Created", [user.email], emailBody)
         .then(async () => {
           await addDataToLogs("URL Created", savePromise._id);
           // await increaseDecreaseCount(user, false, "increase", session).catch((err) => {
