@@ -15,6 +15,8 @@ const mongoose = require("mongoose");
 const { generateResponseEmailBody } = require("./utils/emailForFormResponse");
 const { addDataToLogs } = require("./controllers/log-controller");
 const existingUser = require("./middlewares/existingUserValidation");
+const { QRCodeCanvas, Options } = require("@loskir/styled-qr-code-node");
+
 //body-parse
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
@@ -315,6 +317,55 @@ connectDB();
 
 // routers
 app.use("/api/v1", commonR);
+
+app.get("/getQR", async (req, res)=>{
+  // var url = req.url;
+  // console.log(url)
+  // // Create a URL object to easily access search parameters
+  // const urlObject = new URL(url);
+
+  // // Extract 'color' and 'data' parameters from the search parameters
+  // const dataParam = urlObject.searchParams.get('data')!;
+  console.log(req.query.id)
+  try {
+    var options = {
+      width: 400,
+      height: 400,
+      data: req.query.id,
+      // NOTE: png and jpg formats only.
+      image:
+        "https://raw.githubusercontent.com/0xvashishth/FLIC/main/client/app/assets/logos/flic-transperent.png",
+      dotsOptions: { type: "extra-rounded", color: "#242424" },
+      backgroundOptions: {
+        color: "#fff",
+      },
+      cornersSquareOptions: { type: "extra-rounded", color: "#281728" },
+      cornersDotOptions: {
+        color: "#928192",
+      },
+      imageOptions: {
+        crossOrigin: "anonymous",
+        hideBackgroundDots: true,
+        imageSize: 0.3,
+      },
+    };
+    
+    const qrCode = new QRCodeCanvas(options);
+
+    const file = await qrCode.toDataUrl("png");
+
+    return res.json({
+      pngFile: file,
+    });
+  } catch (error) {
+    return res.json(
+      { error: "Failed to generate QR code" },
+      { status: 500 }
+    );
+  }
+}
+);
+// export async function POST(req, res)
 
 // Middleware
 const middleware = (req, res, next) => {
