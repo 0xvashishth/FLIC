@@ -326,12 +326,12 @@ app.get("/getQR", async (req, res)=>{
 
   // // Extract 'color' and 'data' parameters from the search parameters
   // const dataParam = urlObject.searchParams.get('data')!;
-  console.log(req.query.id)
+  // console.log(req.query.id)
   try {
     var options = {
       width: 400,
       height: 400,
-      data: req.query.id,
+      data: "hello",
       // NOTE: png and jpg formats only.
       image:
         "https://raw.githubusercontent.com/0xvashishth/FLIC/main/client/app/assets/logos/flic-transperent.png",
