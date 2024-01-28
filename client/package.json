@@ -9,19 +9,18 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@loskir/styled-qr-code-node": "^1.5.1",
     "@monaco-editor/react": "^4.6.0",
     "@types/node": "20.10.5",
     "@types/react": "18.2.45",
     "@types/react-dom": "18.2.18",
     "autoprefixer": "10.4.16",
     "axios": "^1.6.3",
-    "cloudinary": "^1.41.3",
     "eslint": "8.56.0",
     "eslint-config-next": "14.0.4",
     "next": "14.0.4",
     "next-mdx-remote": "^4.4.1",
     "postcss": "8.4.32",
+    "qrcode": "^1.5.3",
     "react": "18.2.0",
     "react-codemirror2": "^7.3.0",
     "react-dom": "18.2.0",
@@ -31,9 +30,7 @@
     "typescript": "5.3.3"
   },
   "devDependencies": {
-    "@types/jsdom": "^21.1.6",
-    "@types/streamifier": "^0.1.2",
-    "daisyui": "^4.4.22",
-    "handlebars-loader": "^1.7.3"
+    "@types/qrcode": "^1.5.5",
+    "daisyui": "^4.4.22"
   }
 }

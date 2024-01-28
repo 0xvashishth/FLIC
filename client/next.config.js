@@ -1,14 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    eslint: {
-        ignoreDuringBuilds: true,
-    },webpack: (config, { isServer }) => {
-        if (isServer) {
-          config.externals.push("skia-canvas");
-        }
-    
-        return config;
-      },
+  eslint: {
+      ignoreDuringBuilds: true,
+  },
 }
 
 module.exports = nextConfig
