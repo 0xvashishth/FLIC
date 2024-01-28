@@ -14,9 +14,13 @@ const createTableRows = (data) => {
 
 function generateResponseEmailBody(user, dynamicData) {
   return `
-    <html>
+    <!DOCTYPE html>
+    <html lang="en">
     <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <style>
+        /* Inline CSS for styling */
         body {
           font-family: Arial, sans-serif;
           background-color: #f4f4f4;

@@ -165,20 +165,17 @@ app.post("/f/:id", async (req, res) => {
   const session = await mongoose.startSession();
   // starting the mongoose transaction
   session.startTransaction();
-  console.log("This comes the response: ", formId);
+  console.log("This comes the response: ", formId)
   try {
     // Validate if the form with the given ID exists
     const existingForm = await Form.findById(formId);
-    console.log("Inside Try..")
     if (!existingForm) {
-      console.log("Form Not Found");
       await session.abortTransaction(); // Abort the transactionCommit the transaction
       session.endSession();
       return res.status(404).json({ error: "Form not found" });
     }
 
     if (!existingForm.isEnabled) {
-      console.log("Not enabled");
       await session.abortTransaction(); // Abort the transactionCommit the transaction
       session.endSession();
       res.send(`
@@ -223,9 +220,7 @@ app.post("/f/:id", async (req, res) => {
         </html>
       `);
     } else {
-      console.log("Enable is the form")
       const user = await User.findById(existingForm.userID);
-      console.log("user found");
       const userEmail = user.email;
       // Extract dynamic data from the request body
       const dynamicData = req.body;
@@ -236,17 +231,16 @@ app.post("/f/:id", async (req, res) => {
         requestOrigin: req.headers.origin,
         // You can set other parameters here based on your requirements
       });
-      console.log("This is after creating the form details");
+
       // not sending the email RN
       if (existingForm.isEmailNotification) {
-        console.log("This is inside sending email");
+        console.log("email sending..!")
         await sendEmail(
           "You got Response From FLIC Form",
           [userEmail],
-          "check your response"
+          generateResponseEmailBody(user, dynamicData)
         )
           .then(async () => {
-            console.log("This is after sent email");
             await addDataToLogs("Form Response", formDetails._id);
           })
           .catch((error) => {
@@ -254,19 +248,16 @@ app.post("/f/:id", async (req, res) => {
           });
       }
 
+      // Save the form request details to the database
       await formDetails.save();
-      console.log("This is after saving form request")
 
       // Update the request count in the main form document
       existingForm.requestCount += 1;
       await existingForm.save();
 
-      console.log("this is after form saving")
-
       // Respond with a success message
       await session.commitTransaction(); // Commit the transaction
       session.endSession();
-      console.log("this is after commiting transaction");
       res.send(`
         <html>
             <head>
@@ -310,7 +301,6 @@ app.post("/f/:id", async (req, res) => {
         `);
     }
   } catch (error) {
-    console.log("this is error ", error)
     await session.abortTransaction(); // Abort the transactionCommit the transaction
     session.endSession();
     console.error(error);
