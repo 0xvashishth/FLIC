@@ -15,7 +15,7 @@ export default function Page() {
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   var Root_Url = process.env.NEXT_PUBLIC_ROOT_URL_LIVE;
   // var form_Url = `${Root_Url}` + `l/` + `${searchLinkId}}`;
-  
+
   useEffect(() => {
     async function getFormResponse() {
       setLinkData(await getLinkData(searchLinkId));
@@ -89,8 +89,8 @@ export default function Page() {
 
   var [newQrCodeOptions, setnewQrCodeOptions] = useState({
     light: "#ffffffff",
-    dark: "#000000ff"
-  })
+    dark: "#000000ff",
+  });
   const handleInputChange = (event: any) => {
     var { id, value, type, checked, files } = event.target;
     // const inputValue =
@@ -118,13 +118,11 @@ export default function Page() {
     //   }));
     // }
 
-    
-      
     setnewQrCodeOptions((prevOptions) => ({
-        ...prevOptions,
-        [id]: value,
-      }));
-    }
+      ...prevOptions,
+      [id]: value,
+    }));
+  };
 
   const handleGenerateQRCode = (e: any) => {
     const toastId = toast.loading("Generating QR.. 🚀");
@@ -143,11 +141,15 @@ export default function Page() {
     // }
 
     // console.log(updatedQrCodeOptions);
-    const light = newQrCodeOptions.light.replace(/^#/, '');
-    const dark = newQrCodeOptions.dark.replace(/^#/, '');
+    const light = newQrCodeOptions.light.replace(/^#/, "");
+    const dark = newQrCodeOptions.dark.replace(/^#/, "");
 
     axios
-      .get(`/api/generate?data=${Root_Url}` + `l/` + `${linkData.shortenedSuffix}&light=${light}&dark=${dark}`)
+      .get(
+        `${process.env.NEXT_PUBLIC_ROOT_URL}getqr?data=${Root_Url}` +
+          `l/` +
+          `${linkData.shortenedSuffix}&light=${light}&dark=${dark}`
+      )
       .then((response) => {
         const data = response.data;
         if (data) {
@@ -170,47 +172,47 @@ export default function Page() {
     <div className="rounded-lg my-3 ">
       <div className="my-3 flex">
         <h2 className="align-middle ml-3 mr-3 mt-3">Your Shortened URL</h2>
-        <p
-          className="font-mono input input-bordered w-1/2 py-3 bordered"
-        >{`${Root_Url}` + `l/` + `${linkData.shortenedSuffix}`}</p>
+        <p className="font-mono input input-bordered w-1/2 py-3 bordered">
+          {`${Root_Url}` + `l/` + `${linkData.shortenedSuffix}`}
+        </p>
       </div>
       <div className="my-3 flex">
         <section className="container p-3">
           <div className="row row--body">
             <h1 className="text-2xl mb-4">QR Style Options</h1>
             <div className="flex m-2">
-                  <label
-                    htmlFor="dark"
-                    className="dotsOptionsHelper.colorType.single m-2"
-                  >
-                    Dots Color
-                  </label>
-                  <div className="dotsOptionsHelper.colorType.single">
-                    <input
-                      id="dark"
-                      onChange={handleInputChange}
-                      type="color"
-                      value={newQrCodeOptions.dark}
-                    />
-                  </div>
-                </div>
+              <label
+                htmlFor="dark"
+                className="dotsOptionsHelper.colorType.single m-2"
+              >
+                Dots Color
+              </label>
+              <div className="dotsOptionsHelper.colorType.single">
+                <input
+                  id="dark"
+                  onChange={handleInputChange}
+                  type="color"
+                  value={newQrCodeOptions.dark}
+                />
+              </div>
+            </div>
 
-                <div className="flex m-2">
-                  <label
-                    htmlFor="light"
-                    className="dotsOptionsHelper.colorType.single m-2"
-                  >
-                    Background Color
-                  </label>
-                  <div className="dotsOptionsHelper.colorType.single">
-                    <input
-                      id="light"
-                      onChange={handleInputChange}
-                      type="color"
-                      value={newQrCodeOptions.light}
-                    />
-                  </div>
-                </div>
+            <div className="flex m-2">
+              <label
+                htmlFor="light"
+                className="dotsOptionsHelper.colorType.single m-2"
+              >
+                Background Color
+              </label>
+              <div className="dotsOptionsHelper.colorType.single">
+                <input
+                  id="light"
+                  onChange={handleInputChange}
+                  type="color"
+                  value={newQrCodeOptions.light}
+                />
+              </div>
+            </div>
             {/* <label htmlFor="form-data">Data</label>
             <input
               id="form-data"
