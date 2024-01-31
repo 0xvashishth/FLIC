@@ -6,9 +6,12 @@ export default function Home() {
   
   return (
     <main >
+      <div className="min-h-screen flex flex-col">
       <NavBar />
-      <HomePage />
-      <Footer />
+            <div className="flex-grow"><HomePage /></div>
+            <Footer />
+          </div>
+      
     </main>
   );
 }
