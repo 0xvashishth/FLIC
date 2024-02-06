@@ -33,6 +33,6 @@ const config: Config = {
       'opun-light': ['var(--font-opun-light)'],
     },
   },
-  plugins: [require("daisyui")],
+  plugins: [require("daisyui"), require('@tailwindcss/typography')],
 }
 export default config
