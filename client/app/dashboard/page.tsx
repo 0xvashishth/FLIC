@@ -4,8 +4,7 @@ export default function Page() {
     <div className="m-3">
       <div className="text-center">
         <div className="text-left">
-          <h1 className="text-3xl">Hello Vashishth,</h1>
-          <div className="text-center text-xl m-2">FLIC Stats</div>
+          <div className="text-center text-2xl m-2">FLIC Stats</div>
         </div>
         <ul className="glass m-3 menu menu-vertical md:menu-horizontal bg-base-200 rounded-box">
           <li className="">
