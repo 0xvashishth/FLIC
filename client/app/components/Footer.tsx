@@ -24,14 +24,14 @@ const Footer = () => {
       </aside>
       <nav>
         <header className="footer-title">Services</header>
-        <a href="/form" className="link link-hover">
-          Form 🚀
+        <a href="/services/form" className="link link-hover">
+          Form 📝
         </a>
-        <a href="/link" className="link link-hover">
-          Link 🚀
+        <a href="/services/link" className="link link-hover">
+          Link 🔗
         </a>
-        <a href="/chat" className="link link-hover">
-          Chat 🚀
+        <a href="/services/chat" className="link link-hover">
+          Chat ☁
         </a>
       </nav>
       <nav>
@@ -39,7 +39,6 @@ const Footer = () => {
         <a href="/about" className="link link-hover">
           About us
         </a>
-        <a className="link link-hover">Contact</a>
       </nav>
       <dialog
         id="my_modal_terms"
@@ -47,9 +46,6 @@ const Footer = () => {
       >
         <div className="modal-box">
           <h1 className="text-2xl font-bold mb-4">FLIC - Terms of Use</h1>
-          <div>
-            <p>Last Updated: 22/08/2023</p>
-          </div>
           <div>
             <h2 className="text-xl font-semibold mt-4">
               1. Account Creation and Security
@@ -158,9 +154,6 @@ const Footer = () => {
         <div className="modal-box">
           <h1 className="text-2xl font-bold mb-4">FLIC - Cookies Policy</h1>
           <div>
-            <p>Last Updated: 22/08/2023</p>
-          </div>
-          <div>
             <p>a. Flic uses cookies and similar tracking technologies...</p>
             <p>
               b. You can manage your cookie preferences through your browser
@@ -181,11 +174,6 @@ const Footer = () => {
       >
         <div className="modal-box">
           <h1 className="text-2xl font-bold mb-4">FLIC - Privacy Policy</h1>
-
-          <div>
-            <p>Last Updated: 22/08/2023</p>
-          </div>
-
           <div>
             <h2 className="text-xl font-semibold mt-4">
               1. Information We Collect
@@ -270,7 +258,7 @@ const Footer = () => {
             <p>
               If you have any questions or concerns regarding this Privacy
               Policy, please contact us at{" "}
-              <a href="mailto:privacy@flic.com">privacy@flic.com</a>.
+              <a href="mailto:support@flic.tech<">support@flic.tech</a>.
             </p>
           </div>
 

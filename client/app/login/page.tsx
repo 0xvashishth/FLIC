@@ -75,7 +75,7 @@ const Login = () => {
           <h1 className="text-5xl font-bold text-center">Login Now 🚀</h1>
           <p className="py-6 text-sys-yellow">
             You won't be able to login if your account is not verified. Reach
-            out to us at hello@flic.tech for any quries 💁🏻‍♂️
+            out to us at support@flic.tech for any quries 💁🏻‍♂️
           </p>
         </div>
         <div className="card shrink-0 w-full max-w-sm shadow-2xl bg-base-100">

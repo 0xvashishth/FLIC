@@ -76,7 +76,7 @@ const Signup = () => {
           <h1 className="text-5xl font-bold text-center">Signup Now 🚀</h1>
           <p className="py-6 text-sys-yellow">
             Once Signup has been done, checkout your mail to verify your
-            account. Reach out to us at hello@flic.tech for any quries 💁🏻‍♂️
+            account. Reach out to us at support@flic.tech for any quries 💁🏻‍♂️
           </p>
         </div>
         <div className="card shrink-0 w-full max-w-sm shadow-2xl bg-base-100">

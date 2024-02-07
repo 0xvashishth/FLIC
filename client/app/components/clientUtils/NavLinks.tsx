@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 export const MenuHorizontal = () => {
@@ -7,46 +8,46 @@ export const MenuHorizontal = () => {
   return (
     <ul className="menu menu-horizontal px-1">
       <li>
-        <a href="/" className={` ${pathname === "/" ? "active" : ""}`}>Home</a>
+        <Link href="/" className={` ${pathname === "/" ? "active" : ""}`}>Home</Link>
       </li>
       <li>
         <details>
           <summary>Services</summary>
           <ul className="p-2 z-50">
             <li>
-              <a
-                href="/form"
-                className={` ${pathname === "/form" ? "active" : ""}`}
+              <Link
+                href="/services/form"
+                className={` ${pathname === "/services/form" ? "active" : ""}`}
               >
                 Form
-              </a>
+              </Link>
             </li>
             <li>
-              <a
-                href="/link"
-                className={` ${pathname === "/link" ? "active" : ""}`}
+              <Link
+                href="/services/link"
+                className={` ${pathname === "/services/link" ? "active" : ""}`}
               >
                 Link
-              </a>
+              </Link>
             </li>
             <li>
-              <a
-                href="/chat"
-                className={` ${pathname === "/chat" ? "active" : ""}`}
+              <Link
+                href="/services/chat"
+                className={` ${pathname === "/services/chat" ? "active" : ""}`}
               >
-                Chat <span className="badge bg-sys-yellow">New</span>
-              </a>
+                Chat <span className="badge bg-sys-yellow">Soon</span>
+              </Link>
             </li>
           </ul>
         </details>
       </li>
       <li>
-        <a
+        <Link
           href="/about"
           className={` ${pathname === "/about" ? "active" : ""}`}
         >
           Abous us
-        </a>
+        </Link>
       </li>
     </ul>
   );
@@ -61,36 +62,36 @@ export const MenuVertical = () => {
       className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
     >
       <li>
-        <a className={` ${pathname === "/" ? "active" : ""}`} href="/">
+        <Link className={` ${pathname === "/" ? "active" : ""}`} href="/">
           Home 🏠
-        </a>
+        </Link>
       </li>
       <li>
-        <a>Services</a>
+        <a className={` ${pathname.includes("/services") ? "active" : ""}`}>Services</a>
         <ul className="p-2">
           <li>
-            <a
-              className={` ${pathname === "/form" ? "active" : ""}`}
-              href="/form"
+            <Link
+              className={` ${pathname === "/services/form" ? "active" : ""}`}
+              href="/services/form"
             >
               Form
-            </a>
+            </Link>
           </li>
           <li>
-            <a
-              className={` ${pathname === "/link" ? "active" : ""}`}
-              href="/link"
+            <Link
+              className={` ${pathname === "/services/link" ? "active" : ""}`}
+              href="/services/link"
             >
               Link
-            </a>
+            </Link>
           </li>
           <li>
-            <a
-              className={` ${pathname === "/chat" ? "active" : ""}`}
-              href="/chat"
+            <Link
+              className={` ${pathname === "/services/chat" ? "active" : ""}`}
+              href="/services/chat"
             >
-              Chat <span className="badge badge-primary">New</span>
-            </a>
+              Chat <span className="badge badge-primary">Soon</span>
+            </Link>
           </li>
         </ul>
       </li>
