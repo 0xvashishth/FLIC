@@ -23,6 +23,10 @@ export default function Page() {
       _id: 0,
       originalURL: ""
     }],
+    announcement: [{
+      title: "",
+      description: ""
+    }]
   })
 
   const [flag, removeFlag] = useState(true);
@@ -45,7 +49,7 @@ export default function Page() {
       })
     }
     getData()
-  })
+  }, [])
 
 
   return (
@@ -99,23 +103,24 @@ export default function Page() {
         <div className="menu mx-auto">
           <ul className="menu bg-base-200 rounded-box">
             <li className="menu-title">Announcements From Flic 📢</li>
-            <li>
-              <a><span className="badge badge-accent">Admin</span>
-                Lorem ipsum
-                dolor sit amet consectetur adipisicing elit. Ipsa totam quo
-                reprehenderit cumque quis molestiae, voluptatum vero nisi omnis
-                nostrum debitis minus voluptas molestias quibusdam! Veniam
-                nostrum dicta laudantium libero.{" "}
+            {
+              dashboardData.announcement.map((data, key) => (
+                <li>
+              <a><span className="badge badge-accent">{flag ? "loading.." : data.title}</span>
+              {flag ? "loading.." : data.description}
               </a>
             </li>
-            <li>
+              ))
+            }
+            
+            {/* <li>
               <a><span className="badge badge-accent">Admin</span>
                 Lorem ipsum
                 dolor sit amet consectetur adipisicing elit. Tempore doloribus
                 laudantium excepturi totam dignissimos nostrum a tempora
                 expedita error.
               </a>
-            </li>
+            </li> */}
             {/* <li>
               <a>
                 <span className="badge badge-info">Chat</span>Item 3

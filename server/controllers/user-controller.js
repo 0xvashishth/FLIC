@@ -7,6 +7,7 @@ const Chat = require("../models/chat");
 const Form = require("../models/form");
 const Url = require("../models/url");
 const FormDetails = require("../models/formRequestDetails");
+const Announcement = require("../models/annuoncement");
 // const { sendEmail } = require("../utils/sendEmail")
 const { sendEmailWithTemplate } = require("../utils/sendgridEmail");
 const {
@@ -596,12 +597,14 @@ const getUserDashboardDetails = async (req, res) => {
     var totalUserChatsCount = await Chat.find({userID: req.userId}).sort({creationDate: -1});
     var totalUserLinkCount = await Url.find({userID: req.userId}).sort({creationDate: -1});
 
+    var announcement = await Announcement.find({}).sort({creationDate: -1}).limit(3);
 
     return res.status(201).json({
       message: "Data Retrived Successfully!",
       latestForm: totalUserFormsCount,
       latestChat: totalUserChatsCount,
-      latestLink: totalUserLinkCount    
+      latestLink: totalUserLinkCount,
+      announcement
     });
 
   } catch (error) {
@@ -709,10 +712,34 @@ const deleteUserByAdmin = async (req, res) => {
   } catch (error) {
     await session.abortTransaction(); // Rollback the transaction
     session.endSession();
-    console.error(err);
+    console.error(error);
     return res.status(500).json({ error: "Something Went Wrong" });
   }
 };
+
+const addAnnouncementByAdmin = async (req, res) => {
+  const session = await mongoose.startSession();
+  // starting the mongoose transaction
+  session.startTransaction();
+
+  try {
+    const newAnnouncement = new Announcement({
+      title: req.body.title,
+      description: req.body.description
+    });
+
+    await newAnnouncement.save({ session });
+    await session.commitTransaction();
+    return res.status(201).json({
+      message: "Announcement Created Successfully!",
+    });
+  } catch (error) {
+    await session.abortTransaction(); // Rollback the transaction
+    session.endSession();
+    console.error(error);
+    return res.status(500).json({ error: "Something Went Wrong" });
+  }
+}
 
 module.exports = {
   signup,
@@ -727,5 +754,6 @@ module.exports = {
   getAllUserByAdmin,
   getUserById,
   deleteUserByAdmin,
-  getUserDashboardDetails
+  getUserDashboardDetails,
+  addAnnouncementByAdmin
 };
