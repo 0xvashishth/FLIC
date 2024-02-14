@@ -11,9 +11,18 @@ import axios from "axios";
 export default function Page() {
 
   const [dashboardData, setDashboardData] = useState({
-    latestForm: "loading..",
-    latestChat: "loading..",
-    latestLink: "loading..",
+    latestForm: [{
+      _id: 0,
+      formTitle: ""
+    }],
+    latestChat: [{
+      _id: 0,
+      department: ""
+    }],
+    latestLink: [{
+      _id: 0,
+      originalURL: ""
+    }],
   })
 
   const [flag, removeFlag] = useState(true);
