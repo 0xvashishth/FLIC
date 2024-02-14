@@ -237,7 +237,7 @@ export default function DashboardLayout({
                 </ul>
               </details>
             </li>
-            <li>
+            {/* <li>
               <details open>
                 <summary>Documentation</summary>
                 <ul>
@@ -252,7 +252,7 @@ export default function DashboardLayout({
                   </li>
                 </ul>
               </details>
-            </li>
+            </li> */}
             <li>
               <a href="/logout">Logout</a>
             </li>

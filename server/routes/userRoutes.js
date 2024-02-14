@@ -35,6 +35,8 @@ router.delete("/", auth, verificationAndBannedCheck, userC.deleteProfile);
 // Curently logged in user
 router.get("/me", auth, verificationAndBannedCheck, userC.getMe);
 
+//details in user dashboard
+router.get("/mydashboard", auth, verificationAndBannedCheck, userC.getUserDashboardDetails);
 // Update user details
 // router.put("/user:id", userC.updateUser);
 

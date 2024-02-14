@@ -590,6 +590,26 @@ const getMe = async (req, res, nxt) => {
   }
 };
 
+const getUserDashboardDetails = async (req, res) => {
+  try {
+    var totalUserFormsCount = await Form.find({userID: req.userId}).sort({creationDate: -1});
+    var totalUserChatsCount = await Chat.find({userID: req.userId}).sort({creationDate: -1});
+    var totalUserLinkCount = await Url.find({userID: req.userId}).sort({creationDate: -1});
+
+
+    return res.status(201).json({
+      message: "Data Retrived Successfully!",
+      latestForm: totalUserFormsCount,
+      latestChat: totalUserChatsCount,
+      latestLink: totalUserLinkCount    
+    });
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Something Went Wrong" });
+  }
+}
+
 //--------------------- Admin Controllers-------------------
 
 const getAllUserByAdmin = async (req, res, nxt) => {
@@ -707,4 +727,5 @@ module.exports = {
   getAllUserByAdmin,
   getUserById,
   deleteUserByAdmin,
+  getUserDashboardDetails
 };
