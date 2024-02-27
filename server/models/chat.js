@@ -7,7 +7,7 @@ const chatSchema = new Schema({
     ref: "User",
     required: true,
   },
-  chatName: {
+  chatTitle: {
     type: String,
     required: true,
   },

@@ -35,7 +35,7 @@ const createChat = async (req, res) => {
       }
       await addDataToLogs("Chat Created", newChat._id);
       const savedChat = await newChat.save({ session });
-      res.status(201).json(savedChat);
+      res.status(201).json({savedChat, message: "Chat created successfully"});
     });
   } catch (error) {
     console.error(error);
