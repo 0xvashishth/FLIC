@@ -5,11 +5,13 @@ import { terser } from 'rollup-plugin-terser';
 import postcss from 'rollup-plugin-postcss';
 import commonjs from '@rollup/plugin-commonjs';
 import jQuery from 'jquery';
+import image from '@rollup/plugin-image';
+import url from 'rollup-plugin-url'
 
 export default [
   {
     input: './src/index.jsx',
-    external: ['jquery', 'react'], // Add 'react' to the list of externals
+    external: ['jquery'], // Add 'react' to the list of externals
     output: [
       {
         file: 'dist/index.js',
@@ -27,9 +29,13 @@ export default [
           jquery: '$',
           react: 'React', // Specify global variable name for 'react'
         }
-      },
+      }
     ],
     plugins: [
+      commonjs({
+        include: "/node_modules/",
+        requireReturnsDefault: 'auto',
+      }),
       postcss({
         plugins: [],
         minimize: true,
@@ -42,11 +48,12 @@ export default [
       resolve({
         preferBuiltins: false,
       }),
-      terser(),
-      commonjs({
-        include: "/node_modules/",
-        requireReturnsDefault: 'auto',
+      image(),
+      url({
+        include: ['**/*.ttf', '**/*.ttf'],
+        limit: Infinity,
       }),
+      terser()
     ],
-  }
+  },
 ];

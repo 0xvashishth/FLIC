@@ -9,8 +9,8 @@ const chatSessionSchema = new Schema({
   },
   chatSessionCreated: { type: Date, default: Date.now },
   chatSessionId: {
-    type: String,
-    // required: true,
+    type: Number,
+    required: true,
   },
   message: [
     {

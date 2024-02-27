@@ -1,6 +1,6 @@
 import "../ChatButton.css";
 import $ from "jquery";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 export const ChatButton = () => {
 
@@ -12,9 +12,9 @@ export const ChatButton = () => {
   }, []);
 
   return (
-      <div class="btn btn-raised" id="chat-circle">
+      <div className="btn btn-raised" id="chat-circle">
         <div id="chat-overlay"></div>
-        <i class="material-icons chat-icon">chat</i>
+        <i className="material-icons chat-icon">chat</i>
       </div>
   );
 };

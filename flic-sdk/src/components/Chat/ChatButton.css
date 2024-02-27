@@ -40,6 +40,7 @@ html, body {
   align-items: center;
   padding: 10px;
   cursor: pointer;
+  z-index: 1000;
   box-shadow: 0px 3px 16px 0px rgba(0, 0, 0, 0.6), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
 }
 
@@ -61,6 +62,7 @@ html, body {
     height: 100%;
     border-radius: 50%;
     display: none;
+    z-index: 999; 
 }
 
 
@@ -76,6 +78,7 @@ html, body {
   border-radius:5px;  
 /*   box-shadow: 0px 5px 35px 9px #464a92; */
   box-shadow: 0px 5px 35px 9px #ccc;
+  z-index: 1001;
 }
 .chat-box-toggle {
   float:right;
@@ -167,6 +170,30 @@ html, body {
   overflow-y:scroll;
 }
 
+.online-badge {
+  background-color: green;
+  position: relative;
+  top: -3px;
+  right: 0px;
+  color: black;
+  padding: 3px 6px;
+  text-align: center;
+  border-radius: 5px;
+}
+
+.offline-badge {
+  background-color: gray;
+  /* padding-bottom: 10px; */
+  position: relative;
+  top: -3px;
+  right: 0px;
+  color: black;
+  font-size: 10px;
+  padding: 3px 6px;
+  text-align: center;
+  border-radius: 5px;
+}
+
 @media only screen and (max-width: 500px) {
    .chat-logs {
         height:40vh;
@@ -180,7 +207,7 @@ html, body {
   float:left;
   width:15%;
 }
-.chat-msg.self > .msg-avatar img {
+.chat-msg.user > .msg-avatar img {
   width:45px;
   height:45px;
   border-radius:50%;
@@ -201,7 +228,7 @@ html, body {
 .chat-msg {
   clear:both;    
 }
-.chat-msg.self > .cm-msg-text {  
+.chat-msg.user > .cm-msg-text {  
   float:right;
   margin-right:10px;
   background: #5A5EB9;

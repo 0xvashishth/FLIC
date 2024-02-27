@@ -1,6 +1,6 @@
 {
   "name": "flic-sdk",
-  "version": "0.0.2",
+  "version": "0.0.7",
   "description": "A comprehensive sdk for FLIC",
   "main": "index.js",
   "type": "module",
@@ -17,6 +17,7 @@
   "devDependencies": {
     "@babel/preset-react": "^7.23.3",
     "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-image": "^3.0.3",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@storybook/addon-essentials": "^7.6.17",
     "@storybook/addon-interactions": "^7.6.17",
@@ -28,6 +29,7 @@
     "@storybook/test": "^7.6.17",
     "@types/jquery": "^3.5.29",
     "@types/rollup-plugin-peer-deps-external": "^2.2.4",
+    "@vitejs/plugin-react": "^4.2.1",
     "jquery": "^3.7.1",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
@@ -37,9 +39,11 @@
     "rollup-plugin-peer-deps-external": "^2.2.4",
     "rollup-plugin-postcss": "^4.0.2",
     "rollup-plugin-terser": "^7.0.2",
+    "rollup-plugin-url": "^3.0.1",
     "storybook": "^7.6.17"
   },
   "peerDependencies": {
+    "jquery": "^3.7.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   }

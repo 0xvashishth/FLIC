@@ -11,6 +11,6 @@ export default {
 // Define your stories using the 'args' pattern
 export const App = (args) => {
     return (
-        <Chat chatId={"08090897276"}/>
+        <Chat chatId={"65de0d24d704b70063bd6412"}/>
     );
 };

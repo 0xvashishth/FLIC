@@ -1,11 +1,13 @@
 import "../ChatButton.css";
-
-export const ChatHeader = () => {
+import React from "react";
+export const ChatHeader = ({chatTitle, agentStatus}) => {
   return (
-    <div class="chat-box-header">
-    FLIC Chat
-    <span class="chat-box-toggle">
-      <i class="material-icons close-icon">close</i>
+    <div className="chat-box-header">
+    {chatTitle}
+    {" "}
+    {agentStatus? <span className="online-badge">Online</span> : <span className="offline-badge">Offline</span>}
+    <span className="chat-box-toggle">
+      <i className="material-icons close-icon">close</i>
     </span>
   </div>
   );

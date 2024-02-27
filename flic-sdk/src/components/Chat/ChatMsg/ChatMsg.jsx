@@ -1,6 +1,7 @@
 import "../ChatButton.css";
 import selfImg from "../self.png";
 import adminImg from "../admin.png";
+import React from "react";
 
 export const ChatMsg = ({
   msgs
@@ -14,11 +15,11 @@ export const ChatMsg = ({
         typeImgLink = selfImg;
       }
       return (
-        <div class={`chat-msg ${e.type}`}>
-          <span class="msg-avatar">
+        <div className={`chat-msg ${e.type}`}>
+          <span className="msg-avatar">
             <img src={typeImgLink} />
           </span>
-          <div class="cm-msg-text">{e.msg}</div>
+          <div className="cm-msg-text">{e.msg}</div>
         </div>
       );
     })

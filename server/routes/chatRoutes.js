@@ -77,5 +77,18 @@ router.get(
 );
 
 
+// sdk routes
+
+router.get(
+  "/sdk/getMetadata/:id",
+  chatBannedCheck,
+  chatC.getChatDataFromSdk
+);
+
+router.post(
+  "/sdk/postDefaultAns/:id",
+  chatBannedCheck,
+  chatC.postDefaultAnsFromSdk
+)
 
 module.exports = router;
