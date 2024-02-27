@@ -3,7 +3,7 @@ const router = express.Router();
 
 // Import route handlers or controllers
 const userR = require('../routes/userRoutes');
-// const formR = require('../routes/formRoutes');
+const chatR = require('../routes/chatRoutes');
 const adminR = require('../routes/adminRoutes')
 const urlR = require('../routes/urlRoutes')
 const formR = require('../routes/formRoutes')
@@ -13,5 +13,6 @@ router.use("/user", userR);
 router.use("/form", formR);
 router.use("/admin", adminR);
 router.use("/url", urlR);
+router.use("/chat", chatR);
 
 module.exports = router;

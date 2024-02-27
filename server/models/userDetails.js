@@ -8,7 +8,6 @@ const userDetailsSchema = new Schema({
   theme: { type: String, default: "white" },
   emailNotifications: { type: Boolean, default: true },
   registrationDate: { type: Date, default: Date.now },
-  isOnline: { type: Boolean, default: false },
   Parameter1: String,
   Parameter2: String,
   Parameter3: Boolean,

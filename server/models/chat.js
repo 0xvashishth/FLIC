@@ -2,34 +2,35 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const chatSchema = new Schema({
-  agent: {
+  userID: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
   },
   chatName: {
     type: String,
-    require: true,
+    required: true,
   },
   chatCreated: { type: Date, default: Date.now },
-  department: { type: String },
-  priority: { type: String }, // 'high', 'medium', 'low'
+  department: { type: String, default: "default" },
+  priority: { type: String, default: "low" }, // 'high', 'medium', 'low'
   tags: [
     {
-      type: String, // The type of each element in the array is a string.
+      type: String,
     },
   ],
   sessionCount: {
     type: Number,
     default: 0,
   },
-  status: {
-    type: String, // e.g., 'active', 'closed', 'pending'
-    default: "active",
-  },
   notes: {
-    type: String, // The type of each element in the array is a string.
+    type: String,
   },
+  AllowedOrigins: [String],
+  isEnabled: { type: Boolean, default: true },
+  isEmailNotification: { type: Boolean, default: true },
+  isReported: { type: Number, default: 0 },
+  isBanned: { type: Boolean, default: false },
   Parameter1: String,
   Parameter2: String,
   Parameter3: Boolean,

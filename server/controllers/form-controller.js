@@ -121,7 +121,7 @@ const getForms = async (req, res) => {
     });
   } catch (error) {
     console.error(error.message);
-    return res.status(500).json({ error: "YEYEeyeyeye" });
+    return res.status(500).json({ error: "Error in retrieving Forms" });
   }
 };
 

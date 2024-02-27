@@ -22,6 +22,8 @@ const userSchema = new Schema({
   urlCount: { type: Number, default: 0 },
   qrCount: { type: Number, default: 0 },
   formCount: {type: Number, default: 0},
+  chatCount: {type: Number, default: 0},
+  isOnline: { type: Boolean, default: false },
   Parameter1: String,
   Parameter2: String,
   Parameter3: Boolean,
