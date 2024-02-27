@@ -173,7 +173,7 @@ html, body {
     }
 }
 
-.chat-msg.user > .msg-avatar img {
+.chat-msg.agent > .msg-avatar img {
   width:45px;
   height:45px;
   border-radius:50%;

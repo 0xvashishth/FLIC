@@ -8,7 +8,7 @@ export const ChatMsg = ({
   return (
     msgs.map((e, index) => {
       var typeImgLink;
-      if (e.type == "user") {
+      if (e.type == "agent") {
         typeImgLink = adminImg;
       } else {
         typeImgLink = selfImg;

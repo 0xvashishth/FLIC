@@ -45,6 +45,7 @@ var whitelist = [
 
 // app.use(cors(corsOptions));
 // To allow all traffic, use below
+
 app.use(cors({ origin: true, credentials: true }));
 
 // link redirection
@@ -164,7 +165,6 @@ app.get("/l/:id", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
-
 // form response
 app.post("/f/:id", async (req, res) => {
   const formId = req.params.id;
@@ -354,29 +354,10 @@ function getQrCode(data, lightParam, darkParam) {
 
 app.get("/getqr", async (req, res) => {
   try {
-    // Create a URL object to easily access search parameters
-    // const urlObject = new URL(req.url);
-
-    // Extract 'color' and 'data' parameters from the search parameters
     const lightParam = req.query["light"];
     const dataParam = req.query["data"];
     const darkParam = req.query["dark"];
-
-    // console.log(lightParam, dar)
-    // const widthParam = Number(urlObject.searchParams.get('width'));
-    // const marginParam = Number(urlObject.searchParams.get('mergin'));
-
-    // Generate QR code URL
     const url = await getQrCode(dataParam, lightParam, darkParam);
-
-    // Simulate delay if needed
-    // await new Promise(resolve => setTimeout(resolve, 1000));
-
-    // console.log(url);
-
-    // return res.json({
-    //   pngFile: url,
-    // });
     return res.json({
       pngFile: url,
     });

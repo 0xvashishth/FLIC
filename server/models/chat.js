@@ -1,15 +1,17 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const chatSchema = new Schema({
   agent: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
+    ref: "User",
+    required: true,
   },
-  startTimestamp: { type: Date, default: Date.now },
-  endTimestamp: { type: Date, default: Date.now },
-  duration: { type: Date },
+  chatName: {
+    type: String,
+    require: true,
+  },
+  chatCreated: { type: Date, default: Date.now },
   department: { type: String },
   priority: { type: String }, // 'high', 'medium', 'low'
   tags: [
@@ -17,49 +19,17 @@ const chatSchema = new Schema({
       type: String, // The type of each element in the array is a string.
     },
   ],
-  message: [
-    {
-      isAttachement: {
-        type: Boolean,
-        default: false,
-      },
-      text: {
-        type: String,
-        required: true, // You can make the URL required if needed
-      },
-      createdAt: {
-        type: Date,
-        default: Date.now, // Default to the current timestamp when not provided
-      },
-    },
-  ],
-  closedBy: {
-    type: String, // agent(reference user) or user
-  },
-  closedReason: {
-    type: String
-  },
-  queueNumber: {
-    type: Number // the number on which this chat is currently there
+  sessionCount: {
+    type: Number,
+    default: 0,
   },
   status: {
     type: String, // e.g., 'active', 'closed', 'pending'
-    default: 'active',
+    default: "active",
   },
-  ratingByAgent: {
-    type: Number,
+  notes: {
+    type: String, // The type of each element in the array is a string.
   },
-  ratingByUser: {
-    type: Number,
-  },
-  reviewByUser: {
-    type: String,
-  },
-  notes: [
-    {
-        type: String, // The type of each element in the array is a string.
-    },
-  ],
   Parameter1: String,
   Parameter2: String,
   Parameter3: Boolean,
@@ -67,6 +37,6 @@ const chatSchema = new Schema({
   Parameter5: Date,
 });
 
-const Chat = mongoose.model('Chat', chatSchema);
+const Chat = mongoose.model("Chat", chatSchema);
 
 module.exports = Chat;

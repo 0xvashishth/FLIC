@@ -8,11 +8,12 @@ const userDetailsSchema = new Schema({
   theme: { type: String, default: "white" },
   emailNotifications: { type: Boolean, default: true },
   registrationDate: { type: Date, default: Date.now },
+  isOnline: { type: Boolean, default: false },
   Parameter1: String,
   Parameter2: String,
   Parameter3: Boolean,
   Parameter4: Boolean,
   Parameter5: Date,
 });
-const UserDetails = mongoose.model('UserDetails', userDetailsSchema);
+const UserDetails = mongoose.model("UserDetails", userDetailsSchema);
 module.exports = UserDetails;

@@ -8,7 +8,7 @@ import { ChatMsg } from "./ChatMsg/ChatMsg.jsx";
 export const Chat = ({ chatId }) => {
   const [msgs, setMsgs] = useState([
     {
-      type: "user",
+      type: "agent",
       msg: "How can i help you ?",
       timestamp: new Date().getTime(),
     }
@@ -42,7 +42,7 @@ export const Chat = ({ chatId }) => {
       }
       generate_message(msg, "self");
       setTimeout(function () {
-        generate_message(msg, "user");
+        generate_message(msg, "agent");
       }, 1000);
     });
 
