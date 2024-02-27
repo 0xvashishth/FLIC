@@ -7,30 +7,31 @@ import { useSearchParams, usePathname } from "next/navigation";
 import {fetchData, deleteResponseData} from "./ResponseUtils"
 
 export default function Page() {
-  const [formData, setFormData] = useState([
-    {
-      requestDate: "",
-      _id: "",
-      dynamicData: {
-        email: ""
-      }
-    }
+  // const [formData, setFormData] = useState([
+  //   {
+  //     requestDate: "",
+  //     _id: "",
+  //     dynamicData: {
+  //       email: ""
+  //     }
+  //   }
 
-  ]);
-  const searchParams = useSearchParams();
-  const searchFormId = searchParams.get("id");
-  // const pathname = usePathname();
+  // ]);
+  // const searchParams = useSearchParams();
+  // const searchFormId = searchParams.get("id");
+  // // const pathname = usePathname();
 
-  useEffect(() => {
-    async function getFormResponse(){
-      setFormData(await fetchData(searchFormId));
-    }
-    getFormResponse();
-  }, []);
+  // useEffect(() => {
+  //   async function getFormResponse(){
+  //     setFormData(await fetchData(searchFormId));
+  //   }
+  //   getFormResponse();
+  // }, []);
 
   return (
-    <div className="overflow-x-auto my-5">
-      <table className="table table-md table-pin-rows table-pin-cols">
+    <div className="overflow-x-auto text-center">
+      Coming Soon 🚀
+      {/* <table className="table table-md table-pin-rows table-pin-cols">
         <thead className="border-2">
           <tr>
             <th>Index</th>
@@ -81,7 +82,7 @@ export default function Page() {
             </tr>
           ))}
         </tbody>
-      </table>
+      </table> */}
     </div>
   );
 }

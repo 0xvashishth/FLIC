@@ -3,6 +3,7 @@
 import SwitchLogo from "@/app/components/clientUtils/SwitchLogo";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
 
 export default function LinkDashboardLayout({
   children, // will be a page or nested layout
@@ -12,10 +13,16 @@ export default function LinkDashboardLayout({
   const searchParams = useSearchParams();
   const searchLinkId = searchParams.get("id");
   const pathname = usePathname();
+  const [linkTitle, setLinkTitle] = useState();
+
+  useEffect(()=>{
+    setLinkTitle(JSON.parse(localStorage.getItem("linkDataFromLocalStorage")!).find((item: any) => item._id === searchLinkId).title)
+  }, [])
+
   return (
     <div>
         <div className="pt-3">
-        <h1 className="text-sm rounded-xl p-2 will-change-auto text-center">my link</h1>
+        <h1 className="text-sm rounded-xl p-2 will-change-auto text-center">{linkTitle}</h1>
       </div>
       <div className="pt-3 mx-auto text-center">
         <ul className="menu menu-vertical sm:menu-horizontal bg-base-200 rounded-box">

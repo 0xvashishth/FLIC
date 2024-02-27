@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { getUserLinks } from "./linkRequestUtils";
+import { getUserLinks } from "./linkUtils";
 // `app/dashboard/page.tsx` is the UI htmlFor the `/dashboard` URL
 export default function Page() {
   // const { push } = useRouter();

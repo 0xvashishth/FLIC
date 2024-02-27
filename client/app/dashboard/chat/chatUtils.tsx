@@ -70,3 +70,29 @@ export async function getUserChats() {
     }
   }
 }
+
+export async function getChatData(chatId: any) {
+  const toastId = toast.loading("Getting Data From Server..");
+  try {
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `${
+        process.env.NEXT_PUBLIC_TOKEN_TYPE
+      } ${localStorage.getItem("userToken")}`,
+    };
+    const response = await axios.get(
+      `${process.env["NEXT_PUBLIC_SERVER_URL"]}/chat/${chatId}`,
+      { headers }
+    );
+    toast.success(response.data.message, {
+      id: toastId,
+    });
+    return response.data.chat; // Assuming the server returns the desired data in response.data
+  } catch (error: any) {
+    console.error("Error fetching chat data:", error.message);
+    toast.error(error.response.data.error, {
+      id: toastId,
+    });
+    throw error; // Rethrow the error to handle it in the calling context
+  }
+}

@@ -137,21 +137,21 @@ export default function Page() {
         <label className="label cursor-pointer">
           <span className="label-text">Form Title</span>
           <input type="text" value={form.formTitle} id="formTitle"
-                onChange={handleChange} className="input input-bordered" defaultChecked />
+                onChange={handleChange} className="input input-bordered" />
         </label>
       </div>
       <div className="form-control">
         <label className="label cursor-pointer">
           <span className="label-text">Form Custom Message</span>
           <input type="text" value={form.customMessage} id="customMessage"
-                onChange={handleChange} className="input input-bordered" defaultChecked />
+                onChange={handleChange} className="input input-bordered" />
         </label>
       </div>
       <div className="form-control">
         <label className="label cursor-pointer">
           <span className="label-text">Form Redirect URL</span>
           <input type="text" value={form.redirectUrl} id="redirectUrl"
-                onChange={handleChange} className="input input-bordered" defaultChecked />
+                onChange={handleChange} className="input input-bordered" />
         </label>
       </div>
       <div className="text-center">
@@ -172,7 +172,7 @@ export default function Page() {
       <div className="form-control">
         <label className="label cursor-pointer">
           <span className="label-text">reCAPTCHA</span>
-          <input type="checkbox" className="toggle" defaultChecked disabled />
+          <input type="checkbox" className="toggle" disabled />
         </label>
       </div>
       </form>

@@ -59,40 +59,43 @@ const getAllChats = async (req, res) => {
 };
 
 // Get a specific chat by ID
-const getChatById = async (req, res) => {
+const getChat = async (req, res) => {
   try {
-    const chat = await Chat.findById(req.params.id);
-    if (!chat) {
-      res.status(404).json({ error: 'Chat not found' });
-    } else {
-      res.status(200).json(chat);
-    }
+    return res.status(200).json({
+      message: "Chat Retrieved Successfully!",
+      chat: req.chat,
+    });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error(error.message);
+    return res.status(500).json({ error: error.message });
   }
 };
 
-// Update a specific chat by ID with validation and transaction
-const updateChatById = async (req, res) => {
+const updateChat = async (req, res) => {
   try {
+    const user = req.rootUser;
+    const { chat } = req.body;
+
     await withTransaction(async (session) => {
-      const updatedChat = await Chat.findByIdAndUpdate(req.params.id, req.body, {
-        new: true,
-        runValidators: true,
-        session,
-      });
+      const updatedChat = await Chat.findOneAndUpdate(
+        { _id: chat._id, userID: user._id },
+        chat,
+        { new: true, session}
+      );
 
       if (!updatedChat) {
-        throw { status: 404, message: 'Chat not found' };
+        throw { status: 404, message: 'Chat not found or user does not have permission' };
       }
-
+      
       const validationError = updatedChat.validateSync();
       if (validationError) {
         throw { status: 400, message: validationError.message };
       }
-
-      res.status(200).json(updatedChat);
+      await addDataToLogs("Chat Updated", updatedChat._id);
+      res.status(200).json({
+        message: "Chat Updated Successfully!",
+        chat: updatedChat,
+      });
     });
   } catch (error) {
     console.error(error);
@@ -101,13 +104,15 @@ const updateChatById = async (req, res) => {
 };
 
 // Delete a specific chat by ID
-const deleteChatById = async (req, res) => {
+const deleteChat = async (req, res) => {
   try {
+    const { chat } = req;    
     await withTransaction(async (session) => {
-      const deletedChat = await Chat.findByIdAndDelete(req.params.id);
+      const deletedChat = await Chat.findByIdAndDelete(chat._id);
       if (!deletedChat) {
-        throw { status: 404, message: 'Chat not found' };
+        throw { status: 404, message: 'Chat not found or you do not have required permissions' };
       }
+      await addDataToLogs("Chat Deleted", chat._id);
       res.status(204).json();
     });
   } catch (error) {
@@ -119,7 +124,7 @@ const deleteChatById = async (req, res) => {
 module.exports = {
   createChat,
   getAllChats,
-  getChatById,
-  updateChatById,
-  deleteChatById,
+  getChat,
+  updateChat,
+  deleteChat,
 };

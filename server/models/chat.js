@@ -28,6 +28,7 @@ const chatSchema = new Schema({
   },
   AllowedOrigins: [String],
   isEnabled: { type: Boolean, default: true },
+  defaultAskQuestion: { type: String, required: true },
   isEmailNotification: { type: Boolean, default: true },
   isReported: { type: Number, default: 0 },
   isBanned: { type: Boolean, default: false },

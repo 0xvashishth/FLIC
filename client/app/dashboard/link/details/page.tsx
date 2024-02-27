@@ -1,7 +1,7 @@
 "use client";
 // import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { getLinkData } from "../linkRequestUtils";
+import { getLinkData } from "../linkUtils";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";

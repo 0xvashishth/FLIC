@@ -1,30 +1,37 @@
 "use client"
 
-import SwitchLogo from "@/app/components/clientUtils/SwitchLogo";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
+import { getChatData } from "../chatUtils";
+import { useState, useEffect } from "react";
 
-export default function FormDashboardLayout({
-  children, // will be a page or nested layout
+export default function ChatDashboardLayout({
+  children,
 }: {
   children: React.ReactNode;
 }) {
   const searchParams = useSearchParams();
-  const searchFormId = searchParams.get("id");
+  const searchChatId = searchParams.get("id");
   const pathname = usePathname();
+  const [chatTitle, setChatTitle] = useState();
+
+  useEffect(()=>{
+    setChatTitle(JSON.parse(localStorage.getItem("chatDataFromLocalStorage")!).find((item: any) => item._id === searchChatId)?.chatTitle)
+  }, [])
+
   return (
     <div>
         <div className="pt-3">
-        <h1 className="text-sm rounded-xl p-2 will-change-auto text-center">my form</h1>
+        <h1 className="text-sm rounded-xl p-2 will-change-auto text-center">{chatTitle}</h1>
       </div>
       <div className="pt-3 mx-auto text-center">
         <ul className="menu menu-vertical sm:menu-horizontal bg-base-200 rounded-box">
           <li>
             <Link
               className={` ${
-                pathname == "/dashboard/form/details" ? "active" : ""
+                pathname == "/dashboard/chat/details" ? "active" : ""
               }`}
-              href={"/dashboard/form/details?id="+ searchFormId}
+              href={"/dashboard/chat/details?id="+ searchChatId}
             >
               Integration
             </Link>
@@ -32,11 +39,11 @@ export default function FormDashboardLayout({
           <li>
             <Link
               className={` ${
-                pathname.startsWith("/dashboard/form/details/responses")
+                pathname.startsWith("/dashboard/chat/details/responses")
                   ? "active"
                   : ""
               }`}
-              href={"/dashboard/form/details/responses?id=" + searchFormId}
+              href={"/dashboard/chat/details/responses?id=" + searchChatId}
             >
               Responses
             </Link>
@@ -44,11 +51,11 @@ export default function FormDashboardLayout({
           <li>
             <Link
               className={` ${
-                pathname.startsWith("/dashboard/form/details/settings")
+                pathname.startsWith("/dashboard/chat/details/settings")
                   ? "active"
                   : ""
               }`}
-              href={"/dashboard/form/details/settings?id=" + searchFormId}
+              href={"/dashboard/chat/details/settings?id=" + searchChatId}
             >
               Settings
             </Link>
@@ -56,11 +63,11 @@ export default function FormDashboardLayout({
           <li>
             <Link
               className={` ${
-                pathname.startsWith("/dashboard/form/details/plugins")
+                pathname.startsWith("/dashboard/chat/details/plugins")
                   ? "active"
                   : ""
               }`}
-              href={"/dashboard/form/details/plugins?id=" + searchFormId}
+              href={"/dashboard/chat/details/plugins?id=" + searchChatId}
             >
               Plugins
             </Link>

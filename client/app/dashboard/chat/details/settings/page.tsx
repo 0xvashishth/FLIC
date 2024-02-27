@@ -7,177 +7,264 @@ import { useSearchParams, usePathname } from "next/navigation";
 
 export default function Page() {
   const searchParams = useSearchParams();
-  const searchFormId = searchParams.get("id");
+  const searchChatId = searchParams.get("id");
   const { push } = useRouter();
-  const [form, setForm] = useState({
-    formTitle: "",
-    customMessage: "",
-    redirectUrl: "",
-    isEnabled: true,
+  const [chat, setChat] = useState({
+    chatTitle: "",
+    defaultAskQuestion: "",
+    priority: "low",
+    department: "",
     isEmailNotification: true,
-  }); 
+    isEnabled: true,
+    notes: "",
+  });
 
   const handleChange = (e: any) => {
     var { id, value } = e.target;
-    console.log(id, value)
-    if(id == "isEmailNotification" || id == "isEnabled"){
+    console.log(id, value);
+    if (id == "isEmailNotification" || id == "isEnabled") {
       value = e.target.checked;
     }
-    console.log(id, value)
-    setForm((prevForm) => ({
-      ...prevForm,
+    console.log(id, value);
+    setChat((prevChat) => ({
+      ...prevChat,
       [id]: value,
     }));
-    console.log(form)
+    console.log(chat);
   };
 
   useEffect(() => {
-    async function getFormData(){
-      const toastId = toast.loading("Getting form data..");
+    async function getChatData() {
+      const toastId = toast.loading("Getting chat data..");
       try {
         const headers = {
-          'Content-Type': 'application/json',
-          'Authorization': `${process.env.NEXT_PUBLIC_TOKEN_TYPE} ${localStorage.getItem("userToken")}`
-        }
+          "Content-Type": "application/json",
+          Authorization: `${
+            process.env.NEXT_PUBLIC_TOKEN_TYPE
+          } ${localStorage.getItem("userToken")}`,
+        };
         console.log("Sent ..", headers);
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/form/${searchFormId}`, {headers});
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/chat/${searchChatId}`,
+          { headers }
+        );
         toast.success(response.data.message, {
           id: toastId,
         });
-        setForm(response.data.form)
+        setChat(response.data.chat);
       } catch (error: any) {
-        console.error("Error in getting form data:", error);
+        console.error("Error in getting chat data:", error);
         toast.error(error.response.data.error, {
           id: toastId,
         });
       }
-
     }
-    getFormData();
+    getChatData();
   }, []);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
     // Check if there is a previous change profile attempt in the last 10 minutes
-    const previousChangeFormAttempt = localStorage.getItem("formChangeFormAttempt");
-    if (previousChangeFormAttempt) {
-      const currentTime = Date.now();
-      const timeDifference = currentTime - parseInt(previousChangeFormAttempt, 10);
+    // const previousChangeChatAttempt = localStorage.getItem(
+    //   "chatChangeChatAttempt"
+    // );
+    // if (previousChangeChatAttempt) {
+    //   const currentTime = Date.now();
+    //   const timeDifference =
+    //     currentTime - parseInt(previousChangeChatAttempt, 10);
 
-      // If less than 10 minutes have passed since the last attempt, show an error toast
-      if (timeDifference < 10 * 60 * 1000) {
-        toast.error(
-          "Please wait for 10 minutes before attempting to change form again."
-        );
-        return;
-      }
+    //   // If less than 10 minutes have passed since the last attempt, show an error toast
+    //   if (timeDifference < 10 * 60 * 1000) {
+    //     toast.error(
+    //       "Please wait for 10 minutes before attempting to change chat again."
+    //     );
+    //     return;
+    //   }
+    // }
+
+    const toastId = toast.loading("Updating chat data..");
+    try {
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `${
+          process.env.NEXT_PUBLIC_TOKEN_TYPE
+        } ${localStorage.getItem("userToken")}`,
+      };
+      console.log("Sent ..", headers);
+      const response = await axios.put(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/chat/${searchChatId}`,
+        { chat },
+        { headers }
+      );
+      toast.success(response.data.message, {
+        id: toastId,
+      });
+      localStorage.setItem("chatChangeChatAttempt", Date.now().toString());
+      setChat(response.data.chat);
+    } catch (error: any) {
+      console.error("Error in updating chat", error);
+      toast.error(error.response.data.error, {
+        id: toastId,
+      });
     }
+  };
 
-    const toastId = toast.loading("Updating form data..");
+  const handleDelete = async (e: any) => {
+    e.preventDefault();
+    if (
+      window.confirm("Do you want to delete this chat? Please Confirm!") == true
+    ) {
+      const toastId = toast.loading("Please wait..");
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `${
+          process.env.NEXT_PUBLIC_TOKEN_TYPE
+        } ${localStorage.getItem("userToken")}`,
+      };
       try {
         const headers = {
-          'Content-Type': 'application/json',
-          'Authorization': `${process.env.NEXT_PUBLIC_TOKEN_TYPE} ${localStorage.getItem("userToken")}`
-        }
-        console.log("Sent ..", headers);
-        const response = await axios.put(`${process.env.NEXT_PUBLIC_SERVER_URL}/form/${searchFormId}`, {form} , {headers});
-        toast.success(response.data.message, {
-          id: toastId,
-        });
-        localStorage.setItem("formChangeFormAttempt", Date.now().toString());
-        setForm(response.data.form)
+          "Content-Type": "application/json",
+          Authorization: `${
+            process.env.NEXT_PUBLIC_TOKEN_TYPE
+          } ${localStorage.getItem("userToken")}`,
+        };
+        await axios
+          .delete(
+            `${process.env.NEXT_PUBLIC_SERVER_URL}/chat/${searchChatId}`,
+            { headers }
+          )
+          .then(() => {
+            localStorage.setItem("ChatNewCreatedPing", "Yes");
+            // setting up for updating the data
+            toast.error("Your chat has been deleted!", {
+              id: toastId,
+              icon: "😣",
+            });
+            push("/dashboard/chat");
+          });
       } catch (error: any) {
-        console.error("Error in updating profile:", error);
+        console.error("Error in updating chat:", error);
         toast.error(error.response.data.error, {
           id: toastId,
         });
       }
-
+    } else {
+      toast.success("Thank God", { icon: "☺" });
     }
-
-    const handleDelete = async (e: any) => {
-      e.preventDefault();
-      if(window.confirm("Do you want to delete this form? Please Confirm!") == true){
-        const toastId = toast.loading("Please wait..");
-        const headers = {
-          'Content-Type': 'application/json',
-          'Authorization': `${process.env.NEXT_PUBLIC_TOKEN_TYPE} ${localStorage.getItem("userToken")}`
-        }
-        try {
-          const headers = {
-            'Content-Type': 'application/json',
-            'Authorization': `${process.env.NEXT_PUBLIC_TOKEN_TYPE} ${localStorage.getItem("userToken")}`
-          }
-          await axios.delete(`${process.env.NEXT_PUBLIC_SERVER_URL}/form/${searchFormId}`, {headers}).then(()=>{
-            localStorage.setItem("FormNewCreatedPing", "Yes");
-            // setting up for updating the data
-            toast.error("Your form has been deleted!", {
-              id: toastId,
-              icon: "😣"
-            });
-            push("/dashboard/form");
-          })
-        } catch (error: any) {
-          console.error("Error in updating forms:", error);
-          toast.error(error.response.data.error, {
-            id: toastId,
-          });
-        }
-      }else{
-        toast.success("Thank God", {icon: '☺'})
-      }
-      
-    }
+  };
 
   return (
     <div className="overflow-x-auto my-5 w-1/3 max-xl:m-5 max-xl:w-auto mx-auto">
       <form onSubmit={handleSubmit}>
         <div className="form-control">
-        <label className="label cursor-pointer">
-          <span className="label-text">Form Title</span>
-          <input type="text" value={form.formTitle} id="formTitle"
-                onChange={handleChange} className="input input-bordered" defaultChecked />
-        </label>
-      </div>
-      <div className="form-control">
-        <label className="label cursor-pointer">
-          <span className="label-text">Form Custom Message</span>
-          <input type="text" value={form.customMessage} id="customMessage"
-                onChange={handleChange} className="input input-bordered" defaultChecked />
-        </label>
-      </div>
-      <div className="form-control">
-        <label className="label cursor-pointer">
-          <span className="label-text">Form Redirect URL</span>
-          <input type="text" value={form.redirectUrl} id="redirectUrl"
-                onChange={handleChange} className="input input-bordered" defaultChecked />
-        </label>
-      </div>
-      <div className="text-center">
-        <input type="submit" className="m-3 btn btn-sm btn-outline" value={"Save Changes"} />
-      </div>
-      <div className="form-control">
-        <label className="label cursor-pointer">
-          <span className="label-text">Form Enable</span>
-          <input type="checkbox" id="isEnabled" className="toggle" checked={form.isEnabled} onChange={()=> console.log("")}  onClick={handleChange}/>
-        </label>
-      </div>
-      <div className="form-control">
-        <label className="label cursor-pointer">
-          <span className="label-text">Email Notification</span>
-          <input type="checkbox" id="isEmailNotification" className="toggle" checked={form.isEmailNotification} onChange={()=> console.log("")} onClick={handleChange}/>
-        </label>
-      </div>
-      <div className="form-control">
-        <label className="label cursor-pointer">
-          <span className="label-text">reCAPTCHA</span>
-          <input type="checkbox" className="toggle" defaultChecked disabled />
-        </label>
-      </div>
+          <label className="label cursor-pointer">
+            <span className="label-text">Chat Title</span>
+            <input
+              type="text"
+              value={chat.chatTitle}
+              id="chatTitle"
+              onChange={handleChange}
+              className="input input-bordered"
+            />
+          </label>
+        </div>
+        <div className="form-control">
+          <label className="label cursor-pointer">
+            <span className="label-text">
+              Ask question * (If you are not online)
+            </span>
+            <input
+              type="text"
+              value={chat.defaultAskQuestion}
+              id="defaultAskQuestion"
+              onChange={handleChange}
+              className="input input-bordered"
+            />
+          </label>
+        </div>
+        <div className="form-control">
+          <label className="label cursor-pointer">
+            <span className="label-text">Department</span>
+            <input
+              type="text"
+              value={chat.department}
+              id="department"
+              onChange={handleChange}
+              className="input input-bordered"
+            />
+          </label>
+        </div>
+
+        <div className="form-control">
+          <label className="label cursor-pointer">
+            <span className="label-text">Priority</span>
+            <select
+              onChange={handleChange}
+              id="priority"
+              className="text-lg input select cursor-pointer border-2 block input-bordered rounded-md"
+              value={chat.priority}
+            >
+              <option value={"low"}>low</option>
+              <option value={"high"}>high</option>
+              <option value={"medium"}>medium</option>
+            </select>
+          </label>
+        </div>
+        <div className="form-control">
+          <label className="label cursor-pointer">
+            <span className="label-text">Additional Notes</span>
+            <input
+              type="text"
+              value={chat.notes}
+              id="notes"
+              onChange={handleChange}
+              className="input input-bordered"
+            />
+          </label>
+        </div>
+        <div className="text-center">
+          <input
+            type="submit"
+            className="m-3 btn btn-sm btn-outline"
+            value={"Save Changes"}
+          />
+        </div>
+        <div className="form-control">
+          <label className="label cursor-pointer">
+            <span className="label-text">Chat Enable</span>
+            <input
+              type="checkbox"
+              id="isEnabled"
+              className="toggle"
+              checked={chat.isEnabled}
+              onChange={()=> console.log("")}
+              onClick={handleChange}
+            />
+          </label>
+        </div>
+        <div className="form-control">
+          <label className="label cursor-pointer">
+            <span className="label-text">Email Notification</span>
+            <input
+              type="checkbox"
+              id="isEmailNotification"
+              className="toggle"
+              checked={chat.isEmailNotification}
+              onChange={()=> console.log("")}
+              onClick={handleChange}
+            />
+          </label>
+        </div>
       </form>
       <div className="text-center">
-        <button type="submit" onClick={handleDelete} className="m-3 btn text-red-500 btn-sm btn-outline">Delete Form</button>
+        <button
+          type="submit"
+          onClick={handleDelete}
+          className="m-3 btn text-red-500 btn-sm btn-outline"
+        >
+          Delete Chat
+        </button>
       </div>
     </div>
   );

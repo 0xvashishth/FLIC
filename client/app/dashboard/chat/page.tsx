@@ -5,13 +5,10 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getUserChats } from "./chatUtils";
-// `app/dashboard/page.tsx` is the UI htmlFor the `/dashboard` URL
+
 export default function Page() {
-  // const { push } = useRouter();
-  // const [formModalData, setFormModalData] = useState({
-  //   "chatTitle": "",
-  //   "redirectUrl": ""
-  // });
+
+
   const [chatData, setChatData] = useState([
     {
       _id: "",
@@ -77,7 +74,7 @@ export default function Page() {
                 <td>
                   <Link
                     className="btn btn-sm"
-                    href={"form/details?id=" + data._id}
+                    href={"chat/details?id=" + data._id}
                   >
                     Details
                   </Link>
@@ -92,12 +89,12 @@ export default function Page() {
                       className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box"
                     >
                       <li>
-                        <Link href={"form/details/settings?id=" + data._id}>
+                        <Link href={"chat/details/settings?id=" + data._id}>
                           Edit
                         </Link>
                       </li>
                       <li>
-                        <Link href={"form/details/settings?id=" + data._id}>
+                        <Link href={"chat/details/settings?id=" + data._id}>
                           Delete
                         </Link>
                       </li>

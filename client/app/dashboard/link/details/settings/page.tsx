@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { useSearchParams, usePathname } from "next/navigation";
-import { getLinkData, updateLinkData } from "../../linkRequestUtils";
+import { getLinkData, updateLinkData } from "../../linkUtils";
 
 export default function Page() {
   const searchParams = useSearchParams();
@@ -131,7 +131,6 @@ export default function Page() {
               id="title"
               onChange={handleChange}
               className="input input-bordered"
-              defaultChecked
             />
           </label>
         </div>
@@ -144,7 +143,6 @@ export default function Page() {
               id="originalURL"
               onChange={handleChange}
               className="input input-bordered"
-              defaultChecked
             />
           </label>
         </div>
@@ -157,7 +155,6 @@ export default function Page() {
               id="shortenedSuffix"
               onChange={handleChange}
               className="input input-bordered"
-              defaultChecked
             />
           </label>
         </div>
@@ -190,7 +187,7 @@ export default function Page() {
         <div className="form-control">
           <label className="label cursor-pointer">
             <span className="label-text">reCAPTCHA</span>
-            <input type="checkbox" className="toggle" defaultChecked disabled />
+            <input type="checkbox" className="toggle" disabled />
           </label>
         </div>
       </form>

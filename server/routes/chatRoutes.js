@@ -23,22 +23,24 @@ router.post(
   chatLimitCheck,
   chatC.createChat
 );
-// router.put(
-//   "/:id",
-//   auth,
-//   verificationAndBannedCheck,
-//   formBannedCheck,
-//   isOwnerOfForm,
-//   formC.updateForm
-// );
-// router.delete(
-//   "/:id",
-//   auth,
-//   verificationAndBannedCheck,
-//   formBannedCheck,
-//   isOwnerOfForm,
-//   formC.deleteForm
-// );
+
+router.put(
+  "/:id",
+  auth,
+  verificationAndBannedCheck,
+  chatBannedCheck,
+  isOwnerOfChat,
+  chatC.updateChat
+);
+
+router.delete(
+  "/:id",
+  auth,
+  verificationAndBannedCheck,
+  chatBannedCheck,
+  isOwnerOfChat,
+  chatC.deleteChat
+);
 
 // router.delete(
 //   "/deleteResponse/:id",
@@ -65,14 +67,14 @@ router.get(
   chatC.getAllChats
 );
 
-// router.get(
-//   "/:id",
-//   auth,
-//   verificationAndBannedCheck,
-//   formBannedCheck,
-//   isOwnerOfForm,
-//   formC.getForm
-// );
+router.get(
+  "/:id",
+  auth,
+  verificationAndBannedCheck,
+  chatBannedCheck,
+  isOwnerOfChat,
+  chatC.getChat
+);
 
 
 

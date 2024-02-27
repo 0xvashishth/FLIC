@@ -12,7 +12,15 @@ export default function DashboardLayout({
     chatTitle: "",
     department: "",
     priority: "",
+    defaultAskQuestion: ""
   });
+
+  const [isOnline, setIsOnline] = useState(false);
+
+
+  const statusChange = (e:any) => {
+    setIsOnline(!isOnline);
+  }
 
   const handleChange = (e: any) => {
     const { id, value } = e.target;
@@ -59,7 +67,7 @@ export default function DashboardLayout({
         <div className="text-left">
           <p className="max-sm:text-sm">
             Chat Details{" "}
-            <span className="badge badge-md badge-secondary">Beta</span>
+            <span className="badge badge-md badge-secondary">Won't work properly, It is in Beta mode</span>
           </p>
           <div className="drawer z-[50] drawer-end">
             <input
@@ -112,6 +120,23 @@ export default function DashboardLayout({
                     />
                   </div>
 
+                  <div className="mb-4">
+                    <label
+                      htmlFor="defaultAskQuestion"
+                      className="block text-xl font-medium "
+                    >
+                      Ask question * (If you are not online)
+                    </label>
+                    <input
+                      type="text"
+                      id="defaultAskQuestion"
+                      name="defaultAskQuestion"
+                      value={chatModalData.defaultAskQuestion}
+                      onChange={handleChange}
+                      className="h-7 text-lg p-4 mt-1 block w-full rounded-md"
+                    />
+                  </div>
+
                   <div className="mb-6">
                     <label
                       htmlFor="priority"
@@ -122,9 +147,9 @@ export default function DashboardLayout({
                     <select
                       onChange={handleChange}
                       id="priority"
-                      className="mt-1 p-1 text-lg block w-1/2 rounded-md"
+                      className="mt-1 cursor-pointer p-1 text-lg block w-1/2 rounded-md"
                     >
-                      <option selected value={"low"}>
+                      <option defaultValue={"low"} value={"low"}>
                         low
                       </option>
                       <option value={"high"}>high</option>
@@ -150,14 +175,17 @@ export default function DashboardLayout({
             </div>
           </div>
         </div>
-        <div className="text-right">
+        <div className="text-right flex">
           <label
             htmlFor="create-chat-drawer"
             className="btn btn-sm max-md:text-xs"
           >
             Create New Chat
           </label>
-        </div>
+            <label className="btn btn-sm max-md:text-xs">
+             Change Your status (online/offline) <input type="checkbox" className="toggle toggle-success" onChange={statusChange} checked={isOnline} />
+            </label>
+          </div>
       </div>
       {children}
     </div>
