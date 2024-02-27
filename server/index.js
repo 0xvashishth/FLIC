@@ -53,7 +53,6 @@ app.get("/l/:id", async (req, res) => {
     var SuffixId = req.params.id;
     // var requestUrl = process.env["SERVER_ROOT_URL"] + "/l/" + SuffixId;
     let urlDocument = await Url.findOne({ shortenedSuffix: SuffixId });
-    console.log(urlDocument);
     if (!urlDocument.isActive || urlDocument.isBanned) {
       res.send(`
       <html>
@@ -80,6 +79,13 @@ app.get("/l/:id", async (req, res) => {
       `);
     } else if (urlDocument) {
       var link = urlDocument.originalURL;
+      if (link) {
+        if (!link.includes("://")) {
+          link = "http://" + link;
+        }
+      } else {
+        link = process.env["CLIENT_ROOT_URL"];
+      }
       // We will not wait this to be updated
       await Url.updateOne(
         { _id: urlDocument._id },
@@ -111,7 +117,7 @@ app.get("/l/:id", async (req, res) => {
                 countdown--;
   
                 if (countdown < 0) {
-                  window.location.href = '${link}';
+                window.location.href = '${link}'
                 } else {
                   setTimeout(updateTimer, 1000);
                 }
@@ -123,7 +129,7 @@ app.get("/l/:id", async (req, res) => {
             </script>
           </head>
           <body>
-            <img src="https://github.com/vasu-1/FLIC/assets/76911582/ad679078-7ba8-4cd9-8f1f-065ba17b538c" alt="Logo" width="auto" height="300rem">
+             <img src="https://github.com/vasu-1/FLIC/assets/76911582/ad679078-7ba8-4cd9-8f1f-065ba17b538c" alt="Logo" width="auto" height="300rem">
             <h4>We are crunching your link in <span id="timer">5</span> seconds...</h4>
           </body>
         </html>
@@ -165,7 +171,7 @@ app.post("/f/:id", async (req, res) => {
   const session = await mongoose.startSession();
   // starting the mongoose transaction
   session.startTransaction();
-  console.log("This comes the response: ", formId)
+  console.log("This comes the response: ", formId);
   try {
     // Validate if the form with the given ID exists
     const existingForm = await Form.findById(formId);
@@ -173,6 +179,14 @@ app.post("/f/:id", async (req, res) => {
       await session.abortTransaction(); // Abort the transactionCommit the transaction
       session.endSession();
       return res.status(404).json({ error: "Form not found" });
+    }
+    var link = existingForm.redirectUrl;
+    if (link) {
+      if (!link.includes("://")) {
+        link = "http://" + link;
+      }
+    } else {
+      link = process.env["CLIENT_ROOT_URL"];
     }
 
     if (!existingForm.isEnabled) {
@@ -202,7 +216,7 @@ app.post("/f/:id", async (req, res) => {
                 countdown--;
   
                 if (countdown < 0) {
-                  window.location.href = '${existingForm.redirectUrl}';
+                  window.location.href = '${link}';
                 } else {
                   setTimeout(updateTimer, 1000);
                 }
@@ -234,7 +248,7 @@ app.post("/f/:id", async (req, res) => {
 
       // not sending the email RN
       if (existingForm.isEmailNotification) {
-        console.log("email sending..!")
+        console.log("email sending..!");
         await sendEmail(
           "You got Response From FLIC Form",
           [userEmail],
@@ -282,7 +296,7 @@ app.post("/f/:id", async (req, res) => {
                   countdown--;
     
                   if (countdown < 0) {
-                    window.location.href = '${existingForm.redirectUrl}';
+                    window.location.href = '${link}';
                   } else {
                     setTimeout(updateTimer, 1000);
                   }
@@ -318,13 +332,7 @@ connectDB();
 // routers
 app.use("/api/v1", commonR);
 
-// Middleware
-const middleware = (req, res, next) => {
-  console.log("Hello my flic middleware!");
-  next();
-};
-
-app.get("/", middleware, (req, res) => {
+app.get("/", (req, res) => {
   res.send("Hello Flic!");
 });
 
