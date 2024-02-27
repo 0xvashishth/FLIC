@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import "../ChatButton.css";
 import selfImg from "../self.png";
 import adminImg from "../admin.png";

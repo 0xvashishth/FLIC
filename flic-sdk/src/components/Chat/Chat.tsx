@@ -1,12 +1,14 @@
-import { ChatButton } from "./ChatButton/ChatButton.jsx";
-import { ChatHeader } from "./ChatHeader/ChatHeader.jsx";
+// @ts-nocheck
+
+import { ChatButton } from "./ChatButton/ChatButton";
+import { ChatHeader } from "./ChatHeader/ChatHeader";
 import "./ChatButton.css";
 import $ from "jquery";
 import { useEffect, useState } from "react";
-import { ChatMsg } from "./ChatMsg/ChatMsg.jsx";
+import { ChatMsg } from "./ChatMsg/ChatMsg";
 import React from "react";
 
-export const Chat = ({ chatId }) => {
+export const Chat = ({ chatId }: any) => {
   const [chatTitle, setChatTitle] = useState("FLIC Chat");
   const [agentStatus, setAgentStatus] = useState(false);
   const [msgs, setMsgs] = useState([
@@ -32,9 +34,9 @@ export const Chat = ({ chatId }) => {
     if (type == "user") {
       $("#chat-input").val("");
     }
-    $(".chat-logs")
+    $("#chat-logs")
       .stop()
-      .animate({ scrollTop: $(".chat-logs")[0].scrollHeight }, 1000);
+      .animate({ scrollTop: $("#chat-logs")[0].scrollHeight }, 1000);
   }
 
   useEffect(() => {
@@ -83,9 +85,9 @@ export const Chat = ({ chatId }) => {
       // }, 1000);
     });
 
-    $(".chat-box-toggle").click(function () {
+    $("#chat-box-toggle").click(function () {
       $("#chat-circle").toggle("scale");
-      $(".chat-box").toggle("scale");
+      $("#chat-box").toggle("scale");
     });
 
     fetch(`${url}getMetadata/${chatId}`)
@@ -122,11 +124,11 @@ export const Chat = ({ chatId }) => {
   return (
     <div id="body">
       <ChatButton />
-      <div className="chat-box">
+      <div className="chat-box" id="chat-box">
         <ChatHeader chatTitle={chatTitle} agentStatus={agentStatus} />
         <div className="chat-box-body">
           <div className="chat-box-overlay"></div>
-          <div className="chat-logs">
+          <div className="chat-logs" id="chat-logs">
             {msgs.length == 0
               ? "No Chat Found"
               : <ChatMsg msgs={msgs} />}

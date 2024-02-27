@@ -1,6 +1,6 @@
 // Import your component
 import React from 'react';
-import { Chat } from '../components/Chat/Chat.jsx';
+import { Chat } from '../index';
 
 // Export a default export named 'default' (if applicable)
 export default {

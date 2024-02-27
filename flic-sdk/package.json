@@ -1,10 +1,14 @@
 {
   "name": "flic-sdk",
-  "version": "0.0.7",
+  "version": "0.0.15",
   "description": "A comprehensive sdk for FLIC",
-  "main": "index.js",
   "type": "module",
-  "module": "dist/index.es.js",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
+  "files": [
+    "dist"
+  ],
+  "types": "dist/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "storybook": "storybook dev -p 6006",
@@ -15,10 +19,14 @@
   "author": "0xvashishth",
   "license": "ISC",
   "devDependencies": {
+    "@babel/core": "^7.23.9",
+    "@babel/preset-env": "^7.23.9",
     "@babel/preset-react": "^7.23.3",
+    "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-image": "^3.0.3",
     "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-typescript": "^11.1.6",
     "@storybook/addon-essentials": "^7.6.17",
     "@storybook/addon-interactions": "^7.6.17",
     "@storybook/addon-links": "^7.6.17",
@@ -36,6 +44,7 @@
     "react-dom": "^18.2.0",
     "rollup": "^4.12.0",
     "rollup-plugin-babel": "^4.4.0",
+    "rollup-plugin-dts": "^6.1.0",
     "rollup-plugin-peer-deps-external": "^2.2.4",
     "rollup-plugin-postcss": "^4.0.2",
     "rollup-plugin-terser": "^7.0.2",
