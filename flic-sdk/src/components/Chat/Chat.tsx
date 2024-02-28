@@ -32,19 +32,19 @@ export const Chat = ({ chatId }: any) => {
     //   .hide()
     //   .fadeIn(300);
     if (type == "user") {
-      $("#chat-input").val("");
+      $("#chat-input-abc").val("");
     }
-    $("#chat-logs")
+    $("#chat-logs-abc")
       .stop()
-      .animate({ scrollTop: $("#chat-logs")[0].scrollHeight }, 1000);
+      .animate({ scrollTop: $("#chat-logs-abc")[0].scrollHeight }, 1000);
   }
 
   useEffect(() => {
     const url = `https://flic-7tcx.vercel.app/api/v1/chat/sdk/`;
 
-    $("#chat-submit").click(function (e) {
+    $("#chat-submit-abc").click(function (e) {
       e.preventDefault();
-      var msg = $("#chat-input").val();
+      var msg = $("#chat-input-abc").val();
       if (msg.trim() == "") {
         return false;
       }
@@ -85,9 +85,9 @@ export const Chat = ({ chatId }: any) => {
       // }, 1000);
     });
 
-    $("#chat-box-toggle").click(function () {
-      $("#chat-circle").toggle("scale");
-      $("#chat-box").toggle("scale");
+    $("#chat-box-toggle-abc").click(function () {
+      $("#chat-circle-abc").toggle("scale");
+      $("#chat-box-abc").toggle("scale");
     });
 
     fetch(`${url}getMetadata/${chatId}`, {
@@ -130,25 +130,25 @@ export const Chat = ({ chatId }: any) => {
   return (
     <div id="body">
       <ChatButton />
-      <div className="chat-box" id="chat-box">
+      <div className="chat-box-abc" id="chat-box-abc">
         <ChatHeader chatTitle={chatTitle} agentStatus={agentStatus} />
-        <div className="chat-box-body">
+        <div className="chat-box-body-abc">
           <div className="chat-box-overlay"></div>
-          <div className="chat-logs" id="chat-logs">
+          <div className="chat-logs-abc" id="chat-logs-abc">
             {msgs.length == 0
               ? "No Chat Found"
               : <ChatMsg msgs={msgs} />}
           </div>
         </div>
-        <div className="chat-input">
+        <div className="chat-input-abc">
           <form>
             <input
-              id="chat-input"
+              id="chat-input-abc"
               placeholder="Send a message..."
               type="text"
             />
-            <button className="chat-submit" id="chat-submit" type="submit">
-              <i className="material-icons send-icon">send</i>
+            <button className="chat-submit-abc" id="chat-submit-abc" type="submit">
+              <i className="material-icons send-icon-abc">send</i>
             </button>
           </form>
         </div>

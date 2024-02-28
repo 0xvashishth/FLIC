@@ -1,6 +1,6 @@
 {
   "name": "flic-sdk",
-  "version": "0.0.15",
+  "version": "0.0.19",
   "description": "A comprehensive sdk for FLIC",
   "type": "module",
   "main": "dist/index.cjs.js",

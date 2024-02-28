@@ -21,7 +21,7 @@ export const ChatMsg = ({
           <span className="msg-avatar">
             <img src={typeImgLink} />
           </span>
-          <div className="cm-msg-text">{e.msg}</div>
+          <div className="cm-msg-text-abc">{e.msg}</div>
         </div>
       );
     })
