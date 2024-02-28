@@ -59,19 +59,19 @@ export default function Page() {
           <div className="text-center text-2xl m-2">FLIC Stats</div>
         </div>
         <ul className="glass m-3 menu menu-vertical md:menu-horizontal bg-base-200 rounded-box">
-          <li className="">
+          <li className="" key={"form"}>
             <div className="">
               <a className="text-base">Total Forms</a>
               <span className="badge badge-md badge-warning">{flag? "loading.." : dashboardData.latestForm.length }</span>
             </div>
           </li>
-          <li className="">
+          <li className="" key={"link"}>
             <div className="">
               <a className="text-base">Total Links</a>
               <span className="badge badge-md badge-secondary">{flag? "loading.." : dashboardData.latestLink.length }</span>
             </div>
           </li>
-          <li className="">
+          <li className="" key={"chat"}>
             <div className="">
               <a className="text-base">Total Chats</a>
               <span className="badge badge-md badge-info">{flag? "loading.." : dashboardData.latestChat.length }</span>
@@ -105,7 +105,7 @@ export default function Page() {
             <li className="menu-title">Announcements From Flic 📢</li>
             {
               dashboardData.announcement.map((data, key) => (
-                <li>
+                <li key={key}>
               <a><span className="badge badge-accent">{flag ? "loading.." : data.title}</span>
               {flag ? "loading.." : data.description}
               </a>

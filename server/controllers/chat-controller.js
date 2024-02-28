@@ -143,7 +143,7 @@ const getChatDataFromSdk = async (req, res) => {
     const chat = req.chat;
     const user = await User.findById(chat.userID);
     await addDataToLogs("SDK Chat Initiated", chat._id);
-    return res.status(201).json({
+    return res.status(200).json({
       chat: {
         chatTitle: chat.chatTitle,
         _id: chat._id,
@@ -184,7 +184,7 @@ const postDefaultAnsFromSdk = async (req, res) => {
       chatSession.message.push(oldMessage);
     }else{
       // new more responses not adding for now due to size issue!!
-      return res.status(201).json({
+      return res.status(200).json({
         newMsg: {
           type: "agent",
           msg: "You have already responded, we will get back to you!",

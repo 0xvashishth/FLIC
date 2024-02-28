@@ -38,6 +38,7 @@
     "@types/jquery": "^3.5.29",
     "@types/rollup-plugin-peer-deps-external": "^2.2.4",
     "@vitejs/plugin-react": "^4.2.1",
+    "axios": "^1.6.7",
     "jquery": "^3.7.1",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
