@@ -25,11 +25,11 @@ app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use(cookieParser());
 
 // cors
-var whitelist = [
-  "http://localhost:3000",
-  "https://flic.vercel.app",
-  "https://flic-7tcx.vercel.app",
-];
+// var whitelist = [
+//   "http://localhost:3000",
+//   "https://flic.vercel.app",
+//   "https://flic-7tcx.vercel.app",
+// ];
 // var corsOptions = {
 //   origin: function (origin, callback) {
 //     console.log(origin);
@@ -41,23 +41,12 @@ var whitelist = [
 //   }
 // }
 
-// before using the cors, I want to add the form data that will be using the redirection
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "X-Requested-With");
-  next();
-  });
-// app.use(cors(corsOptions));
-// To allow all traffic, use below
 const corsOptions = {
   origin: true,
   credentials: true,
-  optionSuccessStatus: 200,
 };
 
 app.use(cors(corsOptions));
-
-// app.use(cors(corsOptions)) // Use this after the variable declaration
 
 // link redirection
 app.get("/l/:id", async (req, res) => {

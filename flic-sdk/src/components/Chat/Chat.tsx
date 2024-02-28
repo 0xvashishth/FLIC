@@ -40,7 +40,7 @@ export const Chat = ({ chatId }: any) => {
   }
 
   useEffect(() => {
-    const url = `https://flic.tech/api/v1/chat/sdk/`;
+    const url = `https://flic-7tcx.vercel.app/api/v1/chat/sdk/`;
 
     $("#chat-submit").click(function (e) {
       e.preventDefault();
