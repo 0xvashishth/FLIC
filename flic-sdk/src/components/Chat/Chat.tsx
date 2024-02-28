@@ -92,12 +92,10 @@ export const Chat = ({ chatId }: any) => {
 
     fetch(`${url}getMetadata/${chatId}`, {
       headers: {
-        "Access-Control-Allow-Origin" : true,
-        'Access-Control-Allow-Methods': "GET, POST, PATCH, PUT, DELETE, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type",
         "Access-Control-Max-Age": 86400,
       },
-      // credentials: "include"
+      credentials: "include"
     })
     .then(response => {
       if (!response.ok) {

@@ -42,7 +42,11 @@ var whitelist = [
 // }
 
 // before using the cors, I want to add the form data that will be using the redirection
-
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "X-Requested-With");
+  next();
+  });
 // app.use(cors(corsOptions));
 // To allow all traffic, use below
 const corsOptions = {
