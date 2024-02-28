@@ -45,8 +45,17 @@ var whitelist = [
 
 // app.use(cors(corsOptions));
 // To allow all traffic, use below
+const corsOptions ={
+  origin:'*', 
+  credentials:true,            //access-control-allow-credentials:true
+  optionSuccessStatus:200,
+}
 
-app.use(cors({ origin: true, credentials: true }));
+app.use(cors(corsOptions));
+
+
+
+app.use(cors(corsOptions)) // Use this after the variable declaration
 
 // link redirection
 app.get("/l/:id", async (req, res) => {
