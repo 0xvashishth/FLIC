@@ -235,6 +235,53 @@ const postDefaultAnsFromSdk = async (req, res) => {
   }
 };
 
+const getChatResponses = async (req, res) => {
+  try {
+    const user = req.rootUser;
+    const chatID = req.chat._id;
+    const chatRequestDetails = await ChatSession.find({
+      chatID: chatID,
+    });
+    return res.status(200).json({
+      message: "Responses Retrieved Successfully!",
+      chatRequestDetails,
+    });
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+const deleteChatResponse = async (req, res) => {
+  const session = await mongoose.startSession();
+  // starting the mongoose transaction
+  session.startTransaction();
+
+  try {
+    const responseId = req.header("ResponseId");
+    // Additional validation and checks if needed
+    const deletedResponses = await ChatSession.findByIdAndDelete(
+      responseId,
+      { session }
+    );
+    await addDataToLogs("Response Deleted", responseId);
+    await session.commitTransaction(); // Commit the transaction
+    session.endSession();
+    const chatRequestDetails = await ChatSession.find({
+      chatID: req.chat._id,
+    });
+    return res.status(200).json({
+      message: "Response Deleted Successfully!",
+      chatRequestDetails,
+    });
+  } catch (error) {
+    await session.abortTransaction(); // Commit the transaction
+    session.endSession();
+    console.error(error.message);
+    return res.status(500).json({ error: error.message });
+  }
+};
+
 module.exports = {
   createChat,
   getAllChats,
@@ -243,4 +290,6 @@ module.exports = {
   deleteChat,
   getChatDataFromSdk,
   postDefaultAnsFromSdk,
+  getChatResponses,
+  deleteChatResponse
 };

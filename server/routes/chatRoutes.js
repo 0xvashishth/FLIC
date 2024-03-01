@@ -42,23 +42,23 @@ router.delete(
   chatC.deleteChat
 );
 
-// router.delete(
-//   "/deleteResponse/:id",
-//   auth,
-//   verificationAndBannedCheck,
-//   formBannedCheck,
-//   isOwnerOfForm,
-//   formC.deleteFormResponse
-// );
+router.delete(
+  "/deleteResponse/:id",
+  auth,
+  verificationAndBannedCheck,
+  chatBannedCheck,
+  isOwnerOfChat,
+  chatC.deleteChatResponse
+);
 
-// router.get(
-//   "/getFormResponses/:id",
-//   auth,
-//   verificationAndBannedCheck,
-//   formBannedCheck,
-//   isOwnerOfForm,
-//   formC.getFormResponses // need to create another function for a perticular form retrival
-// );
+router.get(
+  "/getChatResponses/:id",
+  auth,
+  verificationAndBannedCheck,
+  chatBannedCheck,
+  isOwnerOfChat,
+  chatC.getChatResponses // need to create another function for a perticular form retrival
+);
 
 router.get(
   "/getUserChats",
