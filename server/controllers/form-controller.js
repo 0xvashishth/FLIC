@@ -3,6 +3,9 @@ const mongoose = require("mongoose");
 const Form = require("../models/form");
 const FormRequestDetails = require("../models/formRequestDetails");
 const { addDataToLogs } = require("./log-controller");
+const { formCreatedMailScript } = require("../utils/emailScript");
+var { sendEmail } = require("../utils/sendEmail");
+
 const createForm = async (req, res) => {
   const session = await mongoose.startSession();
   // starting the mongoose transaction
@@ -28,6 +31,17 @@ const createForm = async (req, res) => {
     await newForm.save({ session });
     await session.commitTransaction(); // Commit the transaction
     session.endSession();
+    await sendEmail(
+      "Form Created",
+      [user.email],
+      formCreatedMailScript(
+        user.firstName,
+        form.formTitle,
+        form.redirectUrl,
+        form.customMessage ? form.customMessage : ""
+      )
+    );
+
     await addDataToLogs("Form Created", newForm._id);
     return res.status(201).json({
       message: "Form Created Successfully!",
@@ -114,7 +128,7 @@ const getForms = async (req, res) => {
   try {
     const user = req.rootUser;
     const forms = await Form.find({ userID: user._id });
-    console.log("This is")
+    console.log("This is");
     return res.status(200).json({
       message: "Forms Retrieved Successfully!",
       forms,
@@ -157,7 +171,7 @@ const deleteFormResponse = async (req, res) => {
     });
     return res.status(200).json({
       message: "Response Deleted Successfully!",
-      formRequestDetails
+      formRequestDetails,
     });
   } catch (error) {
     await session.abortTransaction(); // Commit the transaction
@@ -194,5 +208,5 @@ module.exports = {
   getForms,
   getFormResponses,
   deleteFormResponse,
-  getForm
+  getForm,
 };

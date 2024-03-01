@@ -7,6 +7,7 @@ const { sendEmailWithTemplate } = require("../utils/sendgridEmail");
 const { cloudinary } = require("../utils/uploadFileToCloudinary");
 var { sendEmail } = require("../utils/sendEmail");
 const mongoose = require("mongoose");
+const {linkCreatedMailScript} = require("../utils/emailScript")
 
 const createUrl = async (req, res) => {
   const session = await mongoose.startSession();
@@ -55,24 +56,8 @@ const createUrl = async (req, res) => {
         .catch((err) => {
           throw err;
         });
-      // var dynamicTemplateData = {
-      //   originalURL,
-      //   shortenedSuffix,
-      //   title,
-      // };
 
-      var emailBody = `Hey ${user.firstName},
-      Thank you for using our service. Here are the details for the link you created:
-  
-      Link Name: ${title}
-      Original Link: ${originalURL}
-      URL Prefix: ${ShortenedUrl}
-  
-      Best regards,
-      FLIC
-      `;
-
-      await sendEmail("Link Created", [user.email], emailBody)
+      await sendEmail("Link Created", [user.email], linkCreatedMailScript(user.firstName, title, originalURL, ShortenedUrl))
         .then(async () => {
           await addDataToLogs("URL Created", savePromise._id);
           // await increaseDecreaseCount(user, false, "increase", session).catch((err) => {
@@ -89,27 +74,6 @@ const createUrl = async (req, res) => {
           throw error;
         });
     }
-
-    // await sendEmailWithTemplate(
-    //   process.env["URLCREATEDTEMPLATEID"],
-    //   [user.email],
-    //   dynamicTemplateData
-    // )
-    // .then(async () => {
-    //   addDataToLogs("URL Created", savePromise._id);
-    //   increaseDecreaseCount(user, false, "increase", session).catch((err) => {
-    //     throw err;
-    //   });
-    //   await session.commitTransaction(); // Commit the transaction
-    //   session.endSession();
-    //   return res.status(201).json({
-    //     message: "URL Created Successfully!",
-    //     url: newUrl,
-    //   });
-    // })
-    // .catch((error) => {
-    //   throw error;
-    // });
   } catch (err) {
     console.error(err.message);
     await session.abortTransaction(); // Rollback the transaction

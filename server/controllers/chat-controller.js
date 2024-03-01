@@ -182,7 +182,7 @@ const postDefaultAnsFromSdk = async (req, res) => {
       });
 
       chatSession.message.push(oldMessage);
-    }else{
+    } else {
       // new more responses not adding for now due to size issue!!
       return res.status(200).json({
         newMsg: {

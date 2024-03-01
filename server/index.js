@@ -12,10 +12,16 @@ const User = require("./models/user");
 const FormRequestDetails = require("./models/formRequestDetails");
 var { sendEmail } = require("./utils/sendEmail");
 const mongoose = require("mongoose");
-const { generateResponseEmailBody } = require("./utils/emailForFormResponse");
+const {
+  generateResponseEmailBodyForFormResponse,
+} = require("./utils/emailScript");
 const { addDataToLogs } = require("./controllers/log-controller");
-const existingUser = require("./middlewares/existingUserValidation");
-var QRCode = require("qrcode");
+const {
+  formResponseMiddlePage,
+  linkMiddlePageNotFound,
+  linkMiddlePageSuccess,
+} = require("./utils/serverHtmlPageReponse");
+const { getQrCode } = require("./utils/generateQRCode");
 
 //body-parse
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
@@ -40,44 +46,20 @@ app.use(cookieParser());
 //     }
 //   }
 // }
-
-const corsOptions = {
-  origin: true,
-  credentials: true,
-};
-
-app.use(cors(corsOptions));
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+  })
+);
 
 // link redirection
 app.get("/l/:id", async (req, res) => {
   try {
     var SuffixId = req.params.id;
-    // var requestUrl = process.env["SERVER_ROOT_URL"] + "/l/" + SuffixId;
     let urlDocument = await Url.findOne({ shortenedSuffix: SuffixId });
     if (!urlDocument.isActive || urlDocument.isBanned) {
-      res.send(`
-      <html>
-          <head>
-            <title>FLIC | No Such URL Exists</title>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <style>
-              body {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                height: 90vh;
-                margin: 0;
-              }
-            </style>
-          </head>
-          <body>
-            <img src="https://github.com/vasu-1/FLIC/assets/76911582/ad679078-7ba8-4cd9-8f1f-065ba17b538c" alt="Logo" width="auto" height="300rem">
-            <h2>No Such URL Exists</h2>
-          </body>
-        </html>
-      `);
+      res.send(linkMiddlePageNotFound());
     } else if (urlDocument) {
       var link = urlDocument.originalURL;
       if (link) {
@@ -94,71 +76,9 @@ app.get("/l/:id", async (req, res) => {
           clickCount: 1 + urlDocument.clickCount,
         }
       );
-      res.send(`
-      <html>
-          <head>
-            <title>FLIC Waiting Page..</title>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <style>
-              body {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                height: 90vh;
-                margin: 0;
-              }
-            </style>
-            <script>
-              // Display a countdown timer and redirect after 5 seconds
-              let countdown = 5;
-              function updateTimer() {
-                document.getElementById('timer').innerText = countdown;
-                countdown--;
-  
-                if (countdown < 0) {
-                window.location.href = '${link}'
-                } else {
-                  setTimeout(updateTimer, 1000);
-                }
-              }
-              
-              window.onload = function() {
-                updateTimer();
-              };
-            </script>
-          </head>
-          <body>
-             <img src="https://github.com/vasu-1/FLIC/assets/76911582/ad679078-7ba8-4cd9-8f1f-065ba17b538c" alt="Logo" width="auto" height="300rem">
-            <h4>We are crunching your link in <span id="timer">5</span> seconds...</h4>
-          </body>
-        </html>
-      `);
+      res.send(linkMiddlePageSuccess(link));
     } else {
-      res.send(`
-      <html>
-          <head>
-            <title>FLIC | No Such URL Exists</title>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <style>
-              body {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                height: 90vh;
-                margin: 0;
-              }
-            </style>
-          </head>
-          <body>
-            <img src="https://github.com/vasu-1/FLIC/assets/76911582/ad679078-7ba8-4cd9-8f1f-065ba17b538c" alt="Logo" width="auto" height="300rem">
-            <h2>No Such URL Exists</h2>
-          </body>
-        </html>
-      `);
+      res.send(linkMiddlePageNotFound());
     }
   } catch (error) {
     console.error("Error:", error);
@@ -171,7 +91,6 @@ app.post("/f/:id", async (req, res) => {
   const session = await mongoose.startSession();
   // starting the mongoose transaction
   session.startTransaction();
-  console.log("This comes the response: ", formId);
   try {
     // Validate if the form with the given ID exists
     const existingForm = await Form.findById(formId);
@@ -192,47 +111,7 @@ app.post("/f/:id", async (req, res) => {
     if (!existingForm.isEnabled) {
       await session.abortTransaction(); // Abort the transactionCommit the transaction
       session.endSession();
-      res.send(`
-      <html>
-          <head>
-            <title>FLIC Waiting Page..</title>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <style>
-              body {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                height: 90vh;
-                margin: 0;
-              }
-            </style>
-            <script>
-              // Display a countdown timer and redirect after 5 seconds
-              let countdown = 5;
-              function updateTimer() {
-                document.getElementById('timer').innerText = countdown;
-                countdown--;
-  
-                if (countdown < 0) {
-                  window.location.href = '${link}';
-                } else {
-                  setTimeout(updateTimer, 1000);
-                }
-              }
-              
-              window.onload = function() {
-                updateTimer();
-              };
-            </script>
-          </head>
-          <body>
-            <img src="https://github.com/vasu-1/FLIC/assets/76911582/ad679078-7ba8-4cd9-8f1f-065ba17b538c" alt="Logo" width="auto" height="300rem">
-            <h4>Form is not enabled, Redirecting in <span id="timer">5</span> seconds...</h4>
-          </body>
-        </html>
-      `);
+      res.send(formResponseMiddlePage(link, "Form is Not Accepting Response"));
     } else {
       const user = await User.findById(existingForm.userID);
       const userEmail = user.email;
@@ -248,11 +127,10 @@ app.post("/f/:id", async (req, res) => {
 
       // not sending the email RN
       if (existingForm.isEmailNotification) {
-        console.log("email sending..!");
         await sendEmail(
           "You got Response From FLIC Form",
           [userEmail],
-          generateResponseEmailBody(user, dynamicData)
+          generateResponseEmailBodyForFormResponse(user, dynamicData)
         )
           .then(async () => {
             await addDataToLogs("Form Response", formDetails._id);
@@ -272,47 +150,7 @@ app.post("/f/:id", async (req, res) => {
       // Respond with a success message
       await session.commitTransaction(); // Commit the transaction
       session.endSession();
-      res.send(`
-        <html>
-            <head>
-              <title>FLIC Waiting Page..</title>
-              <meta charset="UTF-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <style>
-                body {
-                  display: flex;
-                  flex-direction: column;
-                  align-items: center;
-                  justify-content: center;
-                  height: 90vh;
-                  margin: 0;
-                }
-              </style>
-              <script>
-                // Display a countdown timer and redirect after 5 seconds
-                let countdown = 5;
-                function updateTimer() {
-                  document.getElementById('timer').innerText = countdown;
-                  countdown--;
-    
-                  if (countdown < 0) {
-                    window.location.href = '${link}';
-                  } else {
-                    setTimeout(updateTimer, 1000);
-                  }
-                }
-                
-                window.onload = function() {
-                  updateTimer();
-                };
-              </script>
-            </head>
-            <body>
-              <img src="https://github.com/vasu-1/FLIC/assets/76911582/ad679078-7ba8-4cd9-8f1f-065ba17b538c" alt="Logo" width="auto" height="300rem">
-              <h4>${existingForm.customMessage}, Redirecting in <span id="timer">5</span> seconds...</h4>
-            </body>
-          </html>
-        `);
+      res.send(formResponseMiddlePage(link, existingForm.customMessage));
     }
   } catch (error) {
     await session.abortTransaction(); // Abort the transactionCommit the transaction
@@ -335,22 +173,6 @@ app.use("/api/v1", commonR);
 app.get("/", (req, res) => {
   res.send("Hello Flic!");
 });
-
-function getQrCode(data, lightParam, darkParam) {
-  return new Promise((resolve, reject) => {
-    QRCode.toDataURL(
-      data,
-      { color: { dark: darkParam, light: lightParam } },
-      (err, url) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(url);
-        }
-      }
-    );
-  });
-}
 
 app.get("/getqr", async (req, res) => {
   try {
