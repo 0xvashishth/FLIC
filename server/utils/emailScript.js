@@ -145,7 +145,7 @@ function userVerificationLinkMailScript(name, link) {
 </head>
 <body>
     <div class="container">
-        <img src="https://github-production-user-asset-6210df.s3.amazonaws.com/76911582/309322619-ae7a1384-4271-4fcd-8a6d-b9550fe5510e.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20240301%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240301T162228Z&X-Amz-Expires=300&X-Amz-Signature=59e0e0d6c34694f909544cde9e8ddf7bafa7db296c545fa3dcb7c0ca119b6a2b&X-Amz-SignedHeaders=host&actor_id=76911582&key_id=0&repo_id=398164641" alt="FLIC Header" class="header-img">
+        <img src="https://flic.vercel.app/logo.png" alt="FLIC Header" class="header-img">
         <h1>Welcome to FLIC!</h1>
         <p>Hey ${name}, </p>
         <p>Thank you for signing up. To verify your account, please click the button below:</p>
@@ -219,7 +219,7 @@ function userVerifiedLinkMailScript(name) {
 </head>
 <body>
     <div class="container">
-    <img src="https://github-production-user-asset-6210df.s3.amazonaws.com/76911582/309322619-ae7a1384-4271-4fcd-8a6d-b9550fe5510e.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20240301%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240301T162228Z&X-Amz-Expires=300&X-Amz-Signature=59e0e0d6c34694f909544cde9e8ddf7bafa7db296c545fa3dcb7c0ca119b6a2b&X-Amz-SignedHeaders=host&actor_id=76911582&key_id=0&repo_id=398164641" alt="FLIC Header" class="header-img">
+    <img src="https://flic.vercel.app/logo.png" alt="FLIC Header" class="header-img">
         <h1>Congratulations! Your FLIC Account is Verified</h1>
         <p>Hey ${name},</p>
         <p>You can now enjoy our services. Click the button below to access your account:</p>
@@ -296,7 +296,7 @@ function linkCreatedMailScript(name, linkName, originalURL, ShortenedUrl) {
 </head>
 <body>
     <div class="container">
-        <img src="https://github-production-user-asset-6210df.s3.amazonaws.com/76911582/309322619-ae7a1384-4271-4fcd-8a6d-b9550fe5510e.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20240301%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240301T162228Z&X-Amz-Expires=300&X-Amz-Signature=59e0e0d6c34694f909544cde9e8ddf7bafa7db296c545fa3dcb7c0ca119b6a2b&X-Amz-SignedHeaders=host&actor_id=76911582&key_id=0&repo_id=398164641" alt="FLIC Header" class="header-img">
+        <img src="https://flic.vercel.app/logo.png" alt="FLIC Header" class="header-img">
         <h1>FLIC - Link Created</h1>
         <p>Hello ${name},</p>
         <p>You have created the link with following details.</p>
@@ -394,7 +394,7 @@ function formCreatedMailScript(name, formName, redirectUrl, customMessage) {
 </head>
 <body>
     <div class="container">
-        <img src="https://github-production-user-asset-6210df.s3.amazonaws.com/76911582/309322619-ae7a1384-4271-4fcd-8a6d-b9550fe5510e.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20240301%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240301T162228Z&X-Amz-Expires=300&X-Amz-Signature=59e0e0d6c34694f909544cde9e8ddf7bafa7db296c545fa3dcb7c0ca119b6a2b&X-Amz-SignedHeaders=host&actor_id=76911582&key_id=0&repo_id=398164641" alt="FLIC Header" class="header-img">
+        <img src="https://flic.vercel.app/logo.png" alt="FLIC Header" class="header-img">
         <h1>FLIC - Form Created</h1>
         <p>Hello ${name},</p>
         <p>You have created the form with following details.</p>
@@ -488,7 +488,7 @@ function userResetPasswordLinkScript(name, link) {
 </head>
 <body>
     <div class="container">
-        <img src="https://github-production-user-asset-6210df.s3.amazonaws.com/76911582/309322619-ae7a1384-4271-4fcd-8a6d-b9550fe5510e.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20240301%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240301T162228Z&X-Amz-Expires=300&X-Amz-Signature=59e0e0d6c34694f909544cde9e8ddf7bafa7db296c545fa3dcb7c0ca119b6a2b&X-Amz-SignedHeaders=host&actor_id=76911582&key_id=0&repo_id=398164641" alt="FLIC Header" class="header-img">
+        <img src="https://flic.vercel.app/logo.png" alt="FLIC Header" class="header-img">
         <h1>FLIC - Password Reset</h1>
         <p>Hey ${name}</p>
         <p>You've requested a password reset for your FLIC account. Click the button below to reset your password:</p>
