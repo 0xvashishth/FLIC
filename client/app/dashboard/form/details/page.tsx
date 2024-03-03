@@ -7,7 +7,7 @@ export default function Page() {
   const searchParams = useSearchParams();
   const searchFormId = searchParams.get("id");
   const pathname = usePathname();
-  var Root_Url = process.env.NEXT_PUBLIC_ROOT_URL;
+  var Root_Url = process.env.NEXT_PUBLIC_ROOT_URL_LIVE;
   var form_Url = `${Root_Url}` +  `f/` + `${searchFormId}`
 
   const exampleCode =

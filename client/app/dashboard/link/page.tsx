@@ -130,7 +130,7 @@ export default function Page() {
                 </td>
                 <td>
                   <span>
-                  {`${process.env["NEXT_PUBLIC_ROOT_URL"]}l/${data.shortenedSuffix}`}
+                  {`${process.env["NEXT_PUBLIC_ROOT_URL_LIVE"]}l/${data.shortenedSuffix}`}
                   </span>
                 </td>
                 <td>
