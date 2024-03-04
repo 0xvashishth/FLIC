@@ -4,7 +4,7 @@ function isUrlExpired(creationDate) {
 
   // Calculate the date 6 months from the creation date
   const expirationDate = new Date(creationDate);
-  expirationDate.setMonth(expirationDate.getMonth() + process.env["URL_DEFAULT_EXP_MONTH"]);
+  expirationDate.setMonth(expirationDate.getMonth() + process.env["FREE_USER_URL_DEFAULT_EXP_MONTH"]);
 
   // Compare the current date with the expiration date
   return currentDate > expirationDate;

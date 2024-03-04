@@ -15,7 +15,6 @@ const urlSchema = new Schema({
   isBanned: { type: Boolean, default: false },
   qrCodeImageUrl: { type: String, required: false, default: ""},
   qrCodeImagePublicId: { type: String, required: false, default:""},
-  EmailnotificationCount : {type: Number, default: 0},
   Parameter1: String,
   Parameter2: String,
   Parameter3: Boolean,

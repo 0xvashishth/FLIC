@@ -37,8 +37,9 @@ router.get("/me", auth, verificationAndBannedCheck, userC.getMe);
 
 //details in user dashboard
 router.get("/mydashboard", auth, verificationAndBannedCheck, userC.getUserDashboardDetails);
-// Update user details
-
+// Update and Get user details
+router.get("/userdetails", auth, verificationAndBannedCheck, userC.getUserPreferences);
+router.put("/userdetails", auth, verificationAndBannedCheck, userC.changeUserPreferences);
 // for announcement purpose
 // not implemented live for publishing the announcement, need to do manually from local system
 router.post("/createAnnoucement", userC.addAnnouncementByAdmin);

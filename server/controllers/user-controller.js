@@ -7,11 +7,11 @@ const Chat = require("../models/chat");
 const Form = require("../models/form");
 const Url = require("../models/url");
 const FormDetails = require("../models/formRequestDetails");
+const ChatSession = require("../models/chatSession");
 const Announcement = require("../models/annuoncement");
 const {
   generateVerificationLink,
   generatePasswordResetLink,
-  getUuidToken,
 } = require("../utils/generateVerifyLink");
 const { addDataToLogs } = require("./log-controller");
 const {
@@ -19,9 +19,16 @@ const {
 } = require("../middlewares/userMiddleware");
 const mongoose = require("mongoose");
 var bcrypt = require("bcryptjs");
-var { sendEmail } = require("../utils/sendEmail");
-const {userVerificationLinkMailScript, userVerifiedLinkMailScript, userResetPasswordLinkScript} = require("../utils/emailScript")
-const {userVerificationMiddlePage} = require("../utils/serverHtmlPageReponse")
+const {
+  userVerificationLinkMailScript,
+  userVerifiedLinkMailScript,
+  userResetPasswordLinkScript,
+} = require("../utils/emailScript");
+const {
+  userVerificationMiddlePage,
+} = require("../utils/serverHtmlPageReponse");
+const { sendEmailWithSendGrid } = require("../utils/sendgridEmail");
+const UserDetails = require("../models/userDetails");
 
 const login = async (req, res, nxt) => {
   const { user } = req.body;
@@ -97,7 +104,8 @@ const signup = async (req, res, nxt) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
-    var { emailVerificationLink, emailVerificationToken } = generateVerificationLink(email);
+    var { emailVerificationLink, emailVerificationToken } =
+      generateVerificationLink(email);
     const newUser = new User({
       email,
       firstName,
@@ -111,7 +119,11 @@ const signup = async (req, res, nxt) => {
       userID: saveUserPromise._id,
     });
     await newUserDetails.save({ session });
-    await sendEmail("Verification on FLIC", [email], userVerificationLinkMailScript(firstName, emailVerificationLink))
+    await sendEmailWithSendGrid(
+      "Verification on FLIC",
+      [email],
+      userVerificationLinkMailScript(firstName, emailVerificationLink)
+    )
       .then(() => {
         addDataToLogs("User signUp", saveUserPromise._id).then(async () => {
           await session.commitTransaction(); // Commit the transaction
@@ -141,7 +153,12 @@ const emailVerification = async (req, res) => {
   try {
     const { token, email } = req.query;
     if (!token || !email) {
-      return res.send(userVerificationMiddlePage("You went wrong", process.env.CLIENT_ROOT_URL));
+      return res.send(
+        userVerificationMiddlePage(
+          "You went wrong",
+          process.env.CLIENT_ROOT_URL
+        )
+      );
     } else {
       var existingUser = await User.findOne({
         email: email,
@@ -151,16 +168,30 @@ const emailVerification = async (req, res) => {
       if (existingUser) {
         existingUser.emailVerificationToken = "";
         existingUser.isEmailVerified = true;
-        await sendEmail("You are verified on FLIC", [email], userVerifiedLinkMailScript(existingUser.firstName));
+        await sendEmailWithSendGrid(
+          "You are verified on FLIC",
+          [email],
+          userVerifiedLinkMailScript(existingUser.firstName)
+        );
         await existingUser.save();
         addDataToLogs("User Verification", existingUser._id);
         await session.commitTransaction(); // Commit the transaction
         session.endSession();
-        return res.send(userVerificationMiddlePage("You are verified", `${process.env.CLIENT_ROOT_URL}/login`));
+        return res.send(
+          userVerificationMiddlePage(
+            "You are verified",
+            `${process.env.CLIENT_ROOT_URL}/login`
+          )
+        );
       } else {
         await session.abortTransaction(); // Rollback the transaction
         session.endSession();
-        return res.send(userVerificationMiddlePage("User not found on FLIC", process.env.CLIENT_ROOT_URL));
+        return res.send(
+          userVerificationMiddlePage(
+            "User not found on FLIC",
+            process.env.CLIENT_ROOT_URL
+          )
+        );
       }
     }
   } catch (err) {
@@ -200,7 +231,11 @@ const forgotPassword = async (req, res, next) => {
       existingUser.isForgotPasswordInitiated = true;
       existingUser.forgotPasswordToken = token;
       existingUser.forgotPasswordInitiatedDate = currentDateTime;
-      await sendEmail("Password Reset Link", [email], userResetPasswordLinkScript(existingUser.firstName, resetLink));
+      await sendEmailWithSendGrid(
+        "Password Reset Link",
+        [email],
+        userResetPasswordLinkScript(existingUser.firstName, resetLink)
+      );
       await existingUser.save();
       addDataToLogs("User Forgot Password Initiated", existingUser._id);
       await session.commitTransaction(); // Commit the transaction
@@ -418,6 +453,12 @@ const deleteProfile = async (req, res, nxt) => {
   try {
     await userDetails.findOneAndDelete({ userID: req.userId });
 
+    await ChatSession.deleteMany({
+      chatID: {
+        $in: (await Chat.find({ userID: req.userId })).map((chat) => chat._id),
+      },
+    });
+
     await Chat.deleteMany({ agent: req.userId });
 
     await Url.deleteMany({ userID: req.userId });
@@ -462,21 +503,73 @@ const getMe = async (req, res, nxt) => {
 
 const getUserDashboardDetails = async (req, res) => {
   try {
-    var totalUserFormsCount = await Form.find({userID: req.userId}).sort({creationDate: -1});
-    var totalUserChatsCount = await Chat.find({userID: req.userId}).sort({creationDate: -1});
-    var totalUserLinkCount = await Url.find({userID: req.userId}).sort({creationDate: -1});
+    var totalUserFormsCount = await Form.find({ userID: req.userId }).sort({
+      creationDate: -1,
+    });
+    var totalUserChatsCount = await Chat.find({ userID: req.userId }).sort({
+      creationDate: -1,
+    });
+    var totalUserLinkCount = await Url.find({ userID: req.userId }).sort({
+      creationDate: -1,
+    });
 
-    var announcement = await Announcement.find({}).sort({creationDate: -1}).limit(3);
+    var announcement = await Announcement.find({})
+      .sort({ creationDate: -1 })
+      .limit(3);
 
     return res.status(201).json({
       message: "Data Retrived Successfully!",
       latestForm: totalUserFormsCount,
       latestChat: totalUserChatsCount,
       latestLink: totalUserLinkCount,
-      announcement
+      announcement,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Something Went Wrong" });
+  }
+};
+
+const changeUserPreferences = async (req, res) => {
+  const { emailNotifications } = req.body;
+  const session = await mongoose.startSession();
+  // starting the mongoose transaction
+  session.startTransaction();
+  try {
+    await UserDetails.updateOne(
+      { userID: req.userId },
+      { $set: { emailNotifications } },
+      { session }
+    );
+    addDataToLogs("UserDetails Updated", req.userId);
+    await session.commitTransaction(); // Commit the transaction
+    session.endSession();
+    return res.status(200).json({
+      message: "User Details Updated Successfully!",
     });
 
   } catch (error) {
+    await session.abortTransaction(); // Rollback the transaction
+    session.endSession();
+    console.error(error);
+    return res.status(500).json({ error: "Something Went Wrong" });
+  }
+}
+
+const getUserPreferences = async (req, res) => {
+  const session = await mongoose.startSession();
+  // starting the mongoose transaction
+  session.startTransaction();
+  console.log("Getting Data")
+  try {
+    const userDetails = await UserDetails.findOne({userID: req.userId});
+    return res.status(200).json({
+      message: "User Details Retrived Successfully!",
+      userDetails
+    });
+  } catch (error) {
+    await session.abortTransaction(); // Rollback the transaction
+    session.endSession();
     console.error(error);
     return res.status(500).json({ error: "Something Went Wrong" });
   }
@@ -550,7 +643,13 @@ const deleteUserByAdmin = async (req, res) => {
   session.startTransaction();
 
   try {
-    
+    await ChatSession.deleteMany({
+      chatID: {
+        $in: (
+          await Chat.find({ userID: req.params.id })
+        ).map((chat) => chat._id),
+      },
+    });
 
     await Chat.deleteMany({ agent: req.params.id });
 
@@ -594,7 +693,7 @@ const addAnnouncementByAdmin = async (req, res) => {
   try {
     const newAnnouncement = new Announcement({
       title: req.body.title,
-      description: req.body.description
+      description: req.body.description,
     });
 
     await newAnnouncement.save({ session });
@@ -608,7 +707,7 @@ const addAnnouncementByAdmin = async (req, res) => {
     console.error(error);
     return res.status(500).json({ error: "Something Went Wrong" });
   }
-}
+};
 
 module.exports = {
   signup,
@@ -624,5 +723,7 @@ module.exports = {
   getUserById,
   deleteUserByAdmin,
   getUserDashboardDetails,
-  addAnnouncementByAdmin
+  addAnnouncementByAdmin,
+  changeUserPreferences,
+  getUserPreferences
 };

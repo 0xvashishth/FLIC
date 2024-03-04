@@ -10,7 +10,7 @@ const Url = require("./models/url");
 const Form = require("./models/form");
 const User = require("./models/user");
 const FormRequestDetails = require("./models/formRequestDetails");
-const { sendEmailWithSendGrid } = require("./utils/sendgridEmail");
+var { sendEmail } = require("./utils/sendEmail");
 const mongoose = require("mongoose");
 const {
   generateResponseEmailBodyForFormResponse,
@@ -22,7 +22,6 @@ const {
   linkMiddlePageSuccess,
 } = require("./utils/serverHtmlPageReponse");
 const { getQrCode } = require("./utils/generateQRCode");
-const { verifyToSendEmail } = require("./utils/verifyToSendEmail");
 
 //body-parse
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
@@ -127,30 +126,21 @@ app.post("/f/:id", async (req, res) => {
       });
 
       // not sending the email RN
-      console.log(await verifyToSendEmail(
-        "form",
-        user,
-        existingForm.EmailnotificationCount,
-        existingForm.isEmailNotification
-      ))
-      if (
-        await verifyToSendEmail(
-          "form",
-          user,
-          existingForm.EmailnotificationCount,
-          existingForm.isEmailNotification
-        )
-      ) {
-        console.log("you sent the mail")
-        await sendEmailWithSendGrid(
+      if (existingForm.isEmailNotification) {
+        await sendEmail(
           "You got Response From FLIC Form",
           [userEmail],
           generateResponseEmailBodyForFormResponse(user, dynamicData)
-        );
-        user.formEmailNotificationCount += 1;
-        existingForm.EmailnotificationCount += 1;
+        )
+          .then(async () => {
+            await addDataToLogs("Form Response", formDetails._id);
+          })
+          .catch((error) => {
+            throw error;
+          });
       }
-      await addDataToLogs("Form Response", formDetails._id);
+
+      // Save the form request details to the database
       await formDetails.save();
 
       // Update the request count in the main form document

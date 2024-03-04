@@ -428,6 +428,210 @@ function formCreatedMailScript(name, formName, redirectUrl, customMessage) {
   `;
 }
 
+function chatCreatedMailScript(
+  name,
+  chatName,
+  department,
+  priority,
+  defaultAskQuestion
+) {
+  return `
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FLIC - Chat Created Notification</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 30px auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-img {
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        h1 {
+            color: #333333;
+        }
+
+        p {
+            color: #555555;
+            line-height: 1.6;
+        }
+
+        .footer {
+            margin-top: 30px;
+            color: #888888;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 20px;
+        }
+        th, td {
+          border: 1px solid #ddd;
+          padding: 8px;
+          text-align: left;
+        }
+        th {
+          background-color: #f2f2f2;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="https://flic.vercel.app/logo.png" alt="FLIC Header" class="header-img">
+        <h1>FLIC - Chat Created</h1>
+        <p>Hello ${name},</p>
+        <p>You have created the chat with following details.</p>
+        <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Value</th>
+              </tr>
+            </thead>
+            <tbody>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">Chat name</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">${chatName}</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">Department</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">${department}</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">Priority</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">${priority}</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">Default Ask Question</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">${defaultAskQuestion}</td>
+          </tr>
+          </tbody></table>
+        <p class="footer">Best regards,<br>Your FLIC Team</p>
+    </div>
+  </body>
+  </html>
+
+  
+  `;
+}
+
+function chatResponseCreatedMailScript(name, chatName, message, reply) {
+  return `
+    
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FLIC - Chat Created Notification</title>
+  <style>
+      body {
+          font-family: Arial, sans-serif;
+          background-color: #f4f4f4;
+          margin: 0;
+          padding: 0;
+          text-align: center;
+      }
+
+      .container {
+          max-width: 600px;
+          margin: 30px auto;
+          background-color: #ffffff;
+          padding: 20px;
+          border-radius: 10px;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .header-img {
+          width: 100%;
+          max-width: 400px;
+          margin-bottom: 20px;
+          border-radius: 5px;
+      }
+
+      h1 {
+          color: #333333;
+      }
+
+      p {
+          color: #555555;
+          line-height: 1.6;
+      }
+
+      .footer {
+          margin-top: 30px;
+          color: #888888;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+      
+  </style>
+</head>
+<body>
+  <div class="container">
+      <img src="https://flic.vercel.app/logo.png" alt="FLIC Header" class="header-img">
+      <h1>FLIC - You got message on Chat</h1>
+      <p>Hello ${name},</p>
+      <p>You have received a chat message on <b>${chatName}</b> with following details.</p>
+      <table>
+          <thead>
+            <tr>
+              <th>Field</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody>
+        <tr>
+          <td style="border: 1px solid #ddd; padding: 8px;">Message</td>
+          <td style="border: 1px solid #ddd; padding: 8px;">${message}</td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #ddd; padding: 8px;">Reply</td>
+          <td style="border: 1px solid #ddd; padding: 8px;">${reply}</td>
+        </tr>
+        </tbody></table>
+      <p class="footer">Best regards,<br>Your FLIC Team</p>
+  </div>
+</body>
+</html>
+
+
+
+  `;
+}
+
 function userResetPasswordLinkScript(name, link) {
   return `
   <!DOCTYPE html>
@@ -503,12 +707,13 @@ function userResetPasswordLinkScript(name, link) {
   `;
 }
 
-
 module.exports = {
   generateResponseEmailBodyForFormResponse,
   userVerificationLinkMailScript,
   userVerifiedLinkMailScript,
   userResetPasswordLinkScript,
   linkCreatedMailScript,
-  formCreatedMailScript
+  formCreatedMailScript,
+  chatCreatedMailScript,
+  chatResponseCreatedMailScript,
 };

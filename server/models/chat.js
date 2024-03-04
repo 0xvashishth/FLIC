@@ -32,6 +32,7 @@ const chatSchema = new Schema({
   isEmailNotification: { type: Boolean, default: true },
   isReported: { type: Number, default: 0 },
   isBanned: { type: Boolean, default: false },
+  EmailnotificationCount : {type: Number, default: 0},
   Parameter1: String,
   Parameter2: String,
   Parameter3: Boolean,

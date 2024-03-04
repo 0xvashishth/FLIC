@@ -1,10 +1,10 @@
-// controllers/form-controller.js
 const mongoose = require("mongoose");
 const Form = require("../models/form");
 const FormRequestDetails = require("../models/formRequestDetails");
 const { addDataToLogs } = require("./log-controller");
 const { formCreatedMailScript } = require("../utils/emailScript");
-var { sendEmail } = require("../utils/sendEmail");
+const { sendEmailWithSendGrid } = require("../utils/sendgridEmail");
+const { verifyToSendEmail } = require("../utils/verifyToSendEmail");
 
 const createForm = async (req, res) => {
   const session = await mongoose.startSession();
@@ -14,35 +14,36 @@ const createForm = async (req, res) => {
   try {
     const user = req.rootUser;
     const { form } = req.body;
-    console.log(form);
     if (!form.formTitle || !form.redirectUrl) {
       return res.status(400).json({
         error: `Missing required field(s)`,
       });
     }
-
-    // Additional validation and checks if needed
-
     const newForm = new Form({
       ...form,
       userID: user._id,
     });
+    user.formCount += 1;
 
     await newForm.save({ session });
+
+    if (await verifyToSendEmail("user", user)) {
+      user.formEmailNotificationCount += 1;
+      await sendEmailWithSendGrid(
+        "Form Created",
+        [user.email],
+        formCreatedMailScript(
+          user.firstName,
+          form.formTitle,
+          form.redirectUrl,
+          form.customMessage ? form.customMessage : ""
+        )
+      );
+    }
+    await user.save({ session });
+    await addDataToLogs("Form Created", newForm._id);
     await session.commitTransaction(); // Commit the transaction
     session.endSession();
-    await sendEmail(
-      "Form Created",
-      [user.email],
-      formCreatedMailScript(
-        user.firstName,
-        form.formTitle,
-        form.redirectUrl,
-        form.customMessage ? form.customMessage : ""
-      )
-    );
-
-    await addDataToLogs("Form Created", newForm._id);
     return res.status(201).json({
       message: "Form Created Successfully!",
       form: newForm,
@@ -73,7 +74,7 @@ const updateForm = async (req, res) => {
         message: "Form not found or user does not have permission",
       });
     }
-
+    await addDataToLogs("Form Updated", updatedForm._id);
     return res.status(200).json({
       message: "Form Updated Successfully!",
       form: updatedForm,
@@ -108,7 +109,9 @@ const deleteForm = async (req, res) => {
       },
       { session }
     );
-    await addDataToLogs("Form Deleted", form._id);
+    user.formCount -= 1;
+    await user.save({ session });
+    await addDataToLogs("Form Deleted", deletedForm._id);
     await session.commitTransaction(); // Commit the transaction
     session.endSession();
     return res.status(200).json({
@@ -128,7 +131,6 @@ const getForms = async (req, res) => {
   try {
     const user = req.rootUser;
     const forms = await Form.find({ userID: user._id });
-    console.log("This is");
     return res.status(200).json({
       message: "Forms Retrieved Successfully!",
       forms,
@@ -139,6 +141,7 @@ const getForms = async (req, res) => {
   }
 };
 
+// not adding logs
 const getForm = async (req, res) => {
   try {
     return res.status(200).json({
@@ -155,15 +158,16 @@ const deleteFormResponse = async (req, res) => {
   const session = await mongoose.startSession();
   // starting the mongoose transaction
   session.startTransaction();
-
   try {
     const responseId = req.header("ResponseId");
+    const form = req.form;
     // Additional validation and checks if needed
     const deletedResponses = await FormRequestDetails.findByIdAndDelete(
       responseId,
       { session }
     );
-    await addDataToLogs("Response Deleted", responseId);
+    form.requestCount -= 1;
+    await addDataToLogs("Form Response Deleted", deletedResponses._id);
     await session.commitTransaction(); // Commit the transaction
     session.endSession();
     const formRequestDetails = await FormRequestDetails.find({
@@ -185,7 +189,6 @@ const deleteFormResponse = async (req, res) => {
 // not adding logs
 const getFormResponses = async (req, res) => {
   try {
-    const user = req.rootUser;
     const formID = req.form._id;
     const formRequestDetails = await FormRequestDetails.find({
       FormID: formID,

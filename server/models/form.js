@@ -12,6 +12,7 @@ const formSchema = new Schema({
   AllowedOrigins: [String],
   isEnabled: { type: Boolean, default: true },
   isEmailNotification: { type: Boolean, default: true },
+  EmailnotificationCount : {type: Number, default: 0},
   tags: [String],
   isReported: { type: Number, default: 0 },
   isBanned: { type: Boolean, default: false },

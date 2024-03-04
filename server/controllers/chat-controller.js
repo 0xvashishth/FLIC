@@ -3,6 +3,12 @@ const Chat = require("../models/chat");
 const ChatSession = require("../models/chatSession");
 const { addDataToLogs } = require("./log-controller");
 const User = require("../models/user");
+const { sendEmailWithSendGrid } = require("../utils/sendgridEmail");
+const {
+  chatCreatedMailScript,
+  chatResponseCreatedMailScript,
+} = require("../utils/emailScript");
+const { verifyToSendEmail } = require("../utils/verifyToSendEmail");
 
 const withTransaction = async (operations) => {
   const session = await mongoose.startSession();
@@ -30,14 +36,29 @@ const createChat = async (req, res) => {
         userID: user._id,
       });
       user.chatCount += 1;
-      await user.save({ session });
+
       const validationError = newChat.validateSync();
       if (validationError) {
         console.log(validationError);
         throw { status: 400, message: validationError.message };
       }
-      await addDataToLogs("Chat Created", newChat._id);
       const savedChat = await newChat.save({ session });
+      await addDataToLogs("Chat Created", newChat._id);
+      if (await verifyToSendEmail("user", user)) {
+        user.chatEmailNotificationCount += 1;
+        await sendEmailWithSendGrid(
+          "Chat Created",
+          [user.email],
+          chatCreatedMailScript(
+            user.firstName,
+            savedChat.chatTitle,
+            savedChat.department,
+            savedChat.priority,
+            savedChat.defaultAskQuestion
+          )
+        );
+      }
+      await user.save({ session });
       res.status(201).json({ savedChat, message: "Chat created successfully" });
     });
   } catch (error) {
@@ -117,14 +138,19 @@ const updateChat = async (req, res) => {
 const deleteChat = async (req, res) => {
   try {
     const { chat } = req;
+    const user = req.rootUser;
     await withTransaction(async (session) => {
       const deletedChat = await Chat.findByIdAndDelete(chat._id);
+      // deleting all the sessions as well
+      await ChatSession.deleteMany({chatID: chat._id});
       if (!deletedChat) {
         throw {
           status: 404,
           message: "Chat not found or you do not have required permissions",
         };
       }
+      user.chatCount -= 1;
+      await user.save({ session });
       await addDataToLogs("Chat Deleted", chat._id);
       res.status(204).json();
     });
@@ -180,10 +206,10 @@ const postDefaultAnsFromSdk = async (req, res) => {
         chatID: chat._id,
         chatSessionId: req.body.chatSessionId,
       });
-
       chatSession.message.push(oldMessage);
     } else {
       // new more responses not adding for now due to size issue!!
+      await addDataToLogs("SDK Chat Already Sent Message", chat._id);
       return res.status(200).json({
         newMsg: {
           type: "agent",
@@ -210,11 +236,33 @@ const postDefaultAnsFromSdk = async (req, res) => {
       timestamp: Date.now(),
     };
 
+    if (
+      await verifyToSendEmail(
+        "chat",
+        user,
+        chat.EmailnotificationCount,
+        chat.isEmailNotification
+      )
+    ) {
+      user.chatEmailNotificationCount += 1;
+      chat.EmailnotificationCount += 1;
+      await sendEmailWithSendGrid(
+        "You Got Response In Chat",
+        [user.email],
+        chatResponseCreatedMailScript(
+          user.firstName,
+          chat.chatTitle,
+          req.body.msg,
+          finalMessage.msg
+        )
+      );
+    }
+
     chatSession.message.push(finalMessage);
     // increment chatSession count
     chat.sessionCount += 1;
     await chat.save();
-
+    await user.save();
     // Save the updated or new chat session
     await chatSession.save();
 
@@ -235,6 +283,7 @@ const postDefaultAnsFromSdk = async (req, res) => {
   }
 };
 
+// again normal controllers
 const getChatResponses = async (req, res) => {
   try {
     const user = req.rootUser;
@@ -256,15 +305,15 @@ const deleteChatResponse = async (req, res) => {
   const session = await mongoose.startSession();
   // starting the mongoose transaction
   session.startTransaction();
-
   try {
     const responseId = req.header("ResponseId");
     // Additional validation and checks if needed
-    const deletedResponses = await ChatSession.findByIdAndDelete(
-      responseId,
-      { session }
-    );
-    await addDataToLogs("Response Deleted", responseId);
+    await ChatSession.findByIdAndDelete(responseId, { session });
+    const chat = req.chat;
+    // decreasing the session count
+    chat.sessionCount -= 1;
+    await chat.save();
+    await addDataToLogs("Chat Response Deleted", responseId);
     await session.commitTransaction(); // Commit the transaction
     session.endSession();
     const chatRequestDetails = await ChatSession.find({
@@ -291,5 +340,5 @@ module.exports = {
   getChatDataFromSdk,
   postDefaultAnsFromSdk,
   getChatResponses,
-  deleteChatResponse
+  deleteChatResponse,
 };

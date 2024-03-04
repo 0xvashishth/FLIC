@@ -1,3 +1,7 @@
+// deprecating it from 04-03-2024
+// now using sendgrid for efficiently sending the mail
+// But i'm generating the templates
+
 require('dotenv').config();
 const nodemailer = require('nodemailer');
 
