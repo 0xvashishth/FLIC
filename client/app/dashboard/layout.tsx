@@ -126,7 +126,7 @@ export default function DashboardLayout({
             ) : (
               <div></div>
             )}
-            <button
+            {/* <button
               onClick={dashboardNotification}
               className="btn btn-ghost btn-circle"
             >
@@ -147,7 +147,7 @@ export default function DashboardLayout({
                 </svg>
                 <span className="badge badge-xs badge-primary indicator-item"></span>
               </div>
-            </button>
+            </button> */}
           </div>
         </div>
         {children}
@@ -222,7 +222,7 @@ export default function DashboardLayout({
                       Preferences
                     </Link>
                   </li>
-                  <li>
+                  {/* <li>
                     <Link
                       className={` ${
                         pathname.startsWith("/dashboard/profile/billing")
@@ -233,7 +233,7 @@ export default function DashboardLayout({
                     >
                       Billing
                     </Link>
-                  </li>
+                  </li> */}
                 </ul>
               </details>
             </li>

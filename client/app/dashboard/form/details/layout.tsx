@@ -53,7 +53,7 @@ export default function FormDashboardLayout({
               Settings
             </Link>
           </li>
-          <li>
+          {/* <li>
             <Link
               className={` ${
                 pathname.startsWith("/dashboard/form/details/plugins")
@@ -64,7 +64,7 @@ export default function FormDashboardLayout({
             >
               Plugins
             </Link>
-          </li>
+          </li> */}
         </ul>
       </div>
       {children}

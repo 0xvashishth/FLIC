@@ -46,7 +46,7 @@ export const MenuHorizontal = () => {
           href="/about"
           className={` ${pathname === "/about" ? "active" : ""}`}
         >
-          Abous us
+          About us
         </Link>
       </li>
     </ul>

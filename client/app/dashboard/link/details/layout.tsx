@@ -60,7 +60,7 @@ export default function LinkDashboardLayout({
               Settings
             </Link>
           </li>
-          <li>
+          {/* <li>
             <Link
               className={` ${
                 pathname.startsWith("/dashboard/link/details/analytics")
@@ -71,7 +71,7 @@ export default function LinkDashboardLayout({
             >
               Analytics
             </Link>
-          </li>
+          </li> */}
         </ul>
       </div>
       {children}

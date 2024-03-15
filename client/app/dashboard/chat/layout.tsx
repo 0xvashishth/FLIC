@@ -182,9 +182,9 @@ export default function DashboardLayout({
           >
             Create New Chat
           </label>
-            <label className="btn btn-sm max-md:text-xs">
+            {/* <label className="btn btn-sm max-md:text-xs">
              Change Your status (online/offline) <input type="checkbox" className="toggle toggle-success" onChange={statusChange} checked={isOnline} />
-            </label>
+            </label> */}
           </div>
       </div>
       {children}

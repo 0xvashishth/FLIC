@@ -169,12 +169,12 @@ export default function Page() {
           <input type="checkbox" id="isEmailNotification" className="toggle" checked={form.isEmailNotification} onChange={()=> console.log("")} onClick={handleChange}/>
         </label>
       </div>
-      <div className="form-control">
+      {/* <div className="form-control">
         <label className="label cursor-pointer">
           <span className="label-text">reCAPTCHA</span>
           <input type="checkbox" className="toggle" disabled />
         </label>
-      </div>
+      </div> */}
       </form>
       <div className="text-center">
         <button type="submit" onClick={handleDelete} className="m-3 btn text-red-500 btn-sm btn-outline">Delete Form</button>

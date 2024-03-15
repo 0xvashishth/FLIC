@@ -60,7 +60,7 @@ export default function ChatDashboardLayout({
               Settings
             </Link>
           </li>
-          <li>
+          {/* <li>
             <Link
               className={` ${
                 pathname.startsWith("/dashboard/chat/details/plugins")
@@ -71,7 +71,7 @@ export default function ChatDashboardLayout({
             >
               Plugins
             </Link>
-          </li>
+          </li> */}
         </ul>
       </div>
       {children}
